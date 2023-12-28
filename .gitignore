@@ -9,3 +9,7 @@ datasets/**/config.json
 configs/*
 !configs/template.yaml
 analysis_tools/**/
+dist/
+*.egg-info/
+
+
