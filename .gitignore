@@ -1,0 +1,11 @@
+runs/
+_deprecated/
+**/__pycache__/
+*.npz
+datasets/**/train/
+datasets/**/test/
+datasets/**/rawdata/
+datasets/**/config.json
+configs/*
+!configs/template.yaml
+analysis_tools/**/

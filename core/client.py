@@ -1,0 +1,299 @@
+import os
+import sys
+        
+import numpy as np
+import random
+import time
+
+import asyncio
+from mpi4py import MPI
+
+
+sys.path.append(".")
+sys.path.append("..")
+sys.path.append("../..")
+sys.path.append("../../..")
+
+import torch
+
+from FLamingo.core.utils.args_utils import get_args
+from FLamingo.core.utils.data_utils import ClientDataset
+from FLamingo.core.utils.model_utils import create_model_instance
+from FLamingo.core.utils.chores import log, merge_several_dicts
+from FLamingo.core.network import NetworkHandler
+
+class Client():
+    # def __init__(self, args):
+    def __init__(self):
+        """
+        The basic Federated Learning Client, includes basic operations
+        Args:
+            args: passed in through config file or other way
+        returns:
+            None
+        """
+        args = get_args()
+
+        WORLD = MPI.COMM_WORLD
+        rank = WORLD.Get_rank()
+        size = WORLD.Get_size()
+        # self.network = NetworkHandler(WORLD, rank, size)
+        self.comm_world = WORLD
+        self.rank = rank
+        self.size = size
+
+        if torch.cuda.is_available():
+            device_num = torch.cuda.device_count()
+            if device_num > 1:
+                print(f"Warning, multiple GPUs detected, this could probably cause problems. \
+                      They will all work on first GPU if not specified in advance as it may be unable to set GPU after importing torch. \n \
+                      Please use 'os.environ' to set 'CUDA_VISIBLE_DEVICES' before using FLamingo. \n \
+                      For example, 'os.environ['CUDA_VISIBLE_DEVICES'] = '0', then import FLamingo.")
+            self.device = torch.device("cuda")
+        else:
+            self.device = torch.device("cpu")
+    
+        random.seed(args.seed)
+        torch.manual_seed(args.seed)
+        np.random.seed(args.seed)
+        self.MASTER_RANK = 0
+
+        self.status = "TRAINING"
+
+        # Copy info from args
+        self.args = args
+        for key, value in vars(args).items():
+            setattr(self, key, value)
+
+        self.global_round = 0
+        self.loss_func = torch.nn.CrossEntropyLoss()
+        self.dataset = ClientDataset(self.dataset_type, self.data_dir, self.rank)
+        self.train_loader = self.dataset.get_train_loader(self.batch_size)
+        self.test_loader = self.dataset.get_test_loader(self.test_batch_size)
+        self.model_save_path = os.path.join(self.run_dir, "saved_models")    
+         
+        if os.path.exists(self.run_dir) == False:
+            os.makedirs(self.run_dir, exist_ok=True)
+        if os.path.exists(self.model_save_path) == False:
+            os.makedirs(self.model_save_path, exist_ok=True)
+
+        self.start_time = time.localtime()
+
+
+    def log(self, info_str):
+        """
+        Print info string with time and rank
+        """
+        log(self.rank, self.global_round, info_str)
+
+
+    def init(self, model_type=None, model=None, net_handler=NetworkHandler):
+        """
+        Init model and network to enable customize these parts.   
+        For model, pass in torch model or model_type to create coresponding model.   
+        For network, pass in your own network module or leave blank for default.
+        Args:  
+            model_type: str, used to create model using utils.model_utils.create_model_instance if model already implemented.  
+            model: nn.Module, initialized in customized clients or servers outside and passed in for flexibility.
+        Returns:
+            None of these will be returned. The function will set:  
+            self.model, self.model_type(if given when customized)
+            self.optimizer: default SGD
+            self.lr_scheduler: default ExponetialLR with gamma=0.993
+        If you want to customize, please define it in run()
+        """
+        self.network = net_handler()
+        assert isinstance(self.network, NetworkHandler), f"net_handler is not a NetworkHandler, instead {type(net_handler)}"
+        if model is not None:
+            assert isinstance(model, torch.nn.Module), f"Model passed is not PyTorch model nn.Module, instead {type(model)}"
+            self.model = model 
+            self.model_type = model_type
+        else:
+            self.model = create_model_instance(self.model_type, self.dataset_type)
+        assert self.model is not None, f"Model initialized failed. Either not passed in correctly or failed to instantiate."
+        self.model.to(self.device)
+        if self.momentum is not None:
+            self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr, momentum=self.momentum)
+        else:
+            self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
+        self.lr_scheduler = torch.optim.lr_scheduler.ExponentialLR(self.optimizer, gamma=0.993)
+            
+
+    def save_model(self, model, epoch):
+        if not os.path.exists(self.model_save_path):
+            os.makedirs(self.model_save_path)
+        model_path = os.path.join(self.model_save_path, f'model_{self.rank}.pth')
+        torch.save(model.state_dict(), model_path)
+
+
+    def load_model(self, model, epoch):
+        model_path = os.path.join(self.model_save_path, f'model_{self.rank}.pth')
+        assert os.path.exists(model_path), f"model for client {self.rank} does not exist"
+        model.load_state_dict(torch.load(model_path))
+
+
+    def set_model_parameter(self, params, model=None):
+        """
+        Set model parameters. Default self.model
+        """
+        model = self.model if model is None else model
+        torch.nn.utils.vector_to_parameters(params, model.parameters())
+
+    def export_model_parameter(self, model=None):
+        """
+        Export self.model.parameters() to a vector
+        """
+        model = self.model if model is None else model
+        return torch.nn.utils.parameters_to_vector(self.model.parameters()).detach()
+
+
+    def train(self, model, dataloader, local_epoch, loss_func, optimizer):
+        """
+        Train given dataset on given dataloader
+        """
+        model.train()
+        model.to(self.device)
+        epoch_loss, epoch_num = 0.0, 0
+        for ep in range(local_epoch):
+            for batch_idx, (data, target) in enumerate(dataloader):
+                data, target = data.to(self.device), target.to(self.device)
+                batch_num, loss = self._train_one_batch(model, data, target, optimizer, loss_func)
+                epoch_loss += loss * batch_num
+                epoch_num += batch_num
+        epoch_loss /= epoch_num
+        return {'train_loss':epoch_loss, 'train_samples':epoch_num}
+
+
+
+    def test(self, model, dataloader, loss_func, device):
+        """
+        Test dataset on given dataloader
+        """
+        model.eval()
+        test_loss, test_num, test_correct = 0.0, 0, 0
+        for batch_idx, (data, target) in enumerate(dataloader):
+            data, target = data.to(device), target.to(device)
+            batch_num, batch_correct, loss = self._test_one_batch(model, data, target, loss_func)
+            test_loss += loss * batch_num
+            test_num += batch_num
+            test_correct += batch_correct
+        test_loss /= test_num
+        test_acc = float(test_correct) / test_num 
+        return {'test_loss':test_loss, 'test_acc': test_acc,'test_samples':test_num}
+
+
+    def evaluate(self):
+        pass
+
+
+    def finalize_round(self):
+        """
+        Call this to update global_round and other routines
+        """
+        self.global_round += 1
+        
+    
+    def _train_one_batch(self, model, data, target, optimizer, loss_func):
+        """
+        Train one batch data
+        """
+        model.train()
+        model = model.to(self.device)
+        data, target = data.to(self.device), target.to(self.device)
+        self.optimizer.zero_grad()
+        output = model(data)
+        # print(data.shape, target.shape, output.shape)
+        loss = loss_func(output, target)
+        loss.backward()
+        optimizer.step()
+        return len(target), loss.item()
+
+    
+
+    def _test_one_batch(self, model, data, target, loss_func):
+        """
+        Test one batch
+        """
+        model.eval()
+        output = model(data)
+        loss = loss_func(output, target)
+        _, pred = torch.max(output, 1)
+        # Check test accuracy
+        correct = (pred == target).sum().item()
+        num = data.size(0)
+        return num, correct, loss.item()
+
+
+    def listen(self, rank=0):
+        """
+        Listen from other processes, default from server
+        """
+        data = self.network.get(rank)
+        if rank==0:
+            # from server
+            self.global_round = data['global_round']
+        return data
+    
+
+    def send(self, data, rank=0):
+        """
+        Send data to other processes, default to server
+        """
+        self.network.send(data, rank)
+        return
+
+
+    def run(self):
+        """
+        FedAvg procedure:
+        1. Get request from server
+        2. Training
+        3. Send information back
+        """
+        # self.model = create_model_instance(self.model)
+        self.init()
+        while True:
+            # data = self.receive_data(self.MASTER_RANK)
+            # data = self.network.get(self.MASTER_RANK)
+            data = self.listen()
+            # print([k for k,v in data.items()])
+            if data['status'] == 'STOP':
+                if self.verb: self.log('Stopped by server')
+                break
+
+            elif data['status'] == 'TRAINING':
+                # print(f'{self.rank}, {self.verb}')
+                if self.verb: self.log('training')
+                self.set_model_parameter(data['params'])
+                trained_info = self.train(
+                    self.model, self.train_loader, self.args.local_epochs, self.loss_func, self.optimizer)
+                tested_info = self.test(
+                    self.model, self.test_loader, self.loss_func, self.device)
+                # Construct data to send
+                data_to_send = merge_several_dicts([trained_info, tested_info])
+                data_to_send['params'] = self.export_model_parameter()
+                # print(data_to_send)
+                # self.network.send(data_to_send, self.MASTER_RANK)
+                self.send(data_to_send)
+                if self.verb: self.log('training finished')
+
+            elif data['status'] == 'TEST':
+                if self.verb: self.log('testing')
+                self.model = torch.load(data['model'])
+                test_info = self.test()
+                if self.verb: 
+                    self.log(f'test info: {test_info.items()}')
+                    # for k, v in test_info.items():
+                    #     self.log(f'{k}: {v}')
+                self.send(self.MASTER_RANK, test_info)
+        
+            else:
+                raise Exception('Unknown status')
+            
+            self.finalize_round()
+            if self.global_round >= self.max_epochs:
+                if self.verb: self.log(f'Reaching epochs limit {self.max_epochs}')
+                break
+        
+        if self.verb: self.log(f'finished at round {self.global_round}')
+       

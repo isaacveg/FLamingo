@@ -1,0 +1,33 @@
+## FedAvg config
+config: '/data0/yzhu/FLMPI/config.yaml'  # use config file, will overwrite any other arguments
+data_dir: '/data0/yzhu/FLMPI/datasets/'  # dataset directory
+work_dir: '/data0/yzhu/FLMPI/runs/fedmeta_mnist/'  # working directory
+
+seed: 2024  # random seed
+batch_size: 64  # batch size
+test_batch_size: 64  # test batch size
+lr: 0.001  # learning rate
+weight_decay: 0.0001  # weight decay
+epoch: 100  # epoch
+dropout: 0.5  # dropout rate
+
+gpu: -1  # gpu id, default auto select
+server_gpu: -1  # gpu id, default 0
+
+num_clients: 15  # number of clients
+training_clients: 5  # number of training clients
+
+method: fedmeta  # FL method, default fedavg
+# mnist:cnn, mlr, dnn; cifar10: mlr, cnn, dnn
+model: cnn  # model type
+dataset: mnist  # dataset_type
+
+verb: 1  # verbose
+momentum: 0.9  # momentum
+local_epochs: 1  # local epochs
+
+# FedMeta
+alpha: 0.01
+beta: 0.01
+steps: 2
+optim_steps: 15
