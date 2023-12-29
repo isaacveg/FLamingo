@@ -1,4 +1,3 @@
-runs/
 _deprecated/
 **/__pycache__/
 *.npz

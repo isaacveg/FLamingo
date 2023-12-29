@@ -1,0 +1,1737 @@
+[18:15:58 e 0 r 0] Model type:cnn 
+Model size: 2.2202529907226562 MB
+ Parameters: 582026
+[18:15:58 e 0 r 0] Selected clients: [8, 3, 12, 10, 5]
+[18:15:58 e 0 r 8] training
+[18:15:58 e 0 r 3] training
+[18:15:58 e 0 r 12] training
+[18:15:58 e 0 r 10] training
+[18:15:58 e 0 r 0] Server broadcast to [8, 3, 12, 10, 5] succeed
+[18:15:58 e 0 r 5] training
+[18:16:03 e 0 r 8] training finished
+[18:16:03 e 0 r 3] training finished
+[18:16:03 e 0 r 12] training finished
+[18:16:03 e 0 r 10] training finished
+[18:16:03 e 0 r 5] training finished
+[18:16:03 e 0 r 0] Server listening to [8, 3, 12, 10, 5] succeed
+[18:16:03 e 0 r 0] Avg global info:
+ train loss 1.1039972726939555,                  
+test acc 0.9376036115342054,                  
+test loss 0.43826051181739434
+[18:16:03 e 1 r 0] Selected clients: [4, 12, 7, 14, 5]
+[18:16:03 e 1 r 12] training
+[18:16:03 e 1 r 4] training
+[18:16:03 e 1 r 0] Server broadcast to [4, 12, 7, 14, 5] succeed
+[18:16:03 e 1 r 7] training
+[18:16:03 e 1 r 5] training
+[18:16:03 e 1 r 14] training
+[18:16:08 e 1 r 4] training finished
+[18:16:08 e 1 r 12] training finished
+[18:16:08 e 1 r 7] training finished
+[18:16:08 e 1 r 14] training finished
+[18:16:08 e 1 r 5] training finished
+[18:16:08 e 1 r 0] Server listening to [4, 12, 7, 14, 5] succeed
+[18:16:08 e 1 r 0] Avg global info:
+ train loss 0.7078160398203673,                  
+test acc 0.9139475514937387,                  
+test loss 0.38492491478333174
+[18:16:08 e 2 r 0] Selected clients: [9, 4, 11, 12, 8]
+[18:16:08 e 2 r 4] training
+[18:16:08 e 2 r 9] training
+[18:16:08 e 2 r 11] training
+[18:16:08 e 2 r 0] Server broadcast to [9, 4, 11, 12, 8] succeed
+[18:16:08 e 2 r 12] training
+[18:16:08 e 2 r 8] training
+[18:16:12 e 2 r 9] training finished
+[18:16:12 e 2 r 4] training finished
+[18:16:12 e 2 r 11] training finished
+[18:16:12 e 2 r 12] training finished
+[18:16:12 e 2 r 8] training finished
+[18:16:12 e 2 r 0] Server listening to [9, 4, 11, 12, 8] succeed
+[18:16:12 e 2 r 0] Avg global info:
+ train loss 0.5459310978970728,                  
+test acc 0.9752234922382336,                  
+test loss 0.1784964424622831
+[18:16:12 e 3 r 0] Selected clients: [6, 7, 9, 12, 10]
+[18:16:12 e 3 r 7] training
+[18:16:12 e 3 r 6] training
+[18:16:12 e 3 r 9] training
+[18:16:12 e 3 r 0] Server broadcast to [6, 7, 9, 12, 10] succeed
+[18:16:12 e 3 r 12] training
+[18:16:12 e 3 r 10] training
+[18:16:16 e 3 r 6] training finished
+[18:16:16 e 3 r 7] training finished
+[18:16:16 e 3 r 9] training finished
+[18:16:16 e 3 r 12] training finished
+[18:16:16 e 3 r 10] training finished
+[18:16:16 e 3 r 0] Server listening to [6, 7, 9, 12, 10] succeed
+[18:16:16 e 3 r 0] Avg global info:
+ train loss 0.32233914967575866,                  
+test acc 0.9796224330937264,                  
+test loss 0.10815071629472466
+[18:16:16 e 4 r 0] Selected clients: [4, 5, 9, 12, 6]
+[18:16:16 e 4 r 4] training
+[18:16:16 e 4 r 9] training
+[18:16:16 e 4 r 5] training
+[18:16:16 e 4 r 0] Server broadcast to [4, 5, 9, 12, 6] succeed
+[18:16:16 e 4 r 12] training
+[18:16:16 e 4 r 6] training
+[18:16:17 e 4 r 4] training finished
+[18:16:17 e 4 r 5] training finished
+[18:16:17 e 4 r 9] training finished
+[18:16:17 e 4 r 12] training finished
+[18:16:17 e 4 r 6] training finished
+[18:16:17 e 4 r 0] Server listening to [4, 5, 9, 12, 6] succeed
+[18:16:17 e 4 r 0] Avg global info:
+ train loss 0.2510268275684891,                  
+test acc 0.9667986542339054,                  
+test loss 0.1128563673388145
+[18:16:17 e 5 r 0] Selected clients: [9, 2, 12, 4, 8]
+[18:16:17 e 5 r 9] training
+[18:16:17 e 5 r 12] training
+[18:16:17 e 5 r 4] training
+[18:16:17 e 5 r 0] Server broadcast to [9, 2, 12, 4, 8] succeed
+[18:16:17 e 5 r 8] training
+[18:16:17 e 5 r 2] training
+[18:16:18 e 5 r 9] training finished
+[18:16:22 e 5 r 2] training finished
+[18:16:22 e 5 r 12] training finished
+[18:16:22 e 5 r 4] training finished
+[18:16:22 e 5 r 8] training finished
+[18:16:22 e 5 r 0] Server listening to [9, 2, 12, 4, 8] succeed
+[18:16:22 e 5 r 0] Avg global info:
+ train loss 0.47319380645198333,                  
+test acc 0.982797396180171,                  
+test loss 0.07765715867213929
+[18:16:22 e 6 r 0] Selected clients: [15, 12, 11, 3, 9]
+[18:16:22 e 6 r 12] training
+[18:16:22 e 6 r 11] training
+[18:16:22 e 6 r 15] training
+[18:16:22 e 6 r 0] Server broadcast to [15, 12, 11, 3, 9] succeed
+[18:16:22 e 6 r 9] training
+[18:16:22 e 6 r 3] training
+[18:16:26 e 6 r 15] training finished
+[18:16:26 e 6 r 12] training finished
+[18:16:26 e 6 r 11] training finished
+[18:16:26 e 6 r 3] training finished
+[18:16:26 e 6 r 9] training finished
+[18:16:26 e 6 r 0] Server listening to [15, 12, 11, 3, 9] succeed
+[18:16:26 e 6 r 0] Avg global info:
+ train loss 0.3171129274826618,                  
+test acc 0.9865418934980248,                  
+test loss 0.07867846805818826
+[18:16:26 e 7 r 0] Selected clients: [4, 14, 7, 1, 6]
+[18:16:26 e 7 r 4] training
+[18:16:26 e 7 r 14] training
+[18:16:26 e 7 r 7] training
+[18:16:26 e 7 r 0] Server broadcast to [4, 14, 7, 1, 6] succeed
+[18:16:26 e 7 r 6] training
+[18:16:26 e 7 r 1] training
+[18:16:27 e 7 r 4] training finished
+[18:16:27 e 7 r 14] training finished
+[18:16:27 e 7 r 7] training finished
+[18:16:30 e 7 r 1] training finished
+[18:16:30 e 7 r 6] training finished
+[18:16:30 e 7 r 0] Server listening to [4, 14, 7, 1, 6] succeed
+[18:16:30 e 7 r 0] Avg global info:
+ train loss 0.48151057268095504,                  
+test acc 0.9696659308480922,                  
+test loss 0.09434992189801845
+[18:16:30 e 8 r 0] Selected clients: [11, 7, 8, 2, 3]
+[18:16:30 e 8 r 11] training
+[18:16:30 e 8 r 7] training
+[18:16:30 e 8 r 8] training
+[18:16:30 e 8 r 2] training
+[18:16:30 e 8 r 0] Server broadcast to [11, 7, 8, 2, 3] succeed
+[18:16:30 e 8 r 3] training
+[18:16:32 e 8 r 11] training finished
+[18:16:32 e 8 r 7] training finished
+[18:16:32 e 8 r 8] training finished
+[18:16:32 e 8 r 2] training finished
+[18:16:32 e 8 r 3] training finished
+[18:16:32 e 8 r 0] Server listening to [11, 7, 8, 2, 3] succeed
+[18:16:32 e 8 r 0] Avg global info:
+ train loss 0.18698583659782758,                  
+test acc 0.9925045534308637,                  
+test loss 0.029756158792588
+[18:16:32 e 9 r 0] Selected clients: [13, 6, 7, 14, 12]
+[18:16:32 e 9 r 6] training
+[18:16:32 e 9 r 7] training
+[18:16:32 e 9 r 13] training
+[18:16:32 e 9 r 14] training
+[18:16:32 e 9 r 0] Server broadcast to [13, 6, 7, 14, 12] succeed
+[18:16:32 e 9 r 12] training
+[18:16:36 e 9 r 13] training finished
+[18:16:36 e 9 r 6] training finished
+[18:16:36 e 9 r 7] training finished
+[18:16:36 e 9 r 14] training finished
+[18:16:36 e 9 r 12] training finished
+[18:16:36 e 9 r 0] Server listening to [13, 6, 7, 14, 12] succeed
+[18:16:36 e 9 r 0] Avg global info:
+ train loss 0.3169272679312544,                  
+test acc 0.9717987588143364,                  
+test loss 0.08981419325107813
+[18:16:36 e 10 r 0] Selected clients: [13, 4, 6, 7, 12]
+[18:16:36 e 10 r 13] training
+[18:16:36 e 10 r 4] training
+[18:16:36 e 10 r 6] training
+[18:16:36 e 10 r 0] Server broadcast to [13, 4, 6, 7, 12] succeed
+[18:16:36 e 10 r 7] training
+[18:16:36 e 10 r 12] training
+[18:16:37 e 10 r 13] training finished
+[18:16:37 e 10 r 4] training finished
+[18:16:37 e 10 r 6] training finished
+[18:16:37 e 10 r 7] training finished
+[18:16:37 e 10 r 12] training finished
+[18:16:37 e 10 r 0] Server listening to [13, 4, 6, 7, 12] succeed
+[18:16:37 e 10 r 0] Avg global info:
+ train loss 0.19379265675941063,                  
+test acc 0.9761554581551886,                  
+test loss 0.06853844422161415
+[18:16:37 e 11 r 0] Selected clients: [6, 10, 4, 7, 13]
+[18:16:37 e 11 r 6] training
+[18:16:37 e 11 r 4] training
+[18:16:37 e 11 r 7] training
+[18:16:37 e 11 r 10] training
+[18:16:37 e 11 r 0] Server broadcast to [6, 10, 4, 7, 13] succeed
+[18:16:37 e 11 r 13] training
+[18:16:38 e 11 r 6] training finished
+[18:16:38 e 11 r 10] training finished
+[18:16:38 e 11 r 4] training finished
+[18:16:38 e 11 r 7] training finished
+[18:16:38 e 11 r 13] training finished
+[18:16:38 e 11 r 0] Server listening to [6, 10, 4, 7, 13] succeed
+[18:16:38 e 11 r 0] Avg global info:
+ train loss 0.16674100421389168,                  
+test acc 0.9763423916739175,                  
+test loss 0.07061933753745273
+[18:16:38 e 12 r 0] Selected clients: [4, 1, 12, 15, 14]
+[18:16:38 e 12 r 4] training
+[18:16:38 e 12 r 1] training
+[18:16:38 e 12 r 12] training
+[18:16:38 e 12 r 15] training
+[18:16:38 e 12 r 0] Server broadcast to [4, 1, 12, 15, 14] succeed
+[18:16:38 e 12 r 14] training
+[18:16:39 e 12 r 4] training finished
+[18:16:40 e 12 r 1] training finished
+[18:16:40 e 12 r 12] training finished
+[18:16:40 e 12 r 15] training finished
+[18:16:40 e 12 r 14] training finished
+[18:16:40 e 12 r 0] Server listening to [4, 1, 12, 15, 14] succeed
+[18:16:40 e 12 r 0] Avg global info:
+ train loss 0.16245323868898157,                  
+test acc 0.9817945261035822,                  
+test loss 0.05794176368051394
+[18:16:40 e 13 r 0] Selected clients: [14, 5, 9, 6, 10]
+[18:16:40 e 13 r 14] training
+[18:16:40 e 13 r 6] training
+[18:16:40 e 13 r 0] Server broadcast to [14, 5, 9, 6, 10] succeed
+[18:16:40 e 13 r 10] training
+[18:16:40 e 13 r 5] training
+[18:16:40 e 13 r 9] training
+[18:16:41 e 13 r 14] training finished
+[18:16:41 e 13 r 5] training finished
+[18:16:41 e 13 r 9] training finished
+[18:16:41 e 13 r 6] training finished
+[18:16:41 e 13 r 10] training finished
+[18:16:41 e 13 r 0] Server listening to [14, 5, 9, 6, 10] succeed
+[18:16:41 e 13 r 0] Avg global info:
+ train loss 0.1477343725701177,                  
+test acc 0.9843588816116139,                  
+test loss 0.056922032799196796
+[18:16:41 e 14 r 0] Selected clients: [13, 12, 7, 10, 2]
+[18:16:41 e 14 r 13] training
+[18:16:41 e 14 r 12] training
+[18:16:41 e 14 r 7] training
+[18:16:41 e 14 r 10] training
+[18:16:41 e 14 r 0] Server broadcast to [13, 12, 7, 10, 2] succeed
+[18:16:41 e 14 r 2] training
+[18:16:42 e 14 r 13] training finished
+[18:16:42 e 14 r 12] training finished
+[18:16:42 e 14 r 7] training finished
+[18:16:42 e 14 r 10] training finished
+[18:16:42 e 14 r 2] training finished
+[18:16:42 e 14 r 0] Server listening to [13, 12, 7, 10, 2] succeed
+[18:16:42 e 14 r 0] Avg global info:
+ train loss 0.1182197032840511,                  
+test acc 0.9894798479492547,                  
+test loss 0.03081879295367463
+[18:16:42 e 15 r 0] Selected clients: [6, 14, 11, 10, 4]
+[18:16:42 e 15 r 6] training
+[18:16:42 e 15 r 14] training
+[18:16:42 e 15 r 11] training
+[18:16:42 e 15 r 10] training
+[18:16:42 e 15 r 0] Server broadcast to [6, 14, 11, 10, 4] succeed
+[18:16:42 e 15 r 4] training
+[18:16:43 e 15 r 6] training finished
+[18:16:43 e 15 r 14] training finished
+[18:16:43 e 15 r 11] training finished
+[18:16:43 e 15 r 10] training finished
+[18:16:43 e 15 r 4] training finished
+[18:16:43 e 15 r 0] Server listening to [6, 14, 11, 10, 4] succeed
+[18:16:43 e 15 r 0] Avg global info:
+ train loss 0.1399903182963282,                  
+test acc 0.9844275416065378,                  
+test loss 0.04613054899789507
+[18:16:43 e 16 r 0] Selected clients: [4, 8, 6, 3, 15]
+[18:16:43 e 16 r 4] training
+[18:16:43 e 16 r 6] training
+[18:16:43 e 16 r 8] training
+[18:16:43 e 16 r 0] Server broadcast to [4, 8, 6, 3, 15] succeed
+[18:16:43 e 16 r 3] training
+[18:16:43 e 16 r 15] training
+[18:16:44 e 16 r 4] training finished
+[18:16:44 e 16 r 8] training finished
+[18:16:44 e 16 r 6] training finished
+[18:16:44 e 16 r 3] training finished
+[18:16:44 e 16 r 15] training finished
+[18:16:44 e 16 r 0] Server listening to [4, 8, 6, 3, 15] succeed
+[18:16:44 e 16 r 0] Avg global info:
+ train loss 0.13553457736514396,                  
+test acc 0.9841894068912334,                  
+test loss 0.048294906652741186
+[18:16:44 e 17 r 0] Selected clients: [6, 8, 10, 11, 3]
+[18:16:44 e 17 r 6] training
+[18:16:44 e 17 r 8] training
+[18:16:44 e 17 r 10] training
+[18:16:44 e 17 r 0] Server broadcast to [6, 8, 10, 11, 3] succeed
+[18:16:44 e 17 r 11] training
+[18:16:44 e 17 r 3] training
+[18:16:45 e 17 r 6] training finished
+[18:16:45 e 17 r 8] training finished
+[18:16:45 e 17 r 10] training finished
+[18:16:45 e 17 r 11] training finished
+[18:16:46 e 17 r 3] training finished
+[18:16:46 e 17 r 0] Server listening to [6, 8, 10, 11, 3] succeed
+[18:16:46 e 17 r 0] Avg global info:
+ train loss 0.08898532925703959,                  
+test acc 0.9938467875234309,                  
+test loss 0.01968030707953062
+[18:16:46 e 18 r 0] Selected clients: [5, 7, 10, 6, 12]
+[18:16:46 e 18 r 5] training
+[18:16:46 e 18 r 7] training
+[18:16:46 e 18 r 10] training
+[18:16:46 e 18 r 6] training
+[18:16:46 e 18 r 0] Server broadcast to [5, 7, 10, 6, 12] succeed
+[18:16:46 e 18 r 12] training
+[18:16:47 e 18 r 5] training finished
+[18:16:47 e 18 r 7] training finished
+[18:16:47 e 18 r 10] training finished
+[18:16:47 e 18 r 6] training finished
+[18:16:47 e 18 r 12] training finished
+[18:16:47 e 18 r 0] Server listening to [5, 7, 10, 6, 12] succeed
+[18:16:47 e 18 r 0] Avg global info:
+ train loss 0.07770681175194062,                  
+test acc 0.9873089354487057,                  
+test loss 0.03483512940504248
+[18:16:47 e 19 r 0] Selected clients: [12, 15, 8, 3, 11]
+[18:16:47 e 19 r 12] training
+[18:16:47 e 19 r 15] training
+[18:16:47 e 19 r 8] training
+[18:16:47 e 19 r 3] training
+[18:16:47 e 19 r 0] Server broadcast to [12, 15, 8, 3, 11] succeed
+[18:16:47 e 19 r 11] training
+[18:16:48 e 19 r 12] training finished
+[18:16:48 e 19 r 15] training finished
+[18:16:48 e 19 r 8] training finished
+[18:16:48 e 19 r 3] training finished
+[18:16:48 e 19 r 11] training finished
+[18:16:48 e 19 r 0] Server listening to [12, 15, 8, 3, 11] succeed
+[18:16:48 e 19 r 0] Avg global info:
+ train loss 0.11142854818537598,                  
+test acc 0.9947633177717842,                  
+test loss 0.01988053163884382
+[18:16:48 e 20 r 0] Selected clients: [12, 13, 3, 6, 4]
+[18:16:48 e 20 r 12] training
+[18:16:48 e 20 r 13] training
+[18:16:48 e 20 r 3] training
+[18:16:48 e 20 r 6] training
+[18:16:48 e 20 r 0] Server broadcast to [12, 13, 3, 6, 4] succeed
+[18:16:48 e 20 r 4] training
+[18:16:49 e 20 r 12] training finished
+[18:16:49 e 20 r 13] training finished
+[18:16:49 e 20 r 3] training finished
+[18:16:49 e 20 r 6] training finished
+[18:16:49 e 20 r 4] training finished
+[18:16:49 e 20 r 0] Server listening to [12, 13, 3, 6, 4] succeed
+[18:16:49 e 20 r 0] Avg global info:
+ train loss 0.11682800758866815,                  
+test acc 0.9844212653268876,                  
+test loss 0.04276345853872604
+[18:16:49 e 21 r 0] Selected clients: [10, 11, 2, 13, 3]
+[18:16:49 e 21 r 10] training
+[18:16:49 e 21 r 11] training
+[18:16:49 e 21 r 2] training
+[18:16:49 e 21 r 13] training
+[18:16:49 e 21 r 0] Server broadcast to [10, 11, 2, 13, 3] succeed
+[18:16:49 e 21 r 3] training
+[18:16:50 e 21 r 10] training finished
+[18:16:51 e 21 r 11] training finished
+[18:16:51 e 21 r 2] training finished
+[18:16:51 e 21 r 13] training finished
+[18:16:51 e 21 r 3] training finished
+[18:16:51 e 21 r 0] Server listening to [10, 11, 2, 13, 3] succeed
+[18:16:51 e 21 r 0] Avg global info:
+ train loss 0.0771334229075115,                  
+test acc 0.9932631116102882,                  
+test loss 0.021898412738078923
+[18:16:51 e 22 r 0] Selected clients: [1, 3, 8, 12, 4]
+[18:16:51 e 22 r 1] training
+[18:16:51 e 22 r 3] training
+[18:16:51 e 22 r 8] training
+[18:16:51 e 22 r 0] Server broadcast to [1, 3, 8, 12, 4] succeed
+[18:16:51 e 22 r 12] training
+[18:16:51 e 22 r 4] training
+[18:16:52 e 22 r 1] training finished
+[18:16:52 e 22 r 3] training finished
+[18:16:52 e 22 r 8] training finished
+[18:16:52 e 22 r 12] training finished
+[18:16:52 e 22 r 4] training finished
+[18:16:52 e 22 r 0] Server listening to [1, 3, 8, 12, 4] succeed
+[18:16:52 e 22 r 0] Avg global info:
+ train loss 0.09119161893422797,                  
+test acc 0.9931990197315933,                  
+test loss 0.02086638804846493
+[18:16:52 e 23 r 0] Selected clients: [6, 4, 2, 14, 5]
+[18:16:52 e 23 r 6] training
+[18:16:52 e 23 r 4] training
+[18:16:52 e 23 r 2] training
+[18:16:52 e 23 r 14] training
+[18:16:52 e 23 r 0] Server broadcast to [6, 4, 2, 14, 5] succeed
+[18:16:52 e 23 r 5] training
+[18:16:53 e 23 r 6] training finished
+[18:16:53 e 23 r 4] training finished
+[18:16:53 e 23 r 2] training finished
+[18:16:53 e 23 r 14] training finished
+[18:16:53 e 23 r 5] training finished
+[18:16:53 e 23 r 0] Server listening to [6, 4, 2, 14, 5] succeed
+[18:16:53 e 23 r 0] Avg global info:
+ train loss 0.10762488729474276,                  
+test acc 0.9808999168153839,                  
+test loss 0.050910162649122806
+[18:16:53 e 24 r 0] Selected clients: [4, 12, 8, 10, 5]
+[18:16:53 e 24 r 4] training
+[18:16:53 e 24 r 12] training
+[18:16:53 e 24 r 8] training
+[18:16:53 e 24 r 10] training
+[18:16:53 e 24 r 0] Server broadcast to [4, 12, 8, 10, 5] succeed
+[18:16:53 e 24 r 5] training
+[18:16:54 e 24 r 4] training finished
+[18:16:54 e 24 r 12] training finished
+[18:16:54 e 24 r 8] training finished
+[18:16:54 e 24 r 10] training finished
+[18:16:54 e 24 r 5] training finished
+[18:16:54 e 24 r 0] Server listening to [4, 12, 8, 10, 5] succeed
+[18:16:54 e 24 r 0] Avg global info:
+ train loss 0.09833917220109908,                  
+test acc 0.9914342522410194,                  
+test loss 0.029328857802652895
+[18:16:54 e 25 r 0] Selected clients: [8, 9, 7, 11, 13]
+[18:16:54 e 25 r 8] training
+[18:16:54 e 25 r 9] training
+[18:16:54 e 25 r 7] training
+[18:16:54 e 25 r 11] training
+[18:16:54 e 25 r 0] Server broadcast to [8, 9, 7, 11, 13] succeed
+[18:16:54 e 25 r 13] training
+[18:16:55 e 25 r 8] training finished
+[18:16:56 e 25 r 9] training finished
+[18:16:56 e 25 r 7] training finished
+[18:16:56 e 25 r 11] training finished
+[18:16:56 e 25 r 13] training finished
+[18:16:56 e 25 r 0] Server listening to [8, 9, 7, 11, 13] succeed
+[18:16:56 e 25 r 0] Avg global info:
+ train loss 0.08284221916821866,                  
+test acc 0.9918731947518913,                  
+test loss 0.029276446273408495
+[18:16:56 e 26 r 0] Selected clients: [4, 14, 2, 5, 12]
+[18:16:56 e 26 r 4] training
+[18:16:56 e 26 r 14] training
+[18:16:56 e 26 r 2] training
+[18:16:56 e 26 r 0] Server broadcast to [4, 14, 2, 5, 12] succeed
+[18:16:56 e 26 r 5] training
+[18:16:56 e 26 r 12] training
+[18:16:57 e 26 r 4] training finished
+[18:16:57 e 26 r 14] training finished
+[18:16:57 e 26 r 2] training finished
+[18:16:57 e 26 r 5] training finished
+[18:16:57 e 26 r 12] training finished
+[18:16:57 e 26 r 0] Server listening to [4, 14, 2, 5, 12] succeed
+[18:16:57 e 26 r 0] Avg global info:
+ train loss 0.15084813144353132,                  
+test acc 0.98753459563301,                  
+test loss 0.037061693264902086
+[18:16:57 e 27 r 0] Selected clients: [5, 3, 10, 11, 15]
+[18:16:57 e 27 r 5] training
+[18:16:57 e 27 r 3] training
+[18:16:57 e 27 r 10] training
+[18:16:57 e 27 r 11] training
+[18:16:57 e 27 r 0] Server broadcast to [5, 3, 10, 11, 15] succeed
+[18:16:57 e 27 r 15] training
+[18:16:58 e 27 r 5] training finished
+[18:16:58 e 27 r 3] training finished
+[18:16:58 e 27 r 10] training finished
+[18:16:58 e 27 r 11] training finished
+[18:16:58 e 27 r 15] training finished
+[18:16:58 e 27 r 0] Server listening to [5, 3, 10, 11, 15] succeed
+[18:16:58 e 27 r 0] Avg global info:
+ train loss 0.07766737964768586,                  
+test acc 0.9924721789138159,                  
+test loss 0.025918458185849737
+[18:16:58 e 28 r 0] Selected clients: [9, 2, 8, 4, 12]
+[18:16:58 e 28 r 9] training
+[18:16:58 e 28 r 2] training
+[18:16:58 e 28 r 8] training
+[18:16:58 e 28 r 4] training
+[18:16:58 e 28 r 0] Server broadcast to [9, 2, 8, 4, 12] succeed
+[18:16:58 e 28 r 12] training
+[18:16:59 e 28 r 9] training finished
+[18:17:00 e 28 r 2] training finished
+[18:17:00 e 28 r 8] training finished
+[18:17:00 e 28 r 4] training finished
+[18:17:00 e 28 r 12] training finished
+[18:17:00 e 28 r 0] Server listening to [9, 2, 8, 4, 12] succeed
+[18:17:00 e 28 r 0] Avg global info:
+ train loss 0.1954601831407779,                  
+test acc 0.9946571452866063,                  
+test loss 0.01847431139012539
+[18:17:00 e 29 r 0] Selected clients: [13, 7, 3, 9, 4]
+[18:17:00 e 29 r 13] training
+[18:17:00 e 29 r 7] training
+[18:17:00 e 29 r 3] training
+[18:17:00 e 29 r 9] training
+[18:17:00 e 29 r 0] Server broadcast to [13, 7, 3, 9, 4] succeed
+[18:17:00 e 29 r 4] training
+[18:17:01 e 29 r 13] training finished
+[18:17:01 e 29 r 7] training finished
+[18:17:01 e 29 r 3] training finished
+[18:17:01 e 29 r 9] training finished
+[18:17:01 e 29 r 4] training finished
+[18:17:01 e 29 r 0] Server listening to [13, 7, 3, 9, 4] succeed
+[18:17:01 e 29 r 0] Avg global info:
+ train loss 0.09863273402420138,                  
+test acc 0.9905986272828633,                  
+test loss 0.030710470685624564
+[18:17:01 e 30 r 0] Selected clients: [6, 15, 13, 12, 1]
+[18:17:01 e 30 r 6] training
+[18:17:01 e 30 r 15] training
+[18:17:01 e 30 r 13] training
+[18:17:01 e 30 r 12] training
+[18:17:01 e 30 r 0] Server broadcast to [6, 15, 13, 12, 1] succeed
+[18:17:01 e 30 r 1] training
+[18:17:02 e 30 r 6] training finished
+[18:17:02 e 30 r 15] training finished
+[18:17:02 e 30 r 13] training finished
+[18:17:02 e 30 r 12] training finished
+[18:17:02 e 30 r 1] training finished
+[18:17:02 e 30 r 0] Server listening to [6, 15, 13, 12, 1] succeed
+[18:17:02 e 30 r 0] Avg global info:
+ train loss 0.0848636362285756,                  
+test acc 0.9891611381366442,                  
+test loss 0.03519245224950233
+[18:17:02 e 31 r 0] Selected clients: [10, 11, 9, 7, 14]
+[18:17:02 e 31 r 10] training
+[18:17:02 e 31 r 11] training
+[18:17:02 e 31 r 9] training
+[18:17:02 e 31 r 0] Server broadcast to [10, 11, 9, 7, 14] succeed
+[18:17:02 e 31 r 7] training
+[18:17:02 e 31 r 14] training
+[18:17:03 e 31 r 10] training finished
+[18:17:03 e 31 r 11] training finished
+[18:17:03 e 31 r 9] training finished
+[18:17:03 e 31 r 7] training finished
+[18:17:03 e 31 r 14] training finished
+[18:17:03 e 31 r 0] Server listening to [10, 11, 9, 7, 14] succeed
+[18:17:03 e 31 r 0] Avg global info:
+ train loss 0.08089260398564986,                  
+test acc 0.9957588320177893,                  
+test loss 0.015876761388350126
+[18:17:03 e 32 r 0] Selected clients: [2, 15, 4, 1, 9]
+[18:17:03 e 32 r 2] training
+[18:17:03 e 32 r 15] training
+[18:17:03 e 32 r 4] training
+[18:17:03 e 32 r 1] training
+[18:17:03 e 32 r 0] Server broadcast to [2, 15, 4, 1, 9] succeed
+[18:17:03 e 32 r 9] training
+[18:17:05 e 32 r 2] training finished
+[18:17:05 e 32 r 15] training finished
+[18:17:05 e 32 r 4] training finished
+[18:17:05 e 32 r 1] training finished
+[18:17:05 e 32 r 9] training finished
+[18:17:05 e 32 r 0] Server listening to [2, 15, 4, 1, 9] succeed
+[18:17:05 e 32 r 0] Avg global info:
+ train loss 0.10047278978019496,                  
+test acc 0.9905880107541583,                  
+test loss 0.026412759215454884
+[18:17:05 e 33 r 0] Selected clients: [3, 14, 4, 11, 10]
+[18:17:05 e 33 r 3] training
+[18:17:05 e 33 r 14] training
+[18:17:05 e 33 r 4] training
+[18:17:05 e 33 r 11] training
+[18:17:05 e 33 r 0] Server broadcast to [3, 14, 4, 11, 10] succeed
+[18:17:05 e 33 r 10] training
+[18:17:06 e 33 r 3] training finished
+[18:17:06 e 33 r 14] training finished
+[18:17:06 e 33 r 4] training finished
+[18:17:06 e 33 r 11] training finished
+[18:17:06 e 33 r 10] training finished
+[18:17:06 e 33 r 0] Server listening to [3, 14, 4, 11, 10] succeed
+[18:17:06 e 33 r 0] Avg global info:
+ train loss 0.07299530122838974,                  
+test acc 0.9933007783731542,                  
+test loss 0.0203508559337471
+[18:17:06 e 34 r 0] Selected clients: [15, 2, 9, 3, 4]
+[18:17:06 e 34 r 15] training
+[18:17:06 e 34 r 2] training
+[18:17:06 e 34 r 9] training
+[18:17:06 e 34 r 3] training
+[18:17:06 e 34 r 0] Server broadcast to [15, 2, 9, 3, 4] succeed
+[18:17:06 e 34 r 4] training
+[18:17:07 e 34 r 15] training finished
+[18:17:07 e 34 r 2] training finished
+[18:17:07 e 34 r 9] training finished
+[18:17:07 e 34 r 3] training finished
+[18:17:07 e 34 r 4] training finished
+[18:17:07 e 34 r 0] Server listening to [15, 2, 9, 3, 4] succeed
+[18:17:07 e 34 r 0] Avg global info:
+ train loss 0.07543954324924218,                  
+test acc 0.9943383440698407,                  
+test loss 0.019925098849979624
+[18:17:07 e 35 r 0] Selected clients: [8, 10, 13, 12, 3]
+[18:17:07 e 35 r 8] training
+[18:17:07 e 35 r 10] training
+[18:17:07 e 35 r 13] training
+[18:17:07 e 35 r 12] training
+[18:17:07 e 35 r 0] Server broadcast to [8, 10, 13, 12, 3] succeed
+[18:17:07 e 35 r 3] training
+[18:17:08 e 35 r 8] training finished
+[18:17:08 e 35 r 10] training finished
+[18:17:08 e 35 r 13] training finished
+[18:17:08 e 35 r 12] training finished
+[18:17:08 e 35 r 3] training finished
+[18:17:08 e 35 r 0] Server listening to [8, 10, 13, 12, 3] succeed
+[18:17:08 e 35 r 0] Avg global info:
+ train loss 0.05979144197049219,                  
+test acc 0.9947687590262866,                  
+test loss 0.01606830919114482
+[18:17:08 e 36 r 0] Selected clients: [3, 2, 15, 10, 14]
+[18:17:08 e 36 r 3] training
+[18:17:08 e 36 r 2] training
+[18:17:08 e 36 r 15] training
+[18:17:08 e 36 r 10] training
+[18:17:08 e 36 r 0] Server broadcast to [3, 2, 15, 10, 14] succeed
+[18:17:08 e 36 r 14] training
+[18:17:09 e 36 r 3] training finished
+[18:17:09 e 36 r 2] training finished
+[18:17:09 e 36 r 15] training finished
+[18:17:09 e 36 r 10] training finished
+[18:17:09 e 36 r 14] training finished
+[18:17:09 e 36 r 0] Server listening to [3, 2, 15, 10, 14] succeed
+[18:17:09 e 36 r 0] Avg global info:
+ train loss 0.05955133177520564,                  
+test acc 0.9941099801464519,                  
+test loss 0.02065513712896213
+[18:17:09 e 37 r 0] Selected clients: [13, 10, 9, 14, 11]
+[18:17:09 e 37 r 13] training
+[18:17:10 e 37 r 10] training
+[18:17:10 e 37 r 9] training
+[18:17:10 e 37 r 14] training
+[18:17:10 e 37 r 0] Server broadcast to [13, 10, 9, 14, 11] succeed
+[18:17:10 e 37 r 11] training
+[18:17:11 e 37 r 13] training finished
+[18:17:11 e 37 r 10] training finished
+[18:17:11 e 37 r 9] training finished
+[18:17:11 e 37 r 14] training finished
+[18:17:11 e 37 r 11] training finished
+[18:17:11 e 37 r 0] Server listening to [13, 10, 9, 14, 11] succeed
+[18:17:11 e 37 r 0] Avg global info:
+ train loss 0.06988407282388935,                  
+test acc 0.9931993699483306,                  
+test loss 0.023652422109282555
+[18:17:11 e 38 r 0] Selected clients: [1, 10, 2, 9, 3]
+[18:17:11 e 38 r 1] training
+[18:17:11 e 38 r 10] training
+[18:17:11 e 38 r 2] training
+[18:17:11 e 38 r 9] training
+[18:17:11 e 38 r 0] Server broadcast to [1, 10, 2, 9, 3] succeed
+[18:17:11 e 38 r 3] training
+[18:17:12 e 38 r 1] training finished
+[18:17:12 e 38 r 10] training finished
+[18:17:12 e 38 r 2] training finished
+[18:17:12 e 38 r 9] training finished
+[18:17:12 e 38 r 3] training finished
+[18:17:12 e 38 r 0] Server listening to [1, 10, 2, 9, 3] succeed
+[18:17:12 e 38 r 0] Avg global info:
+ train loss 0.03768089670353094,                  
+test acc 0.998349468939313,                  
+test loss 0.006077712707477987
+[18:17:12 e 39 r 0] Selected clients: [9, 12, 6, 1, 2]
+[18:17:12 e 39 r 9] training
+[18:17:12 e 39 r 12] training
+[18:17:12 e 39 r 6] training
+[18:17:12 e 39 r 1] training
+[18:17:12 e 39 r 0] Server broadcast to [9, 12, 6, 1, 2] succeed
+[18:17:12 e 39 r 2] training
+[18:17:13 e 39 r 9] training finished
+[18:17:13 e 39 r 12] training finished
+[18:17:13 e 39 r 6] training finished
+[18:17:13 e 39 r 1] training finished
+[18:17:13 e 39 r 2] training finished
+[18:17:13 e 39 r 0] Server listening to [9, 12, 6, 1, 2] succeed
+[18:17:13 e 39 r 0] Avg global info:
+ train loss 0.05069333185033381,                  
+test acc 0.9952877496575525,                  
+test loss 0.012756806093204837
+[18:17:13 e 40 r 0] Selected clients: [5, 1, 3, 14, 2]
+[18:17:13 e 40 r 5] training
+[18:17:13 e 40 r 1] training
+[18:17:13 e 40 r 3] training
+[18:17:13 e 40 r 14] training
+[18:17:13 e 40 r 0] Server broadcast to [5, 1, 3, 14, 2] succeed
+[18:17:13 e 40 r 2] training
+[18:17:15 e 40 r 5] training finished
+[18:17:15 e 40 r 1] training finished
+[18:17:15 e 40 r 3] training finished
+[18:17:15 e 40 r 14] training finished
+[18:17:15 e 40 r 2] training finished
+[18:17:15 e 40 r 0] Server listening to [5, 1, 3, 14, 2] succeed
+[18:17:15 e 40 r 0] Avg global info:
+ train loss 0.061305618026240405,                  
+test acc 0.9926904617884151,                  
+test loss 0.02260327956133598
+[18:17:15 e 41 r 0] Selected clients: [11, 14, 10, 15, 13]
+[18:17:15 e 41 r 11] training
+[18:17:15 e 41 r 14] training
+[18:17:15 e 41 r 10] training
+[18:17:15 e 41 r 0] Server broadcast to [11, 14, 10, 15, 13] succeed
+[18:17:15 e 41 r 15] training
+[18:17:15 e 41 r 13] training
+[18:17:16 e 41 r 11] training finished
+[18:17:16 e 41 r 14] training finished
+[18:17:16 e 41 r 10] training finished
+[18:17:16 e 41 r 15] training finished
+[18:17:16 e 41 r 13] training finished
+[18:17:16 e 41 r 0] Server listening to [11, 14, 10, 15, 13] succeed
+[18:17:16 e 41 r 0] Avg global info:
+ train loss 0.07430489011721877,                  
+test acc 0.9911274317983683,                  
+test loss 0.028782639812526555
+[18:17:16 e 42 r 0] Selected clients: [12, 4, 10, 14, 11]
+[18:17:16 e 42 r 12] training
+[18:17:16 e 42 r 4] training
+[18:17:16 e 42 r 10] training
+[18:17:16 e 42 r 14] training
+[18:17:16 e 42 r 0] Server broadcast to [12, 4, 10, 14, 11] succeed
+[18:17:16 e 42 r 11] training
+[18:17:17 e 42 r 12] training finished
+[18:17:17 e 42 r 4] training finished
+[18:17:17 e 42 r 10] training finished
+[18:17:17 e 42 r 14] training finished
+[18:17:17 e 42 r 11] training finished
+[18:17:17 e 42 r 0] Server listening to [12, 4, 10, 14, 11] succeed
+[18:17:17 e 42 r 0] Avg global info:
+ train loss 0.056491074710848896,                  
+test acc 0.993654320906931,                  
+test loss 0.018566701819017033
+[18:17:17 e 43 r 0] Selected clients: [4, 8, 3, 14, 6]
+[18:17:17 e 43 r 4] training
+[18:17:17 e 43 r 8] training
+[18:17:17 e 43 r 3] training
+[18:17:17 e 43 r 0] Server broadcast to [4, 8, 3, 14, 6] succeed
+[18:17:17 e 43 r 14] training
+[18:17:17 e 43 r 6] training
+[18:17:18 e 43 r 4] training finished
+[18:17:18 e 43 r 8] training finished
+[18:17:18 e 43 r 3] training finished
+[18:17:18 e 43 r 14] training finished
+[18:17:18 e 43 r 6] training finished
+[18:17:18 e 43 r 0] Server listening to [4, 8, 3, 14, 6] succeed
+[18:17:18 e 43 r 0] Avg global info:
+ train loss 0.09399603829699374,                  
+test acc 0.9917723059856607,                  
+test loss 0.02406288726533052
+[18:17:18 e 44 r 0] Selected clients: [5, 12, 8, 11, 13]
+[18:17:18 e 44 r 5] training
+[18:17:18 e 44 r 12] training
+[18:17:18 e 44 r 8] training
+[18:17:18 e 44 r 0] Server broadcast to [5, 12, 8, 11, 13] succeed
+[18:17:18 e 44 r 11] training
+[18:17:18 e 44 r 13] training
+[18:17:19 e 44 r 5] training finished
+[18:17:19 e 44 r 12] training finished
+[18:17:19 e 44 r 8] training finished
+[18:17:19 e 44 r 11] training finished
+[18:17:19 e 44 r 13] training finished
+[18:17:19 e 44 r 0] Server listening to [5, 12, 8, 11, 13] succeed
+[18:17:19 e 44 r 0] Avg global info:
+ train loss 0.07150523663040309,                  
+test acc 0.9929233235512435,                  
+test loss 0.023280616139792393
+[18:17:19 e 45 r 0] Selected clients: [14, 12, 13, 4, 7]
+[18:17:19 e 45 r 14] training
+[18:17:19 e 45 r 12] training
+[18:17:19 e 45 r 13] training
+[18:17:19 e 45 r 0] Server broadcast to [14, 12, 13, 4, 7] succeed
+[18:17:19 e 45 r 4] training
+[18:17:19 e 45 r 7] training
+[18:17:20 e 45 r 14] training finished
+[18:17:20 e 45 r 12] training finished
+[18:17:20 e 45 r 13] training finished
+[18:17:20 e 45 r 4] training finished
+[18:17:20 e 45 r 7] training finished
+[18:17:20 e 45 r 0] Server listening to [14, 12, 13, 4, 7] succeed
+[18:17:21 e 45 r 0] Avg global info:
+ train loss 0.07201644276691957,                  
+test acc 0.9914883608999656,                  
+test loss 0.027769004512404792
+[18:17:21 e 46 r 0] Selected clients: [10, 14, 8, 7, 15]
+[18:17:21 e 46 r 10] training
+[18:17:21 e 46 r 14] training
+[18:17:21 e 46 r 8] training
+[18:17:21 e 46 r 7] training
+[18:17:21 e 46 r 0] Server broadcast to [10, 14, 8, 7, 15] succeed
+[18:17:21 e 46 r 15] training
+[18:17:22 e 46 r 10] training finished
+[18:17:22 e 46 r 14] training finished
+[18:17:22 e 46 r 8] training finished
+[18:17:22 e 46 r 7] training finished
+[18:17:22 e 46 r 15] training finished
+[18:17:22 e 46 r 0] Server listening to [10, 14, 8, 7, 15] succeed
+[18:17:22 e 46 r 0] Avg global info:
+ train loss 0.06038662905615533,                  
+test acc 0.9936954778658242,                  
+test loss 0.02112728955050136
+[18:17:22 e 47 r 0] Selected clients: [12, 3, 4, 14, 5]
+[18:17:22 e 47 r 12] training
+[18:17:22 e 47 r 3] training
+[18:17:22 e 47 r 4] training
+[18:17:22 e 47 r 14] training
+[18:17:22 e 47 r 0] Server broadcast to [12, 3, 4, 14, 5] succeed
+[18:17:22 e 47 r 5] training
+[18:17:23 e 47 r 12] training finished
+[18:17:23 e 47 r 3] training finished
+[18:17:23 e 47 r 4] training finished
+[18:17:23 e 47 r 14] training finished
+[18:17:23 e 47 r 5] training finished
+[18:17:23 e 47 r 0] Server listening to [12, 3, 4, 14, 5] succeed
+[18:17:23 e 47 r 0] Avg global info:
+ train loss 0.07774030778437133,                  
+test acc 0.9917984754922259,                  
+test loss 0.024100113183384793
+[18:17:23 e 48 r 0] Selected clients: [7, 4, 13, 3, 6]
+[18:17:23 e 48 r 7] training
+[18:17:23 e 48 r 4] training
+[18:17:23 e 48 r 13] training
+[18:17:23 e 48 r 3] training
+[18:17:23 e 48 r 0] Server broadcast to [7, 4, 13, 3, 6] succeed
+[18:17:23 e 48 r 6] training
+[18:17:24 e 48 r 7] training finished
+[18:17:24 e 48 r 4] training finished
+[18:17:24 e 48 r 13] training finished
+[18:17:24 e 48 r 3] training finished
+[18:17:24 e 48 r 6] training finished
+[18:17:24 e 48 r 0] Server listening to [7, 4, 13, 3, 6] succeed
+[18:17:24 e 48 r 0] Avg global info:
+ train loss 0.06444482479110614,                  
+test acc 0.9910460250236417,                  
+test loss 0.02444086613344634
+[18:17:24 e 49 r 0] Selected clients: [8, 11, 1, 2, 6]
+[18:17:24 e 49 r 8] training
+[18:17:24 e 49 r 11] training
+[18:17:24 e 49 r 1] training
+[18:17:24 e 49 r 0] Server broadcast to [8, 11, 1, 2, 6] succeed
+[18:17:24 e 49 r 2] training
+[18:17:24 e 49 r 6] training
+[18:17:25 e 49 r 8] training finished
+[18:17:25 e 49 r 11] training finished
+[18:17:25 e 49 r 1] training finished
+[18:17:25 e 49 r 2] training finished
+[18:17:25 e 49 r 6] training finished
+[18:17:25 e 49 r 0] Server listening to [8, 11, 1, 2, 6] succeed
+[18:17:25 e 49 r 0] Avg global info:
+ train loss 0.040921168236245906,                  
+test acc 0.9968005466907133,                  
+test loss 0.009302705612984902
+[18:17:25 e 50 r 0] Selected clients: [11, 1, 13, 4, 9]
+[18:17:25 e 50 r 11] training
+[18:17:25 e 50 r 1] training
+[18:17:25 e 50 r 13] training
+[18:17:25 e 50 r 0] Server broadcast to [11, 1, 13, 4, 9] succeed
+[18:17:25 e 50 r 4] training
+[18:17:25 e 50 r 9] training
+[18:17:27 e 50 r 11] training finished
+[18:17:27 e 50 r 1] training finished
+[18:17:27 e 50 r 13] training finished
+[18:17:27 e 50 r 4] training finished
+[18:17:27 e 50 r 9] training finished
+[18:17:27 e 50 r 0] Server listening to [11, 1, 13, 4, 9] succeed
+[18:17:27 e 50 r 0] Avg global info:
+ train loss 0.05823774276472249,                  
+test acc 0.9940050985113604,                  
+test loss 0.018859416318014053
+[18:17:27 e 51 r 0] Selected clients: [7, 11, 1, 4, 10]
+[18:17:27 e 51 r 7] training
+[18:17:27 e 51 r 11] training
+[18:17:27 e 51 r 1] training
+[18:17:27 e 51 r 4] training
+[18:17:27 e 51 r 0] Server broadcast to [7, 11, 1, 4, 10] succeed
+[18:17:27 e 51 r 10] training
+[18:17:28 e 51 r 7] training finished
+[18:17:28 e 51 r 11] training finished
+[18:17:28 e 51 r 1] training finished
+[18:17:28 e 51 r 4] training finished
+[18:17:28 e 51 r 10] training finished
+[18:17:28 e 51 r 0] Server listening to [7, 11, 1, 4, 10] succeed
+[18:17:28 e 51 r 0] Avg global info:
+ train loss 0.0390704267360865,                  
+test acc 0.9962643190193866,                  
+test loss 0.011463711470326612
+[18:17:28 e 52 r 0] Selected clients: [8, 9, 15, 14, 1]
+[18:17:28 e 52 r 8] training
+[18:17:28 e 52 r 9] training
+[18:17:28 e 52 r 15] training
+[18:17:28 e 52 r 0] Server broadcast to [8, 9, 15, 14, 1] succeed
+[18:17:28 e 52 r 14] training
+[18:17:28 e 52 r 1] training
+[18:17:29 e 52 r 8] training finished
+[18:17:29 e 52 r 9] training finished
+[18:17:29 e 52 r 15] training finished
+[18:17:29 e 52 r 14] training finished
+[18:17:29 e 52 r 1] training finished
+[18:17:29 e 52 r 0] Server listening to [8, 9, 15, 14, 1] succeed
+[18:17:29 e 52 r 0] Avg global info:
+ train loss 0.0718086635041513,                  
+test acc 0.994633742451261,                  
+test loss 0.01661542674703854
+[18:17:29 e 53 r 0] Selected clients: [7, 6, 1, 9, 14]
+[18:17:29 e 53 r 7] training
+[18:17:29 e 53 r 6] training
+[18:17:29 e 53 r 1] training
+[18:17:29 e 53 r 9] training
+[18:17:29 e 53 r 0] Server broadcast to [7, 6, 1, 9, 14] succeed
+[18:17:29 e 53 r 14] training
+[18:17:30 e 53 r 7] training finished
+[18:17:30 e 53 r 6] training finished
+[18:17:30 e 53 r 1] training finished
+[18:17:30 e 53 r 9] training finished
+[18:17:30 e 53 r 14] training finished
+[18:17:30 e 53 r 0] Server listening to [7, 6, 1, 9, 14] succeed
+[18:17:30 e 53 r 0] Avg global info:
+ train loss 0.05685621535053157,                  
+test acc 0.9943519045314175,                  
+test loss 0.01559009675559378
+[18:17:30 e 54 r 0] Selected clients: [9, 5, 11, 12, 3]
+[18:17:30 e 54 r 9] training
+[18:17:30 e 54 r 5] training
+[18:17:30 e 54 r 11] training
+[18:17:30 e 54 r 0] Server broadcast to [9, 5, 11, 12, 3] succeed
+[18:17:30 e 54 r 12] training
+[18:17:30 e 54 r 3] training
+[18:17:31 e 54 r 9] training finished
+[18:17:31 e 54 r 5] training finished
+[18:17:31 e 54 r 11] training finished
+[18:17:31 e 54 r 12] training finished
+[18:17:32 e 54 r 3] training finished
+[18:17:32 e 54 r 0] Server listening to [9, 5, 11, 12, 3] succeed
+[18:17:32 e 54 r 0] Avg global info:
+ train loss 0.050931783556756205,                  
+test acc 0.9972914043105234,                  
+test loss 0.009778992046999408
+[18:17:32 e 55 r 0] Selected clients: [4, 10, 2, 7, 13]
+[18:17:32 e 55 r 4] training
+[18:17:32 e 55 r 10] training
+[18:17:32 e 55 r 2] training
+[18:17:32 e 55 r 7] training
+[18:17:32 e 55 r 0] Server broadcast to [4, 10, 2, 7, 13] succeed
+[18:17:32 e 55 r 13] training
+[18:17:33 e 55 r 4] training finished
+[18:17:33 e 55 r 10] training finished
+[18:17:33 e 55 r 2] training finished
+[18:17:33 e 55 r 7] training finished
+[18:17:33 e 55 r 13] training finished
+[18:17:33 e 55 r 0] Server listening to [4, 10, 2, 7, 13] succeed
+[18:17:33 e 55 r 0] Avg global info:
+ train loss 0.05872086246648335,                  
+test acc 0.9935935768810786,                  
+test loss 0.01885255654232077
+[18:17:33 e 56 r 0] Selected clients: [15, 3, 14, 1, 6]
+[18:17:33 e 56 r 15] training
+[18:17:33 e 56 r 3] training
+[18:17:33 e 56 r 14] training
+[18:17:33 e 56 r 1] training
+[18:17:33 e 56 r 0] Server broadcast to [15, 3, 14, 1, 6] succeed
+[18:17:33 e 56 r 6] training
+[18:17:34 e 56 r 15] training finished
+[18:17:34 e 56 r 3] training finished
+[18:17:34 e 56 r 14] training finished
+[18:17:34 e 56 r 1] training finished
+[18:17:34 e 56 r 6] training finished
+[18:17:34 e 56 r 0] Server listening to [15, 3, 14, 1, 6] succeed
+[18:17:34 e 56 r 0] Avg global info:
+ train loss 0.044410995188464884,                  
+test acc 0.9931389087233065,                  
+test loss 0.019602055801548984
+[18:17:34 e 57 r 0] Selected clients: [5, 15, 8, 3, 6]
+[18:17:34 e 57 r 5] training
+[18:17:34 e 57 r 15] training
+[18:17:34 e 57 r 8] training
+[18:17:34 e 57 r 0] Server broadcast to [5, 15, 8, 3, 6] succeed
+[18:17:34 e 57 r 3] training
+[18:17:34 e 57 r 6] training
+[18:17:35 e 57 r 5] training finished
+[18:17:35 e 57 r 15] training finished
+[18:17:35 e 57 r 8] training finished
+[18:17:35 e 57 r 3] training finished
+[18:17:35 e 57 r 6] training finished
+[18:17:35 e 57 r 0] Server listening to [5, 15, 8, 3, 6] succeed
+[18:17:35 e 57 r 0] Avg global info:
+ train loss 0.05166681121357025,                  
+test acc 0.9931433956317839,                  
+test loss 0.01940306753699844
+[18:17:35 e 58 r 0] Selected clients: [14, 8, 7, 15, 10]
+[18:17:35 e 58 r 14] training
+[18:17:35 e 58 r 8] training
+[18:17:35 e 58 r 7] training
+[18:17:35 e 58 r 15] training
+[18:17:35 e 58 r 0] Server broadcast to [14, 8, 7, 15, 10] succeed
+[18:17:35 e 58 r 10] training
+[18:17:36 e 58 r 14] training finished
+[18:17:36 e 58 r 8] training finished
+[18:17:36 e 58 r 7] training finished
+[18:17:36 e 58 r 15] training finished
+[18:17:36 e 58 r 10] training finished
+[18:17:36 e 58 r 0] Server listening to [14, 8, 7, 15, 10] succeed
+[18:17:36 e 58 r 0] Avg global info:
+ train loss 0.05196346289134094,                  
+test acc 0.9949272290842958,                  
+test loss 0.015479769256367506
+[18:17:36 e 59 r 0] Selected clients: [6, 3, 1, 2, 12]
+[18:17:36 e 59 r 6] training
+[18:17:36 e 59 r 3] training
+[18:17:36 e 59 r 1] training
+[18:17:36 e 59 r 2] training
+[18:17:36 e 59 r 0] Server broadcast to [6, 3, 1, 2, 12] succeed
+[18:17:36 e 59 r 12] training
+[18:17:38 e 59 r 6] training finished
+[18:17:38 e 59 r 3] training finished
+[18:17:38 e 59 r 1] training finished
+[18:17:38 e 59 r 2] training finished
+[18:17:38 e 59 r 12] training finished
+[18:17:38 e 59 r 0] Server listening to [6, 3, 1, 2, 12] succeed
+[18:17:38 e 59 r 0] Avg global info:
+ train loss 0.04255908403644976,                  
+test acc 0.9971658434943664,                  
+test loss 0.0067128712359282305
+[18:17:38 e 60 r 0] Selected clients: [6, 7, 11, 3, 9]
+[18:17:38 e 60 r 6] training
+[18:17:38 e 60 r 7] training
+[18:17:38 e 60 r 11] training
+[18:17:38 e 60 r 3] training
+[18:17:38 e 60 r 0] Server broadcast to [6, 7, 11, 3, 9] succeed
+[18:17:38 e 60 r 9] training
+[18:17:39 e 60 r 6] training finished
+[18:17:39 e 60 r 7] training finished
+[18:17:39 e 60 r 11] training finished
+[18:17:39 e 60 r 3] training finished
+[18:17:39 e 60 r 9] training finished
+[18:17:39 e 60 r 0] Server listening to [6, 7, 11, 3, 9] succeed
+[18:17:39 e 60 r 0] Avg global info:
+ train loss 0.045577256406761225,                  
+test acc 0.9974350140908854,                  
+test loss 0.006385467041130724
+[18:17:39 e 61 r 0] Selected clients: [12, 2, 1, 11, 7]
+[18:17:39 e 61 r 12] training
+[18:17:39 e 61 r 2] training
+[18:17:39 e 61 r 1] training
+[18:17:39 e 61 r 11] training
+[18:17:39 e 61 r 0] Server broadcast to [12, 2, 1, 11, 7] succeed
+[18:17:39 e 61 r 7] training
+[18:17:40 e 61 r 12] training finished
+[18:17:40 e 61 r 2] training finished
+[18:17:40 e 61 r 1] training finished
+[18:17:40 e 61 r 11] training finished
+[18:17:40 e 61 r 7] training finished
+[18:17:40 e 61 r 0] Server listening to [12, 2, 1, 11, 7] succeed
+[18:17:40 e 61 r 0] Avg global info:
+ train loss 0.026497713896697583,                  
+test acc 0.9979636947461696,                  
+test loss 0.004782556804052729
+[18:17:40 e 62 r 0] Selected clients: [15, 1, 13, 5, 4]
+[18:17:40 e 62 r 15] training
+[18:17:40 e 62 r 1] training
+[18:17:40 e 62 r 13] training
+[18:17:40 e 62 r 5] training
+[18:17:40 e 62 r 0] Server broadcast to [15, 1, 13, 5, 4] succeed
+[18:17:40 e 62 r 4] training
+[18:17:42 e 62 r 15] training finished
+[18:17:42 e 62 r 1] training finished
+[18:17:42 e 62 r 13] training finished
+[18:17:42 e 62 r 5] training finished
+[18:17:42 e 62 r 4] training finished
+[18:17:42 e 62 r 0] Server listening to [15, 1, 13, 5, 4] succeed
+[18:17:42 e 62 r 0] Avg global info:
+ train loss 0.09881034335236807,                  
+test acc 0.989029924901839,                  
+test loss 0.032835698438943066
+[18:17:42 e 63 r 0] Selected clients: [2, 6, 9, 10, 3]
+[18:17:42 e 63 r 2] training
+[18:17:42 e 63 r 6] training
+[18:17:42 e 63 r 9] training
+[18:17:42 e 63 r 10] training
+[18:17:42 e 63 r 0] Server broadcast to [2, 6, 9, 10, 3] succeed
+[18:17:42 e 63 r 3] training
+[18:17:43 e 63 r 2] training finished
+[18:17:43 e 63 r 6] training finished
+[18:17:43 e 63 r 9] training finished
+[18:17:43 e 63 r 10] training finished
+[18:17:43 e 63 r 3] training finished
+[18:17:43 e 63 r 0] Server listening to [2, 6, 9, 10, 3] succeed
+[18:17:43 e 63 r 0] Avg global info:
+ train loss 0.07218943468736153,                  
+test acc 0.9981477423697479,                  
+test loss 0.006458750321172121
+[18:17:43 e 64 r 0] Selected clients: [4, 10, 14, 2, 7]
+[18:17:43 e 64 r 4] training
+[18:17:43 e 64 r 10] training
+[18:17:43 e 64 r 14] training
+[18:17:43 e 64 r 2] training
+[18:17:43 e 64 r 0] Server broadcast to [4, 10, 14, 2, 7] succeed
+[18:17:43 e 64 r 7] training
+[18:17:44 e 64 r 4] training finished
+[18:17:44 e 64 r 10] training finished
+[18:17:44 e 64 r 14] training finished
+[18:17:44 e 64 r 2] training finished
+[18:17:44 e 64 r 7] training finished
+[18:17:44 e 64 r 0] Server listening to [4, 10, 14, 2, 7] succeed
+[18:17:44 e 64 r 0] Avg global info:
+ train loss 0.06383596663723431,                  
+test acc 0.9955008574628053,                  
+test loss 0.01488657682743047
+[18:17:44 e 65 r 0] Selected clients: [2, 10, 12, 13, 5]
+[18:17:44 e 65 r 2] training
+[18:17:44 e 65 r 10] training
+[18:17:44 e 65 r 12] training
+[18:17:44 e 65 r 13] training
+[18:17:44 e 65 r 0] Server broadcast to [2, 10, 12, 13, 5] succeed
+[18:17:44 e 65 r 5] training
+[18:17:46 e 65 r 2] training finished
+[18:17:46 e 65 r 10] training finished
+[18:17:46 e 65 r 12] training finished
+[18:17:46 e 65 r 13] training finished
+[18:17:46 e 65 r 5] training finished
+[18:17:46 e 65 r 0] Server listening to [2, 10, 12, 13, 5] succeed
+[18:17:46 e 65 r 0] Avg global info:
+ train loss 0.04411955280356469,                  
+test acc 0.9934842755643206,                  
+test loss 0.019807850785384266
+[18:17:46 e 66 r 0] Selected clients: [7, 9, 3, 4, 1]
+[18:17:46 e 66 r 7] training
+[18:17:46 e 66 r 9] training
+[18:17:46 e 66 r 3] training
+[18:17:46 e 66 r 4] training
+[18:17:46 e 66 r 0] Server broadcast to [7, 9, 3, 4, 1] succeed
+[18:17:46 e 66 r 1] training
+[18:17:47 e 66 r 7] training finished
+[18:17:47 e 66 r 9] training finished
+[18:17:47 e 66 r 3] training finished
+[18:17:47 e 66 r 4] training finished
+[18:17:47 e 66 r 1] training finished
+[18:17:47 e 66 r 0] Server listening to [7, 9, 3, 4, 1] succeed
+[18:17:47 e 66 r 0] Avg global info:
+ train loss 0.04350546809354679,                  
+test acc 0.9976196766269911,                  
+test loss 0.008503258922722738
+[18:17:47 e 67 r 0] Selected clients: [9, 2, 4, 7, 15]
+[18:17:47 e 67 r 9] training
+[18:17:47 e 67 r 2] training
+[18:17:47 e 67 r 4] training
+[18:17:47 e 67 r 7] training
+[18:17:47 e 67 r 0] Server broadcast to [9, 2, 4, 7, 15] succeed
+[18:17:47 e 67 r 15] training
+[18:17:48 e 67 r 9] training finished
+[18:17:48 e 67 r 2] training finished
+[18:17:48 e 67 r 4] training finished
+[18:17:48 e 67 r 7] training finished
+[18:17:48 e 67 r 15] training finished
+[18:17:48 e 67 r 0] Server listening to [9, 2, 4, 7, 15] succeed
+[18:17:48 e 67 r 0] Avg global info:
+ train loss 0.045551901665768744,                  
+test acc 0.9960124755135487,                  
+test loss 0.013360085487604537
+[18:17:48 e 68 r 0] Selected clients: [10, 7, 8, 15, 3]
+[18:17:48 e 68 r 10] training
+[18:17:48 e 68 r 7] training
+[18:17:48 e 68 r 8] training
+[18:17:48 e 68 r 15] training
+[18:17:48 e 68 r 0] Server broadcast to [10, 7, 8, 15, 3] succeed
+[18:17:48 e 68 r 3] training
+[18:17:49 e 68 r 10] training finished
+[18:17:49 e 68 r 7] training finished
+[18:17:49 e 68 r 8] training finished
+[18:17:49 e 68 r 15] training finished
+[18:17:49 e 68 r 3] training finished
+[18:17:49 e 68 r 0] Server listening to [10, 7, 8, 15, 3] succeed
+[18:17:49 e 68 r 0] Avg global info:
+ train loss 0.03432998726309864,                  
+test acc 0.9977294275415606,                  
+test loss 0.008585518225843967
+[18:17:49 e 69 r 0] Selected clients: [14, 11, 4, 9, 5]
+[18:17:49 e 69 r 14] training
+[18:17:49 e 69 r 11] training
+[18:17:49 e 69 r 4] training
+[18:17:49 e 69 r 9] training
+[18:17:49 e 69 r 0] Server broadcast to [14, 11, 4, 9, 5] succeed
+[18:17:49 e 69 r 5] training
+[18:17:50 e 69 r 14] training finished
+[18:17:51 e 69 r 11] training finished
+[18:17:51 e 69 r 4] training finished
+[18:17:51 e 69 r 9] training finished
+[18:17:51 e 69 r 5] training finished
+[18:17:51 e 69 r 0] Server listening to [14, 11, 4, 9, 5] succeed
+[18:17:51 e 69 r 0] Avg global info:
+ train loss 0.054969381932768055,                  
+test acc 0.9946939909362389,                  
+test loss 0.017483332670535395
+[18:17:51 e 70 r 0] Selected clients: [15, 14, 5, 10, 6]
+[18:17:51 e 70 r 15] training
+[18:17:51 e 70 r 14] training
+[18:17:51 e 70 r 5] training
+[18:17:51 e 70 r 10] training
+[18:17:51 e 70 r 0] Server broadcast to [15, 14, 5, 10, 6] succeed
+[18:17:51 e 70 r 6] training
+[18:17:52 e 70 r 15] training finished
+[18:17:52 e 70 r 14] training finished
+[18:17:52 e 70 r 5] training finished
+[18:17:52 e 70 r 10] training finished
+[18:17:52 e 70 r 6] training finished
+[18:17:52 e 70 r 0] Server listening to [15, 14, 5, 10, 6] succeed
+[18:17:52 e 70 r 0] Avg global info:
+ train loss 0.04496205518855098,                  
+test acc 0.9926189359945254,                  
+test loss 0.022647402284995212
+[18:17:52 e 71 r 0] Selected clients: [8, 11, 2, 7, 12]
+[18:17:52 e 71 r 8] training
+[18:17:52 e 71 r 11] training
+[18:17:52 e 71 r 2] training
+[18:17:52 e 71 r 7] training
+[18:17:52 e 71 r 0] Server broadcast to [8, 11, 2, 7, 12] succeed
+[18:17:52 e 71 r 12] training
+[18:17:53 e 71 r 8] training finished
+[18:17:53 e 71 r 11] training finished
+[18:17:53 e 71 r 2] training finished
+[18:17:53 e 71 r 7] training finished
+[18:17:53 e 71 r 12] training finished
+[18:17:53 e 71 r 0] Server listening to [8, 11, 2, 7, 12] succeed
+[18:17:53 e 71 r 0] Avg global info:
+ train loss 0.04543080168036308,                  
+test acc 0.9994723655340094,                  
+test loss 0.0026276528963476093
+[18:17:53 e 72 r 0] Selected clients: [13, 5, 6, 9, 12]
+[18:17:53 e 72 r 13] training
+[18:17:53 e 72 r 5] training
+[18:17:53 e 72 r 6] training
+[18:17:53 e 72 r 9] training
+[18:17:53 e 72 r 0] Server broadcast to [13, 5, 6, 9, 12] succeed
+[18:17:53 e 72 r 12] training
+[18:17:54 e 72 r 13] training finished
+[18:17:54 e 72 r 5] training finished
+[18:17:54 e 72 r 6] training finished
+[18:17:54 e 72 r 9] training finished
+[18:17:54 e 72 r 12] training finished
+[18:17:54 e 72 r 0] Server listening to [13, 5, 6, 9, 12] succeed
+[18:17:54 e 72 r 0] Avg global info:
+ train loss 0.06513580517020832,                  
+test acc 0.9926186576035686,                  
+test loss 0.023181680382746005
+[18:17:54 e 73 r 0] Selected clients: [4, 15, 13, 6, 14]
+[18:17:54 e 73 r 4] training
+[18:17:54 e 73 r 15] training
+[18:17:54 e 73 r 13] training
+[18:17:54 e 73 r 6] training
+[18:17:54 e 73 r 0] Server broadcast to [4, 15, 13, 6, 14] succeed
+[18:17:54 e 73 r 14] training
+[18:17:55 e 73 r 4] training finished
+[18:17:56 e 73 r 15] training finished
+[18:17:56 e 73 r 13] training finished
+[18:17:56 e 73 r 6] training finished
+[18:17:56 e 73 r 14] training finished
+[18:17:56 e 73 r 0] Server listening to [4, 15, 13, 6, 14] succeed
+[18:17:56 e 73 r 0] Avg global info:
+ train loss 0.05583160523840689,                  
+test acc 0.9918789646566513,                  
+test loss 0.02569450759362693
+[18:17:56 e 74 r 0] Selected clients: [7, 13, 8, 10, 5]
+[18:17:56 e 74 r 7] training
+[18:17:56 e 74 r 13] training
+[18:17:56 e 74 r 8] training
+[18:17:56 e 74 r 0] Server broadcast to [7, 13, 8, 10, 5] succeed
+[18:17:56 e 74 r 10] training
+[18:17:56 e 74 r 5] training
+[18:17:57 e 74 r 7] training finished
+[18:17:57 e 74 r 13] training finished
+[18:17:57 e 74 r 8] training finished
+[18:17:57 e 74 r 10] training finished
+[18:17:57 e 74 r 5] training finished
+[18:17:57 e 74 r 0] Server listening to [7, 13, 8, 10, 5] succeed
+[18:17:57 e 74 r 0] Avg global info:
+ train loss 0.06570695301610394,                  
+test acc 0.9946386744006969,                  
+test loss 0.017334608028211077
+[18:17:57 e 75 r 0] Selected clients: [5, 11, 14, 4, 8]
+[18:17:57 e 75 r 5] training
+[18:17:57 e 75 r 11] training
+[18:17:57 e 75 r 14] training
+[18:17:57 e 75 r 4] training
+[18:17:57 e 75 r 0] Server broadcast to [5, 11, 14, 4, 8] succeed
+[18:17:57 e 75 r 8] training
+[18:17:58 e 75 r 5] training finished
+[18:17:58 e 75 r 11] training finished
+[18:17:58 e 75 r 14] training finished
+[18:17:58 e 75 r 4] training finished
+[18:17:58 e 75 r 8] training finished
+[18:17:58 e 75 r 0] Server listening to [5, 11, 14, 4, 8] succeed
+[18:17:58 e 75 r 0] Avg global info:
+ train loss 0.05748049278832566,                  
+test acc 0.9939977195567291,                  
+test loss 0.01795932523235793
+[18:17:58 e 76 r 0] Selected clients: [11, 9, 1, 5, 7]
+[18:17:58 e 76 r 11] training
+[18:17:58 e 76 r 9] training
+[18:17:58 e 76 r 1] training
+[18:17:58 e 76 r 5] training
+[18:17:58 e 76 r 0] Server broadcast to [11, 9, 1, 5, 7] succeed
+[18:17:58 e 76 r 7] training
+[18:17:59 e 76 r 11] training finished
+[18:17:59 e 76 r 9] training finished
+[18:17:59 e 76 r 1] training finished
+[18:17:59 e 76 r 5] training finished
+[18:17:59 e 76 r 7] training finished
+[18:17:59 e 76 r 0] Server listening to [11, 9, 1, 5, 7] succeed
+[18:17:59 e 76 r 0] Avg global info:
+ train loss 0.0356292155803997,                  
+test acc 0.9976122350024019,                  
+test loss 0.008735563089734992
+[18:17:59 e 77 r 0] Selected clients: [14, 11, 4, 5, 7]
+[18:17:59 e 77 r 14] training
+[18:17:59 e 77 r 11] training
+[18:17:59 e 77 r 4] training
+[18:17:59 e 77 r 5] training
+[18:17:59 e 77 r 0] Server broadcast to [14, 11, 4, 5, 7] succeed
+[18:17:59 e 77 r 7] training
+[18:18:00 e 77 r 14] training finished
+[18:18:01 e 77 r 11] training finished
+[18:18:01 e 77 r 4] training finished
+[18:18:01 e 77 r 5] training finished
+[18:18:01 e 77 r 7] training finished
+[18:18:01 e 77 r 0] Server listening to [14, 11, 4, 5, 7] succeed
+[18:18:01 e 77 r 0] Avg global info:
+ train loss 0.04992039757590922,                  
+test acc 0.9936195536381767,                  
+test loss 0.01813393370911479
+[18:18:01 e 78 r 0] Selected clients: [9, 3, 11, 6, 5]
+[18:18:01 e 78 r 9] training
+[18:18:01 e 78 r 3] training
+[18:18:01 e 78 r 11] training
+[18:18:01 e 78 r 6] training
+[18:18:01 e 78 r 0] Server broadcast to [9, 3, 11, 6, 5] succeed
+[18:18:01 e 78 r 5] training
+[18:18:02 e 78 r 9] training finished
+[18:18:02 e 78 r 3] training finished
+[18:18:02 e 78 r 11] training finished
+[18:18:02 e 78 r 6] training finished
+[18:18:02 e 78 r 5] training finished
+[18:18:02 e 78 r 0] Server listening to [9, 3, 11, 6, 5] succeed
+[18:18:02 e 78 r 0] Avg global info:
+ train loss 0.03202258946062952,                  
+test acc 0.9972909730337575,                  
+test loss 0.010592251768312256
+[18:18:02 e 79 r 0] Selected clients: [12, 9, 13, 3, 2]
+[18:18:02 e 79 r 12] training
+[18:18:02 e 79 r 9] training
+[18:18:02 e 79 r 13] training
+[18:18:02 e 79 r 3] training
+[18:18:02 e 79 r 0] Server broadcast to [12, 9, 13, 3, 2] succeed
+[18:18:02 e 79 r 2] training
+[18:18:03 e 79 r 12] training finished
+[18:18:03 e 79 r 9] training finished
+[18:18:03 e 79 r 13] training finished
+[18:18:03 e 79 r 3] training finished
+[18:18:03 e 79 r 2] training finished
+[18:18:03 e 79 r 0] Server listening to [12, 9, 13, 3, 2] succeed
+[18:18:03 e 79 r 0] Avg global info:
+ train loss 0.03565114628222353,                  
+test acc 0.9975678147400566,                  
+test loss 0.008825225715852012
+[18:18:03 e 80 r 0] Selected clients: [9, 4, 8, 10, 5]
+[18:18:03 e 80 r 9] training
+[18:18:03 e 80 r 4] training
+[18:18:03 e 80 r 8] training
+[18:18:03 e 80 r 0] Server broadcast to [9, 4, 8, 10, 5] succeed
+[18:18:03 e 80 r 10] training
+[18:18:03 e 80 r 5] training
+[18:18:04 e 80 r 9] training finished
+[18:18:05 e 80 r 4] training finished
+[18:18:05 e 80 r 8] training finished
+[18:18:05 e 80 r 10] training finished
+[18:18:05 e 80 r 5] training finished
+[18:18:05 e 80 r 0] Server listening to [9, 4, 8, 10, 5] succeed
+[18:18:05 e 80 r 0] Avg global info:
+ train loss 0.04566279072327266,                  
+test acc 0.9962528491262388,                  
+test loss 0.012131398043383047
+[18:18:05 e 81 r 0] Selected clients: [5, 4, 11, 9, 7]
+[18:18:05 e 81 r 5] training
+[18:18:05 e 81 r 4] training
+[18:18:05 e 81 r 11] training
+[18:18:05 e 81 r 9] training
+[18:18:05 e 81 r 0] Server broadcast to [5, 4, 11, 9, 7] succeed
+[18:18:05 e 81 r 7] training
+[18:18:06 e 81 r 5] training finished
+[18:18:06 e 81 r 4] training finished
+[18:18:06 e 81 r 11] training finished
+[18:18:06 e 81 r 9] training finished
+[18:18:06 e 81 r 7] training finished
+[18:18:06 e 81 r 0] Server listening to [5, 4, 11, 9, 7] succeed
+[18:18:06 e 81 r 0] Avg global info:
+ train loss 0.02959892529421107,                  
+test acc 0.9960564690559807,                  
+test loss 0.01223040115228895
+[18:18:06 e 82 r 0] Selected clients: [12, 5, 3, 8, 6]
+[18:18:06 e 82 r 12] training
+[18:18:06 e 82 r 5] training
+[18:18:06 e 82 r 3] training
+[18:18:06 e 82 r 8] training
+[18:18:06 e 82 r 0] Server broadcast to [12, 5, 3, 8, 6] succeed
+[18:18:06 e 82 r 6] training
+[18:18:07 e 82 r 12] training finished
+[18:18:07 e 82 r 5] training finished
+[18:18:07 e 82 r 3] training finished
+[18:18:07 e 82 r 8] training finished
+[18:18:07 e 82 r 6] training finished
+[18:18:07 e 82 r 0] Server listening to [12, 5, 3, 8, 6] succeed
+[18:18:07 e 82 r 0] Avg global info:
+ train loss 0.026835933217699514,                  
+test acc 0.9965919764233269,                  
+test loss 0.01046712780575256
+[18:18:07 e 83 r 0] Selected clients: [1, 10, 11, 7, 2]
+[18:18:07 e 83 r 1] training
+[18:18:07 e 83 r 10] training
+[18:18:07 e 83 r 11] training
+[18:18:07 e 83 r 7] training
+[18:18:07 e 83 r 0] Server broadcast to [1, 10, 11, 7, 2] succeed
+[18:18:07 e 83 r 2] training
+[18:18:08 e 83 r 1] training finished
+[18:18:08 e 83 r 10] training finished
+[18:18:08 e 83 r 11] training finished
+[18:18:08 e 83 r 7] training finished
+[18:18:09 e 83 r 2] training finished
+[18:18:09 e 83 r 0] Server listening to [1, 10, 11, 7, 2] succeed
+[18:18:09 e 83 r 0] Avg global info:
+ train loss 0.022341664372697224,                  
+test acc 0.9988293049285011,                  
+test loss 0.0037633887033970857
+[18:18:09 e 84 r 0] Selected clients: [13, 12, 3, 2, 7]
+[18:18:09 e 84 r 13] training
+[18:18:09 e 84 r 12] training
+[18:18:09 e 84 r 3] training
+[18:18:09 e 84 r 2] training
+[18:18:09 e 84 r 0] Server broadcast to [13, 12, 3, 2, 7] succeed
+[18:18:09 e 84 r 7] training
+[18:18:10 e 84 r 13] training finished
+[18:18:10 e 84 r 12] training finished
+[18:18:10 e 84 r 3] training finished
+[18:18:10 e 84 r 2] training finished
+[18:18:10 e 84 r 7] training finished
+[18:18:10 e 84 r 0] Server listening to [13, 12, 3, 2, 7] succeed
+[18:18:10 e 84 r 0] Avg global info:
+ train loss 0.037553967929657935,                  
+test acc 0.9968458051307479,                  
+test loss 0.009752867643880014
+[18:18:10 e 85 r 0] Selected clients: [10, 6, 4, 2, 15]
+[18:18:10 e 85 r 10] training
+[18:18:10 e 85 r 6] training
+[18:18:10 e 85 r 4] training
+[18:18:10 e 85 r 2] training
+[18:18:10 e 85 r 0] Server broadcast to [10, 6, 4, 2, 15] succeed
+[18:18:10 e 85 r 15] training
+[18:18:11 e 85 r 10] training finished
+[18:18:11 e 85 r 6] training finished
+[18:18:11 e 85 r 4] training finished
+[18:18:12 e 85 r 2] training finished
+[18:18:12 e 85 r 15] training finished
+[18:18:12 e 85 r 0] Server listening to [10, 6, 4, 2, 15] succeed
+[18:18:12 e 85 r 0] Avg global info:
+ train loss 0.04140063162870507,                  
+test acc 0.9962388789305082,                  
+test loss 0.011589349974709905
+[18:18:12 e 86 r 0] Selected clients: [5, 1, 13, 11, 15]
+[18:18:12 e 86 r 5] training
+[18:18:12 e 86 r 1] training
+[18:18:12 e 86 r 13] training
+[18:18:12 e 86 r 11] training
+[18:18:12 e 86 r 0] Server broadcast to [5, 1, 13, 11, 15] succeed
+[18:18:12 e 86 r 15] training
+[18:18:13 e 86 r 5] training finished
+[18:18:13 e 86 r 1] training finished
+[18:18:13 e 86 r 13] training finished
+[18:18:13 e 86 r 11] training finished
+[18:18:13 e 86 r 15] training finished
+[18:18:13 e 86 r 0] Server listening to [5, 1, 13, 11, 15] succeed
+[18:18:13 e 86 r 0] Avg global info:
+ train loss 0.04073748196622816,                  
+test acc 0.9936302068272216,                  
+test loss 0.019054407184410975
+[18:18:13 e 87 r 0] Selected clients: [11, 14, 9, 4, 7]
+[18:18:13 e 87 r 11] training
+[18:18:13 e 87 r 14] training
+[18:18:13 e 87 r 9] training
+[18:18:13 e 87 r 4] training
+[18:18:13 e 87 r 0] Server broadcast to [11, 14, 9, 4, 7] succeed
+[18:18:13 e 87 r 7] training
+[18:18:14 e 87 r 11] training finished
+[18:18:14 e 87 r 14] training finished
+[18:18:14 e 87 r 9] training finished
+[18:18:14 e 87 r 4] training finished
+[18:18:14 e 87 r 7] training finished
+[18:18:14 e 87 r 0] Server listening to [11, 14, 9, 4, 7] succeed
+[18:18:14 e 87 r 0] Avg global info:
+ train loss 0.04756833263672428,                  
+test acc 0.9967227583813658,                  
+test loss 0.00981578591388486
+[18:18:14 e 88 r 0] Selected clients: [3, 4, 12, 8, 5]
+[18:18:14 e 88 r 3] training
+[18:18:14 e 88 r 4] training
+[18:18:14 e 88 r 12] training
+[18:18:14 e 88 r 8] training
+[18:18:14 e 88 r 0] Server broadcast to [3, 4, 12, 8, 5] succeed
+[18:18:14 e 88 r 5] training
+[18:18:16 e 88 r 3] training finished
+[18:18:16 e 88 r 4] training finished
+[18:18:16 e 88 r 12] training finished
+[18:18:16 e 88 r 8] training finished
+[18:18:16 e 88 r 5] training finished
+[18:18:16 e 88 r 0] Server listening to [3, 4, 12, 8, 5] succeed
+[18:18:16 e 88 r 0] Avg global info:
+ train loss 0.03004076028416878,                  
+test acc 0.9969311037204147,                  
+test loss 0.01052815334423966
+[18:18:16 e 89 r 0] Selected clients: [2, 8, 15, 13, 10]
+[18:18:16 e 89 r 2] training
+[18:18:16 e 89 r 8] training
+[18:18:16 e 89 r 15] training
+[18:18:16 e 89 r 13] training
+[18:18:16 e 89 r 0] Server broadcast to [2, 8, 15, 13, 10] succeed
+[18:18:16 e 89 r 10] training
+[18:18:17 e 89 r 2] training finished
+[18:18:17 e 89 r 8] training finished
+[18:18:17 e 89 r 15] training finished
+[18:18:17 e 89 r 13] training finished
+[18:18:17 e 89 r 10] training finished
+[18:18:17 e 89 r 0] Server listening to [2, 8, 15, 13, 10] succeed
+[18:18:17 e 89 r 0] Avg global info:
+ train loss 0.05545240666017613,                  
+test acc 0.9961714319050928,                  
+test loss 0.012595742907217095
+[18:18:17 e 90 r 0] Selected clients: [5, 3, 12, 7, 10]
+[18:18:17 e 90 r 5] training
+[18:18:17 e 90 r 3] training
+[18:18:17 e 90 r 12] training
+[18:18:17 e 90 r 7] training
+[18:18:17 e 90 r 0] Server broadcast to [5, 3, 12, 7, 10] succeed
+[18:18:17 e 90 r 10] training
+[18:18:18 e 90 r 5] training finished
+[18:18:18 e 90 r 3] training finished
+[18:18:18 e 90 r 12] training finished
+[18:18:18 e 90 r 7] training finished
+[18:18:18 e 90 r 10] training finished
+[18:18:18 e 90 r 0] Server listening to [5, 3, 12, 7, 10] succeed
+[18:18:18 e 90 r 0] Avg global info:
+ train loss 0.04029279610021373,                  
+test acc 0.9972586557329013,                  
+test loss 0.007709767558692984
+[18:18:18 e 91 r 0] Selected clients: [14, 11, 2, 4, 10]
+[18:18:18 e 91 r 14] training
+[18:18:18 e 91 r 11] training
+[18:18:18 e 91 r 2] training
+[18:18:18 e 91 r 4] training
+[18:18:18 e 91 r 0] Server broadcast to [14, 11, 2, 4, 10] succeed
+[18:18:18 e 91 r 10] training
+[18:18:19 e 91 r 14] training finished
+[18:18:19 e 91 r 11] training finished
+[18:18:20 e 91 r 2] training finished
+[18:18:20 e 91 r 4] training finished
+[18:18:20 e 91 r 10] training finished
+[18:18:20 e 91 r 0] Server listening to [14, 11, 2, 4, 10] succeed
+[18:18:20 e 91 r 0] Avg global info:
+ train loss 0.03976887861334042,                  
+test acc 0.9963883612421387,                  
+test loss 0.010457752373859397
+[18:18:20 e 92 r 0] Selected clients: [4, 3, 5, 11, 14]
+[18:18:20 e 92 r 4] training
+[18:18:20 e 92 r 3] training
+[18:18:20 e 92 r 5] training
+[18:18:20 e 92 r 11] training
+[18:18:20 e 92 r 0] Server broadcast to [4, 3, 5, 11, 14] succeed
+[18:18:20 e 92 r 14] training
+[18:18:21 e 92 r 4] training finished
+[18:18:21 e 92 r 3] training finished
+[18:18:21 e 92 r 5] training finished
+[18:18:21 e 92 r 11] training finished
+[18:18:21 e 92 r 14] training finished
+[18:18:21 e 92 r 0] Server listening to [4, 3, 5, 11, 14] succeed
+[18:18:21 e 92 r 0] Avg global info:
+ train loss 0.0345574585642961,                  
+test acc 0.9960607954654597,                  
+test loss 0.015090402135244447
+[18:18:21 e 93 r 0] Selected clients: [14, 12, 13, 7, 11]
+[18:18:21 e 93 r 14] training
+[18:18:21 e 93 r 12] training
+[18:18:21 e 93 r 13] training
+[18:18:21 e 93 r 7] training
+[18:18:21 e 93 r 0] Server broadcast to [14, 12, 13, 7, 11] succeed
+[18:18:21 e 93 r 11] training
+[18:18:22 e 93 r 14] training finished
+[18:18:22 e 93 r 12] training finished
+[18:18:22 e 93 r 13] training finished
+[18:18:22 e 93 r 7] training finished
+[18:18:22 e 93 r 11] training finished
+[18:18:22 e 93 r 0] Server listening to [14, 12, 13, 7, 11] succeed
+[18:18:22 e 93 r 0] Avg global info:
+ train loss 0.04027338797867565,                  
+test acc 0.9963360635215853,                  
+test loss 0.012393988240101747
+[18:18:22 e 94 r 0] Selected clients: [2, 3, 6, 7, 13]
+[18:18:22 e 94 r 2] training
+[18:18:22 e 94 r 3] training
+[18:18:22 e 94 r 6] training
+[18:18:22 e 94 r 7] training
+[18:18:22 e 94 r 0] Server broadcast to [2, 3, 6, 7, 13] succeed
+[18:18:22 e 94 r 13] training
+[18:18:23 e 94 r 2] training finished
+[18:18:23 e 94 r 3] training finished
+[18:18:23 e 94 r 6] training finished
+[18:18:23 e 94 r 7] training finished
+[18:18:23 e 94 r 13] training finished
+[18:18:23 e 94 r 0] Server listening to [2, 3, 6, 7, 13] succeed
+[18:18:23 e 94 r 0] Avg global info:
+ train loss 0.03736865914389329,                  
+test acc 0.9956600753531797,                  
+test loss 0.011277708893206836
+[18:18:23 e 95 r 0] Selected clients: [11, 12, 6, 9, 4]
+[18:18:23 e 95 r 11] training
+[18:18:23 e 95 r 12] training
+[18:18:23 e 95 r 6] training
+[18:18:23 e 95 r 9] training
+[18:18:23 e 95 r 0] Server broadcast to [11, 12, 6, 9, 4] succeed
+[18:18:23 e 95 r 4] training
+[18:18:25 e 95 r 11] training finished
+[18:18:25 e 95 r 12] training finished
+[18:18:25 e 95 r 6] training finished
+[18:18:25 e 95 r 9] training finished
+[18:18:25 e 95 r 4] training finished
+[18:18:25 e 95 r 0] Server listening to [11, 12, 6, 9, 4] succeed
+[18:18:25 e 95 r 0] Avg global info:
+ train loss 0.033462170346240626,                  
+test acc 0.9983022071307301,                  
+test loss 0.006597356173196259
+[18:18:25 e 96 r 0] Selected clients: [1, 10, 5, 7, 3]
+[18:18:25 e 96 r 1] training
+[18:18:25 e 96 r 10] training
+[18:18:25 e 96 r 5] training
+[18:18:25 e 96 r 7] training
+[18:18:25 e 96 r 0] Server broadcast to [1, 10, 5, 7, 3] succeed
+[18:18:25 e 96 r 3] training
+[18:18:26 e 96 r 1] training finished
+[18:18:26 e 96 r 10] training finished
+[18:18:26 e 96 r 5] training finished
+[18:18:26 e 96 r 7] training finished
+[18:18:26 e 96 r 3] training finished
+[18:18:26 e 96 r 0] Server listening to [1, 10, 5, 7, 3] succeed
+[18:18:26 e 96 r 0] Avg global info:
+ train loss 0.022348159910530782,                  
+test acc 0.9977957459577604,                  
+test loss 0.008345958512583528
+[18:18:26 e 97 r 0] Selected clients: [10, 5, 3, 9, 14]
+[18:18:26 e 97 r 10] training
+[18:18:26 e 97 r 5] training
+[18:18:26 e 97 r 3] training
+[18:18:26 e 97 r 9] training
+[18:18:26 e 97 r 0] Server broadcast to [10, 5, 3, 9, 14] succeed
+[18:18:26 e 97 r 14] training
+[18:18:27 e 97 r 10] training finished
+[18:18:27 e 97 r 5] training finished
+[18:18:27 e 97 r 3] training finished
+[18:18:27 e 97 r 9] training finished
+[18:18:27 e 97 r 14] training finished
+[18:18:27 e 97 r 0] Server listening to [10, 5, 3, 9, 14] succeed
+[18:18:27 e 97 r 0] Avg global info:
+ train loss 0.038003047920566045,                  
+test acc 0.9958961638489674,                  
+test loss 0.0135892582928309
+[18:18:27 e 98 r 0] Selected clients: [4, 9, 3, 12, 7]
+[18:18:27 e 98 r 4] training
+[18:18:27 e 98 r 9] training
+[18:18:27 e 98 r 3] training
+[18:18:27 e 98 r 12] training
+[18:18:27 e 98 r 0] Server broadcast to [4, 9, 3, 12, 7] succeed
+[18:18:27 e 98 r 7] training
+[18:18:28 e 98 r 4] training finished
+[18:18:28 e 98 r 9] training finished
+[18:18:29 e 98 r 3] training finished
+[18:18:29 e 98 r 12] training finished
+[18:18:29 e 98 r 7] training finished
+[18:18:29 e 98 r 0] Server listening to [4, 9, 3, 12, 7] succeed
+[18:18:29 e 98 r 0] Avg global info:
+ train loss 0.024813492800770266,                  
+test acc 0.998811544991511,                  
+test loss 0.005504020330302669
+[18:18:29 e 99 r 0] Selected clients: [12, 9, 4, 3, 15]
+[18:18:29 e 99 r 12] training
+[18:18:29 e 99 r 9] training
+[18:18:29 e 99 r 4] training
+[18:18:29 e 99 r 3] training
+[18:18:29 e 99 r 0] Server broadcast to [12, 9, 4, 3, 15] succeed
+[18:18:29 e 99 r 15] training
+[18:18:30 e 99 r 12] training finished
+[18:18:30 e 100 r 12] Reaching epochs limit 100
+[18:18:30 e 100 r 12] finished at round 100
+[18:18:30 e 99 r 9] training finished
+[18:18:30 e 100 r 9] Reaching epochs limit 100
+[18:18:30 e 100 r 9] finished at round 100
+[18:18:30 e 99 r 4] training finished
+[18:18:30 e 100 r 4] Reaching epochs limit 100
+[18:18:30 e 100 r 4] finished at round 100
+[18:18:30 e 99 r 3] training finished
+[18:18:30 e 100 r 3] Reaching epochs limit 100
+[18:18:30 e 100 r 3] finished at round 100
+[18:18:30 e 99 r 15] training finished
+[18:18:30 e 100 r 15] Reaching epochs limit 100
+[18:18:30 e 100 r 15] finished at round 100
+[18:18:30 e 99 r 0] Server listening to [12, 9, 4, 3, 15] succeed
+[18:18:30 e 99 r 0] Avg global info:
+ train loss 0.03141207635237281,                  
+test acc 0.9977675898453006,                  
+test loss 0.0079842686628982
+[18:18:30 e 100 r 0] Reaching epochs limit 100
+[18:18:30 e 100 r 0] Server finished at round 100
+[18:18:30 e 100 r 1] Stopped by server
+[18:18:30 e 100 r 1] finished at round 100
+[18:18:30 e 100 r 2] Stopped by server
+[18:18:30 e 100 r 2] finished at round 100
+[18:18:30 e 100 r 5] Stopped by server
+[18:18:30 e 100 r 5] finished at round 100
+[18:18:30 e 100 r 7] Stopped by server
+[18:18:30 e 100 r 7] finished at round 100
+[18:18:30 e 100 r 8] Stopped by server
+[18:18:30 e 100 r 8] finished at round 100
+[18:18:30 e 100 r 11] Stopped by server
+[18:18:30 e 100 r 11] finished at round 100
+[18:18:30 e 100 r 6] Stopped by server
+[18:18:30 e 100 r 6] finished at round 100
+[18:18:30 e 100 r 10] Stopped by server
+[18:18:30 e 100 r 10] finished at round 100
+[18:18:30 e 100 r 14] Stopped by server
+[18:18:30 e 100 r 14] finished at round 100
+[18:18:30 e 100 r 0] Server broadcast to range(1, 16) succeed
+[18:18:30 e 100 r 0] Stopped all clients
+[18:18:30 e 100 r 13] Stopped by server
+[18:18:30 e 100 r 13] finished at round 100
