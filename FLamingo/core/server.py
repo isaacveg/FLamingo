@@ -115,8 +115,10 @@ class Server():
         self.data_to_send = None
         self.buffer = []
 
-        self.loss_func = torch.nn.CrossEntropyLoss()
         self.start_time = time.localtime()
+        self.init()
+        assert self.network and self.model and self.optimizer and self.loss_func is not None, \
+            "NetworkHandler, Model, Optimizer, and Loss Function must be defined in init() function."
 
 
     def log(self, info_str):
@@ -139,29 +141,21 @@ class Server():
         model.load_state_dict(torch.load(model_path))
 
 
-    def init(self, model_type=None, model=None, net_handler=NetworkHandler):
+    def init(self):
         """
         Init model and network to enable customize these parts.   
         For model, pass in torch model or model_type to create coresponding model.   
         For network, pass in your own network module or leave blank for default.
-        Args:  
-            model_type: str, used to create model using utils.model_utils.create_model_instance if model already implemented.  
-            model: nn.Module, initialized in customized clients or servers outside and passed in for flexibility.
         Returns:
             None of these will be returned. The function will set:  
             self.model, self.model_type(if given when customized)
             self.optimizer: default SGD
+            self.loss_func: default CrossEntropyLoss
             self.lr_scheduler: default ExponetialLR with gamma=0.993
-        If you want to customize, please define it in run()
+        If you want to customize, please define it.
         """
-        self.network = net_handler()
-        assert isinstance(self.network, NetworkHandler), f"net_handler is not a NetworkHandler, instead {type(net_handler)}"
-        if model is not None:
-            assert isinstance(model, torch.nn.Module), f"Model passed is not PyTorch model nn.Module, instead {type(model)}"
-            self.model = model 
-            self.model_type = model_type
-        else:
-            self.model = create_model_instance(self.model_type, self.dataset_type)
+        self.network = NetworkHandler()
+        self.model = create_model_instance(self.model_type, self.dataset_type)
         assert self.model is not None, f"Model initialized failed. Either not passed in correctly or failed to instantiate."
         self.model.to(self.device)
         if self.momentum is not None:
@@ -169,6 +163,8 @@ class Server():
         else:
             self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
         self.lr_scheduler = torch.optim.lr_scheduler.ExponentialLR(self.optimizer, gamma=0.993)
+        self.loss_func = torch.nn.CrossEntropyLoss()
+
 
 
     def set_model_parameter(self, params, model=None):
@@ -444,7 +440,7 @@ class Server():
         4. Aggregating results
         5. Evaluating and record
         """
-        self.init()
+        # self.init()
         self.print_model_info()
         self.init_clients(clientObj=ClientInfo)
         while True:

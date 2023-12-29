@@ -15,10 +15,13 @@ class YourClientInfo(ClientInfo):
 
 
 class YourServer(Server):
-    def __init__(self, args):
-        super().__init__(args)
-        # your server attrs
-        self.new_server_attr = None
+    def init(self):
+        # define network, model, optimizer, loss func and more here.
+        self.network = MyNetworkHandler()
+        # self.model = 
+        # self.optimizer = 
+        # self.loss_func =
+        # self.new_attr = 
 
 
     def your_select_clients(self):
@@ -52,6 +55,5 @@ class YourServer(Server):
 
 
 if __name__ == "__main__":
-    args = get_args()
-    server = YourServer(args)
+    server = YourServer()
     server.run()

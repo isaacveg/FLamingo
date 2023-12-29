@@ -1,7 +1,7 @@
 ## FedAvg config
-config: '/data0/yzhu/FLMPI/config.yaml'  # use config file, will overwrite any other arguments
-data_dir: '/data0/yzhu/FLMPI/datasets/'  # dataset directory
-work_dir: '/data0/yzhu/FLMPI/runs/fedmeta_mnist/'  # working directory
+config: './config.yaml'  # use config file, will overwrite any other arguments
+data_dir: './datasets/'  # dataset directory
+work_dir: './runs/fedmeta_mnist/'  # working directory
 
 seed: 2024  # random seed
 batch_size: 64  # batch size

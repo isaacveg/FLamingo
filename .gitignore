@@ -11,5 +11,6 @@ configs/*
 analysis_tools/**/
 dist/
 *.egg-info/
+build/
 
 

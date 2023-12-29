@@ -1,17 +1,14 @@
 from FLamingo.core.client import *
 
+
 class YourClient(Client):
     """
     Your own Client
     """
-    def __init__(self, args):
-        super().__init__(args)
-        # your new attributes
-        self.new_attr = None
-
     def YourTrain(self):
         # Train your own model
         return 
+
 
     def run(self):
         """
@@ -35,6 +32,5 @@ class YourClient(Client):
 
 
 if __name__ == '__main__':
-    args = get_args()
-    client = YourClient(args)
+    client = YourClient()
     client.run()
