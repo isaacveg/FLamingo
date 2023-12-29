@@ -66,7 +66,7 @@ class Client():
             setattr(self, key, value)
 
         self.global_round = 0
-        self.loss_func = torch.nn.CrossEntropyLoss()
+
         self.dataset = ClientDataset(self.dataset_type, self.data_dir, self.rank)
         self.train_loader = self.dataset.get_train_loader(self.batch_size)
         self.test_loader = self.dataset.get_test_loader(self.test_batch_size)
@@ -77,6 +77,21 @@ class Client():
         if os.path.exists(self.model_save_path) == False:
             os.makedirs(self.model_save_path, exist_ok=True)
 
+        self.init()
+
+        # If user didn't init model, network, optimizer, loss_func, lr_scheduler, do it here
+        if self.network is None:
+            self.network = NetworkHandler()
+        if self.model is None:
+            self.model = create_model_instance(self.model_type, self.dataset_type)
+        if self.optimizer is None:
+            if self.momentum is not None:
+                self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr, momentum=self.momentum)
+            else:
+                self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
+        if self.loss_func is None:
+            self.loss_func = torch.nn.CrossEntropyLoss()
+        
         self.start_time = time.localtime()
 
 
@@ -87,29 +102,21 @@ class Client():
         log(self.rank, self.global_round, info_str)
 
 
-    def init(self, model_type=None, model=None, net_handler=NetworkHandler):
+    def init(self):
         """
         Init model and network to enable customize these parts.   
         For model, pass in torch model or model_type to create coresponding model.   
         For network, pass in your own network module or leave blank for default.
-        Args:  
-            model_type: str, used to create model using utils.model_utils.create_model_instance if model already implemented.  
-            model: nn.Module, initialized in customized clients or servers outside and passed in for flexibility.
         Returns:
             None of these will be returned. The function will set:  
             self.model, self.model_type(if given when customized)
             self.optimizer: default SGD
+            self.loss_func: default CrossEntropyLoss
             self.lr_scheduler: default ExponetialLR with gamma=0.993
-        If you want to customize, please define it in run()
+        If you want to customize, please define it.
         """
-        self.network = net_handler()
-        assert isinstance(self.network, NetworkHandler), f"net_handler is not a NetworkHandler, instead {type(net_handler)}"
-        if model is not None:
-            assert isinstance(model, torch.nn.Module), f"Model passed is not PyTorch model nn.Module, instead {type(model)}"
-            self.model = model 
-            self.model_type = model_type
-        else:
-            self.model = create_model_instance(self.model_type, self.dataset_type)
+        self.network = NetworkHandler()
+        self.model = create_model_instance(self.model_type, self.dataset_type)
         assert self.model is not None, f"Model initialized failed. Either not passed in correctly or failed to instantiate."
         self.model.to(self.device)
         if self.momentum is not None:
@@ -117,6 +124,8 @@ class Client():
         else:
             self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
         self.lr_scheduler = torch.optim.lr_scheduler.ExponentialLR(self.optimizer, gamma=0.993)
+        self.loss_func = torch.nn.CrossEntropyLoss()
+
             
 
     def save_model(self, model, epoch):
@@ -251,7 +260,7 @@ class Client():
         3. Send information back
         """
         # self.model = create_model_instance(self.model)
-        self.init()
+        # self.init()
         while True:
             # data = self.receive_data(self.MASTER_RANK)
             # data = self.network.get(self.MASTER_RANK)

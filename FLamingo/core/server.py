@@ -115,10 +115,22 @@ class Server():
         self.data_to_send = None
         self.buffer = []
 
-        self.start_time = time.localtime()
         self.init()
-        assert self.network and self.model and self.optimizer and self.loss_func is not None, \
-            "NetworkHandler, Model, Optimizer, and Loss Function must be defined in init() function."
+
+        # If user didn't init model, network, optimizer, loss_func, lr_scheduler, do it here
+        if self.network is None:
+            self.network = NetworkHandler()
+        if self.model is None:
+            self.model = create_model_instance(self.model_type, self.dataset_type)
+        if self.optimizer is None:
+            if self.momentum is not None:
+                self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr, momentum=self.momentum)
+            else:
+                self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
+        if self.loss_func is None:
+            self.loss_func = torch.nn.CrossEntropyLoss()
+        
+        self.start_time = time.localtime()
 
 
     def log(self, info_str):

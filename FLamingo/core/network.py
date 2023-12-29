@@ -20,12 +20,6 @@ async def get_data(comm, received, src_rank, tag_epoch):
 class NetworkHandler():
     """
     Network handler of client.
-    Init:
-        Args:
-            world: mpi4py.MPI.WORLD, communication world of MPI
-            rank: the rank of current process
-            size: the size of current world, i.e. processes in total
-            All these can be get automatically by Server or Client class. Else you'll decide which process to set.
     """
     def __init__(self):
         world = MPI.COMM_WORLD
