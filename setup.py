@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='FLamingo',
-    version='0.0.1',
+    version='0.0.1-beta',
     author='Isaacveg',
     author_email='isaaczhu@mail.ustc.edu.cn',
     description='A brief description of the package',
@@ -14,15 +14,15 @@ setup(
     package_data={'FLamingo': ['templates/*.txt']},
     install_requires=[
         # 依赖列表
-        'mpi4py>=3.1.4',
-        'numpy>=1.23.5',
-        'Pillow>=9.3.0',
+        'mpi4py>=3.1',
+        'numpy>=1',
+        'Pillow>=9',
         'PyYAML>=6.0',
         'scikit_learn>=1.3.0',
-        'spacy>=3.6.1',
-        'torch>=2.0.1',
-        'torchvision>=0.15.2',
-        'tqdm>=4.65.0'
+        'spacy>=3.6',
+        'torch>=2.0',
+        'torchvision>=0.15',
+        'tqdm>=4'
     ],
     classifiers=[
         'License :: OSI Approved :: MIT License',
