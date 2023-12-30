@@ -8,7 +8,6 @@ import time
 import asyncio
 from mpi4py import MPI
 
-
 sys.path.append(".")
 sys.path.append("..")
 sys.path.append("../..")
@@ -21,6 +20,7 @@ from FLamingo.core.utils.data_utils import ClientDataset
 from FLamingo.core.utils.model_utils import create_model_instance
 from FLamingo.core.utils.chores import log, merge_several_dicts
 from FLamingo.core.network import NetworkHandler
+
 
 class Client():
     # def __init__(self, args):
@@ -80,16 +80,16 @@ class Client():
         self.init()
 
         # If user didn't init model, network, optimizer, loss_func, lr_scheduler, do it here
-        if self.network is None:
+        if not hasattr(self, 'network'):
             self.network = NetworkHandler()
-        if self.model is None:
+        if not hasattr(self, 'model'):
             self.model = create_model_instance(self.model_type, self.dataset_type)
-        if self.optimizer is None:
-            if self.momentum is not None:
+        if not hasattr(self, 'optimizer'):
+            if hasattr(self, 'momentum'):
                 self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr, momentum=self.momentum)
             else:
                 self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
-        if self.loss_func is None:
+        if not hasattr(self, 'loss_func'):
             self.loss_func = torch.nn.CrossEntropyLoss()
         
         self.start_time = time.localtime()
@@ -100,7 +100,6 @@ class Client():
         Print info string with time and rank
         """
         log(self.rank, self.global_round, info_str)
-
 
     def init(self):
         """
@@ -126,20 +125,16 @@ class Client():
         self.lr_scheduler = torch.optim.lr_scheduler.ExponentialLR(self.optimizer, gamma=0.993)
         self.loss_func = torch.nn.CrossEntropyLoss()
 
-            
-
     def save_model(self, model, epoch):
         if not os.path.exists(self.model_save_path):
             os.makedirs(self.model_save_path)
         model_path = os.path.join(self.model_save_path, f'model_{self.rank}.pth')
         torch.save(model.state_dict(), model_path)
 
-
     def load_model(self, model, epoch):
         model_path = os.path.join(self.model_save_path, f'model_{self.rank}.pth')
         assert os.path.exists(model_path), f"model for client {self.rank} does not exist"
         model.load_state_dict(torch.load(model_path))
-
 
     def set_model_parameter(self, params, model=None):
         """
@@ -154,7 +149,6 @@ class Client():
         """
         model = self.model if model is None else model
         return torch.nn.utils.parameters_to_vector(self.model.parameters()).detach()
-
 
     def train(self, model, dataloader, local_epoch, loss_func, optimizer):
         """
@@ -172,8 +166,6 @@ class Client():
         epoch_loss /= epoch_num
         return {'train_loss':epoch_loss, 'train_samples':epoch_num}
 
-
-
     def test(self, model, dataloader, loss_func, device):
         """
         Test dataset on given dataloader
@@ -190,17 +182,14 @@ class Client():
         test_acc = float(test_correct) / test_num 
         return {'test_loss':test_loss, 'test_acc': test_acc,'test_samples':test_num}
 
-
     def evaluate(self):
         pass
-
 
     def finalize_round(self):
         """
         Call this to update global_round and other routines
         """
         self.global_round += 1
-        
     
     def _train_one_batch(self, model, data, target, optimizer, loss_func):
         """
@@ -217,8 +206,6 @@ class Client():
         optimizer.step()
         return len(target), loss.item()
 
-    
-
     def _test_one_batch(self, model, data, target, loss_func):
         """
         Test one batch
@@ -232,7 +219,6 @@ class Client():
         num = data.size(0)
         return num, correct, loss.item()
 
-
     def listen(self, rank=0):
         """
         Listen from other processes, default from server
@@ -243,14 +229,12 @@ class Client():
             self.global_round = data['global_round']
         return data
     
-
     def send(self, data, rank=0):
         """
         Send data to other processes, default to server
         """
         self.network.send(data, rank)
         return
-
 
     def run(self):
         """

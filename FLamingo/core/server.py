@@ -2,13 +2,6 @@ import os
 import sys
 from mpi4py import MPI
 
-# WORLD = MPI.COMM_WORLD
-# rank = WORLD.Get_rank()
-# size = WORLD.Get_size()
-
-# os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-# os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
-
 import torch
 import numpy as np
 import random
@@ -19,7 +12,6 @@ sys.path.append(".")
 sys.path.append("..")
 sys.path.append("../..")
 sys.path.append("../../..")
-
 
 from FLamingo.core.utils.args_utils import get_args
 from FLamingo.core.utils.data_utils import ClientDataset
@@ -58,7 +50,6 @@ class ClientInfo():
         for k,v in data.items():
             assert hasattr(self, k), f"{k} not in client info"
             setattr(self, k, v)
-
 
 
 class Server():
@@ -116,22 +107,20 @@ class Server():
         self.buffer = []
 
         self.init()
-
         # If user didn't init model, network, optimizer, loss_func, lr_scheduler, do it here
-        if self.network is None:
+        if not hasattr(self, 'network'):
             self.network = NetworkHandler()
-        if self.model is None:
+        if not hasattr(self, 'model'):
             self.model = create_model_instance(self.model_type, self.dataset_type)
-        if self.optimizer is None:
-            if self.momentum is not None:
+        if not hasattr(self, 'optimizer'):
+            if hasattr(self, 'momentum'):
                 self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr, momentum=self.momentum)
             else:
                 self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
-        if self.loss_func is None:
+        if not hasattr(self, 'loss_func'):
             self.loss_func = torch.nn.CrossEntropyLoss()
         
         self.start_time = time.localtime()
-
 
     def log(self, info_str):
         """
@@ -139,19 +128,16 @@ class Server():
         """
         log(self.rank, self.global_round, info_str)
 
-
     def save_model(self, model, epoch):
         if not os.path.exists(self.model_save_path):
             os.makedirs(self.model_save_path)
         model_path = os.path.join(self.model_save_path, f'model_{self.rank}.pth')
         torch.save(model.state_dict(), model_path)
 
-
     def load_model(self, model, epoch):
         model_path = os.path.join(self.model_save_path, f'model_{self.rank}.pth')
         assert os.path.exists(model_path), f"model for Server {self.rank} does not exist"
         model.load_state_dict(torch.load(model_path))
-
 
     def init(self):
         """
@@ -177,8 +163,6 @@ class Server():
         self.lr_scheduler = torch.optim.lr_scheduler.ExponentialLR(self.optimizer, gamma=0.993)
         self.loss_func = torch.nn.CrossEntropyLoss()
 
-
-
     def set_model_parameter(self, params, model=None):
         """
         Set model parameters. Default self.model
@@ -186,14 +170,12 @@ class Server():
         model = self.model if model is None else model
         torch.nn.utils.vector_to_parameters(params, model.parameters())
 
-
     def export_model_parameter(self, model=None):
         """
         Export self.model.parameters() to a vector
         """
         model = self.model if model is None else model
         return torch.nn.utils.parameters_to_vector(self.model.parameters()).detach()
-
 
     def print_model_info(self, model=None):
         """
@@ -205,13 +187,11 @@ class Server():
         model_size = para_nums * 4 / 1024 / 1024
         self.log(f"Model type:{self.model_type} \nModel size: {model_size} MB\n Parameters: {para_nums}")
 
-
     def init_clients(self, clientObj=ClientInfo):
         """
         Init clients list on server, clients list must be a class
         """
         self.all_clients = [clientObj(rank) for rank in range(0, self.num_clients+1)]
-
 
     def stop_all(self):
         """
@@ -219,7 +199,6 @@ class Server():
         """
         self.broadcast({"status":'STOP'}, dest_ranks=range(1, self.num_clients+1))
         self.log("Stopped all clients")
-
 
     def select_clients(self, selected_from=None, selected_num=None):
         """
@@ -238,9 +217,7 @@ class Server():
             # self.all_clients[client_idx].strategy = strategy
             self.all_clients[client_idx].params = self.export_model_parameter(self.model)
             self.selected_clients.append(self.all_clients[client_idx])
-        
         if self.verb:self.log(f"Selected clients: {self.selected_idxes}")
-
 
     def get_client_by_rank(self, rank, client_list=None):
         """
@@ -259,7 +236,6 @@ class Server():
                 return client
         raise IndexError(f"Client rank {rank} not found")
 
-
     def train(self, model, dataloader, local_epoch, loss_func, optimizer):
         model.train()
         model.to(self.device)
@@ -272,7 +248,6 @@ class Server():
                 epoch_num += batch_num
         epoch_loss /= epoch_num
         return {'loss':epoch_loss, 'num':epoch_num}
-
 
     def broadcast(self, data, dest_ranks=None, network=None):
         """
@@ -296,7 +271,6 @@ class Server():
             network.send(data, dest)
         if self.verb: self.log(f'Server broadcast to {dest_ranks} succeed')
 
-
     def listen(self, src_ranks=None, clientObj=None, network=None):
         """
         Listening data from src_ranks(list: int) and update client
@@ -317,7 +291,6 @@ class Server():
             client = self.get_client_by_rank(src, clientObj)
             client.update(received_data)     
         if self.verb: self.log(f'Server listening to {src_ranks} succeed')
-
 
     def aggregate(self, client_list=None, weight_by_sample=False):
         """
@@ -347,7 +320,6 @@ class Server():
         global_param_vec += param_delta_vec
         self.set_model_parameter(global_param_vec)
 
-
     def load_client_model(self, client_rank):
         """
         Load parameters of a client to new model
@@ -356,7 +328,6 @@ class Server():
         model = deepcopy(self.model)
         self.set_model_parameter(client.params, model=model)
         return model
-
 
     def average_client_info(self, client_list):
         """
@@ -374,8 +345,6 @@ class Server():
                  \ntest acc {avg_test_acc/length}, \
                  \ntest loss {avg_test_loss/length}")
         
-
-
     def evaluate_on_clients(self, client_list, model=None):
         """
         Evalutae model on given clients' datasets
@@ -394,7 +363,6 @@ class Server():
                   Avg acc {np.mean(evaluation_acc)}\n \
                   Avg loss {np.mean(evaluation_loss)}')
 
-
     def _evaluate_single_client(self, model, dataset_rank, model_rank=None):
         """
         Evaluate model on client dataset
@@ -405,7 +373,6 @@ class Server():
         test_loss, test_acc, test_num = self.test(model, testloader, self.loss_func,self.device)
         del client_set, testloader
         return test_loss, test_acc, test_num
-
 
     def test(self, model, dataloader, loss_func, device='cpu'):
         model.eval()
@@ -420,7 +387,6 @@ class Server():
         test_acc = correct_num / test_num
         return test_loss, test_acc , test_num
 
-
     def _test_one_batch(self, model, data, target, loss_func):
         """
         Test one batch
@@ -434,13 +400,11 @@ class Server():
         num = data.size(0)
         return num, correct, loss.item()
 
-
     def finalize_round(self):
         """
         Call this to update global_round and other routines
         """
         self.global_round += 1
-
 
     def run(self):
         """
