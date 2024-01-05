@@ -64,7 +64,7 @@ def create_dataset_instance(rank, dataset_type, data_dir, train_test):
         file_num = len(os.listdir(pickle_dir))
         assert os.path.exists(pickle_file), f'{pickle_file} Client {rank} dataset {dataset_type} not found, plz generate it.\n \
             Hint: file number under {pickle_dir} is {file_num}, check your client num matches or not.'
-        with open(pickle_dir, 'rb') as f:
+        with open(pickle_file, 'rb') as f:
             data = np.load(f, allow_pickle=True)['data'].tolist()
 
         X_train = torch.Tensor(data['x']).type(torch.float32)
