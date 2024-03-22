@@ -36,6 +36,8 @@ mpiexec --oversubscribe -n 1 python core/server/base_server.py : -n 30 python co
 
 
 ### Get started
+You can use `python -c "from FLamingo.templates import generate;generate('./FedProx')" ` to generate a template for your own method. Then you can modify it and run it.
+
 The archecture is shown below.
 
 - server.py implements `Server`, must have `run()`;    

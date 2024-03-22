@@ -1,0 +1,1 @@
+from .generate_template import generate
