@@ -64,7 +64,6 @@ class Client():
         self.args = args
         for key, value in vars(args).items():
             setattr(self, key, value)
-
         self.global_round = 0
 
         self.dataset = ClientDataset(self.dataset_type, self.data_dir, self.rank)
@@ -106,7 +105,7 @@ class Client():
         Init model and network to enable customize these parts.   
         For model, pass in torch model or model_type to create coresponding model.   
         For network, pass in your own network module or leave blank for default.
-        Returns:
+        Returns:  
             None of these will be returned. The function will set:  
             self.model, self.model_type(if given when customized)
             self.optimizer: default SGD
@@ -117,7 +116,7 @@ class Client():
         self.network = NetworkHandler()
         self.model = create_model_instance(self.model_type, self.dataset_type)
         assert self.model is not None, f"Model initialized failed. Either not passed in correctly or failed to instantiate."
-        self.model.to(self.device)
+        self.model = self.model.to(self.device)
         if self.momentum is not None:
             self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr, momentum=self.momentum)
         else:
@@ -148,14 +147,23 @@ class Client():
         Export self.model.parameters() to a vector
         """
         model = self.model if model is None else model
-        return torch.nn.utils.parameters_to_vector(self.model.parameters()).detach()
+        return torch.nn.utils.parameters_to_vector(model.parameters()).detach()
 
-    def train(self, model, dataloader, local_epoch, loss_func, optimizer):
+    def train(self, model, dataloader, local_epoch, loss_func, optimizer, scheduler=None):
         """
-        Train given dataset on given dataloader
+        Train given dataset on given dataloader.
+        Args:
+            model: model to be trained
+            dataloader: dataloader for the dataset
+            local_epoch: number of local epochs
+            loss_func: loss function
+            optimizer: optimizer
+            scheduler: default None, learning rate scheduler, lr will be consistent if not given
+        Return:
+            dict: train_loss and train_samples
         """
         model.train()
-        model.to(self.device)
+        # model.to(self.device)
         epoch_loss, epoch_num = 0.0, 0
         for ep in range(local_epoch):
             for batch_idx, (data, target) in enumerate(dataloader):
@@ -163,6 +171,7 @@ class Client():
                 batch_num, loss = self._train_one_batch(model, data, target, optimizer, loss_func)
                 epoch_loss += loss * batch_num
                 epoch_num += batch_num
+            if scheduler is not None: scheduler.step()
         epoch_loss /= epoch_num
         return {'train_loss':epoch_loss, 'train_samples':epoch_num}
 
@@ -187,20 +196,31 @@ class Client():
 
     def finalize_round(self):
         """
-        Call this to update global_round and other routines
+        Finalize training round and execute given functions.
+        The basic version will only update global_round.
         """
         self.global_round += 1
     
     def _train_one_batch(self, model, data, target, optimizer, loss_func):
         """
-        Train one batch data
+        Trains the model on a single batch of data. 
+        
+        Parameters:
+        - model (nn.Module): The model to be trained.
+        - data (torch.Tensor): The input data for the model.
+        - target (torch.Tensor): The target values for the model.
+        - optimizer (torch.optim.Optimizer): The optimizer used to update the model parameters.
+        - loss_func (callable): The loss function used to compute the loss between the model output and the target.
+
+        Returns:
+        - batch_size (int): The size of the target tensor.
+        - loss (float): The computed loss value.
         """
         model.train()
-        model = model.to(self.device)
+        # model = model.to(self.device)
         data, target = data.to(self.device), target.to(self.device)
-        self.optimizer.zero_grad()
+        optimizer.zero_grad()
         output = model(data)
-        # print(data.shape, target.shape, output.shape)
         loss = loss_func(output, target)
         loss.backward()
         optimizer.step()
@@ -224,9 +244,6 @@ class Client():
         Listen from other processes, default from server
         """
         data = self.network.get(rank)
-        if rank==0:
-            # from server
-            self.global_round = data['global_round']
         return data
     
     def send(self, data, rank=0):
@@ -256,7 +273,7 @@ class Client():
 
             elif data['status'] == 'TRAINING':
                 # print(f'{self.rank}, {self.verb}')
-                if self.verb: self.log('training')
+                # if self.verb: self.log('training')
                 self.set_model_parameter(data['params'])
                 trained_info = self.train(
                     self.model, self.train_loader, self.args.local_epochs, self.loss_func, self.optimizer)
@@ -268,7 +285,7 @@ class Client():
                 # print(data_to_send)
                 # self.network.send(data_to_send, self.MASTER_RANK)
                 self.send(data_to_send)
-                if self.verb: self.log('training finished')
+                # if self.verb: self.log('training finished')
 
             elif data['status'] == 'TEST':
                 if self.verb: self.log('testing')

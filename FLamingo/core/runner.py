@@ -1,7 +1,9 @@
+from uu import Error
 import yaml
 import os
 import time
 import subprocess
+import platform, signal
 
 
 class Runner(object):
@@ -11,7 +13,7 @@ class Runner(object):
         if self.cfg is None:
             raise ValueError("No config file found.")
         config = self.cfg
-        
+        self.process = None
         
     def ParseConfig(self, cfg_file):
         """
@@ -26,7 +28,6 @@ class Runner(object):
             except yaml.YAMLError as exc:
                 print(exc)
         return config
-        
     
     def add_cfg(self, key, value):
         """
@@ -34,15 +35,24 @@ class Runner(object):
         """
         self.cfg.update({key: value})
 
-
     def export_config(self, file_path):
         """
         Export the config and added settings.
         """
         with open(file_path, 'w') as f:
-            for key, value in self.cfg.items():
-                f.write(f"{key}: {value}\n")
+            yaml.dump(self.cfg, f)
 
+    def terminate(self):
+        """
+        Terminate the process.
+        """
+        if self.process is not None:
+            if platform.system() == 'Windows':
+                self.process.send_signal(signal.CTRL_BREAK_EVENT)
+            else:
+                self.process.terminate()
+                self.process.wait()
+            self.process = None
 
     def run(self):
         """
@@ -75,13 +85,22 @@ class Runner(object):
             'mpiexec', '-n', '1', 
             'python', config['server_file'], '--config', config['saved_config_dir'], 
             ':', '-n', str(config['num_clients']), 
-            'python', config['client_file'], '--config', config['saved_config_dir'], 
-            '> ' + log_path
+            'python', config['client_file'], '--config', config['saved_config_dir']
+            # ,'> ' + log_path
         ]
 
-        # Execute the command with subprocess
-        subprocess.run(' '.join(mpiexec_cmd), shell=True)
-    
-
+        # Execute the command with subprocess, catch errors, and terminate the mpi processes
+        try:
+            with open(log_path, 'w') as log:
+                self.process = subprocess.Popen(mpiexec_cmd, stdout=log, stderr=subprocess.STDOUT)
+                self.process.wait()
+        except KeyboardInterrupt:
+            print("Interrupted by user.")
+            self.terminate()
+        except Exception as e:
+            print(e)
+            self.terminate()
+        finally:
+            self.process = None
 
 

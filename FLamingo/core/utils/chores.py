@@ -18,5 +18,5 @@ def merge_several_dicts(dict_list):
         """
         merged_dict = {}
         for dic in dict_list:
-                merged_dict.update(dic)
+            merged_dict.update(dic)
         return merged_dict

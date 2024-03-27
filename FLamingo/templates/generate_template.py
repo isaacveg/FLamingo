@@ -32,7 +32,7 @@ def generate(destination_dir=None, module_name_list=None):
     None
     """
     template_str = '_template_'
-    default_name_list = ['client','config','server','network','runner']
+    default_name_list = ['client','config','server','network','main']
     # 获取当前模块的文件路径
     module_path = os.path.abspath(__file__)
     module_dir = os.path.dirname(module_path)

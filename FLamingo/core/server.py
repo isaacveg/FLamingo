@@ -155,8 +155,8 @@ class Server():
         self.network = NetworkHandler()
         self.model = create_model_instance(self.model_type, self.dataset_type)
         assert self.model is not None, f"Model initialized failed. Either not passed in correctly or failed to instantiate."
-        self.model.to(self.device)
-        if self.momentum is not None:
+        self.model = self.model.to(self.device)
+        if self.args.momentum is not None:
             self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr, momentum=self.momentum)
         else:
             self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
@@ -179,7 +179,10 @@ class Server():
 
     def print_model_info(self, model=None):
         """
-        Print model related info
+        Print model related info.
+        By default, it will log: model type, model size(MB), number of parameters.
+        Args:
+            model: model to print, default self.model
         """
         model = self.model if model is None else model
         model_params = self.export_model_parameter(model=model)
@@ -189,39 +192,44 @@ class Server():
 
     def init_clients(self, clientObj=ClientInfo):
         """
-        Init clients list on server, clients list must be a class
+        Init clients list on server, clients list must be a class.
+        This will set self.all_clients with a list of clientObj, defined by you.
         """
+        # use num_clients+1 to ensure the rank 0 is server itself.
         self.all_clients = [clientObj(rank) for rank in range(0, self.num_clients+1)]
+        self.all_clients_idxes = [i for i in range(1, self.num_clients+1)]
 
     def stop_all(self):
         """
         Stop all your clients.
+        This will broadcast a 'STOP' signal to all clients.
         """
         self.broadcast({"status":'STOP'}, dest_ranks=range(1, self.num_clients+1))
         self.log("Stopped all clients")
 
     def select_clients(self, selected_from=None, selected_num=None):
         """
-        Randomly select select_num clients from list selected_from   
+        Randomly select select_num clients from list selected_from.  
+        This will set self.selected_clients and self.selected_clients_idxes.  
         Args:       
-            selected_from: default self.all_clients
-            selected_num: default self.num_training_clients
+            selected_from: int list, default self.all_clients_idxes
+            selected_num: int, default self.num_training_clients
         """
-        all_idx = [i for i in range(1, self.num_clients+1)]
-        selected_from = all_idx if selected_from is None else selected_from
+        selected_from = self.all_clients_idxes if selected_from is None else selected_from
         selected_num = self.num_training_clients if selected_num is None else selected_num
-        self.selected_idxes = random.sample(selected_from, selected_num)
+        self.selected_clients_idxes = random.sample(selected_from, selected_num)
         self.selected_clients = []
-        for client_idx in self.selected_idxes:
+        for client_idx in self.selected_clients_idxes:
             self.all_clients[client_idx].global_round = self.global_round
             # self.all_clients[client_idx].strategy = strategy
             self.all_clients[client_idx].params = self.export_model_parameter(self.model)
             self.selected_clients.append(self.all_clients[client_idx])
-        if self.verb:self.log(f"Selected clients: {self.selected_idxes}")
+        if self.verb:self.log(f"Selected clients: {self.selected_clients_idxes}")
 
     def get_client_by_rank(self, rank, client_list=None):
         """
-        Get client by its rank
+        Get client by its rank, return ClientInfo object.
+        In most cases, if you set client_list to None, then you can simply use self.all_clients[rank].
         Args:
             rank: client rank to return
             client_list [ClientInfo]: where to find, default self.all_clients
@@ -231,14 +239,27 @@ class Server():
         assert rank in range(1, self.size+1), f"Invalid rank {rank}"
         if client_list is None:
             client_list = self.all_clients
+        #     return self.all_clients[rank]
         for client in client_list:
             if client.rank == rank:
                 return client
         raise IndexError(f"Client rank {rank} not found")
 
     def train(self, model, dataloader, local_epoch, loss_func, optimizer):
+        """
+        A basic training function.
+        Args:
+            model: model to train
+            dataloader: dataloader to train
+            local_epoch: local epoch to train
+            loss_func: loss function
+            optimizer: optimizer
+        Returns:
+            A dict containing averaged 'loss' and number of samples 'num' trained
+            {'loss':epoch_loss, 'num':epoch_num}
+        """
         model.train()
-        model.to(self.device)
+        # model.to(self.device)
         epoch_loss, epoch_num = 0.0, 0
         for ep in range(local_epoch):
             for batch_idx, (data, target) in enumerate(dataloader):
@@ -254,7 +275,7 @@ class Server():
         Broadcast data to dest_ranks(list: int)
         Args:
             data: data to send, default self.data_to_send
-            dest_ranks: destinations, default self.selected_idxes
+            dest_ranks: destinations, default self.selected_clients_idxes
         """
         if network is None:
             network = self.network
@@ -264,14 +285,14 @@ class Server():
         if not isinstance(data, dict):
             self.log(f"Data to send is not dict, type {type(data)}")
         if dest_ranks is None:
-            assert self.selected_idxes is not None, "No dest_ranks to send in both dest_ranks and self.selected_idxes"
-            dest_ranks = self.selected_idxes
+            assert self.selected_clients_idxes is not None, "No dest_ranks to send in both dest_ranks and self.selected_clients_idxes"
+            dest_ranks = self.selected_clients_idxes
         data.update({'global_round':self.global_round})
         for dest in dest_ranks:
             network.send(data, dest)
         if self.verb: self.log(f'Server broadcast to {dest_ranks} succeed')
 
-    def listen(self, src_ranks=None, clientObj=None, network=None):
+    def listen(self, src_ranks=None, network=None):
         """
         Listening data from src_ranks(list: int) and update client
         Args:
@@ -280,15 +301,12 @@ class Server():
         """
         if network is None:
             network = self.network
-        if clientObj is None:
-            assert self.selected_clients is not None, "No ClientInfo object to store data"
-            clientObj = self.all_clients
         if src_ranks is None:
-            assert self.selected_idxes is not None, "No src_ranks to send in both src_ranks and self.selected_idxes"
-            src_ranks = self.selected_idxes
+            assert self.selected_clients_idxes is not None, "No src_ranks to send in both src_ranks and self.selected_clients_idxes"
+            src_ranks = self.selected_clients_idxes
         for src in src_ranks:
             received_data = network.get(src_rank=src)
-            client = self.get_client_by_rank(src, clientObj)
+            client = self.get_client_by_rank(src)
             client.update(received_data)     
         if self.verb: self.log(f'Server listening to {src_ranks} succeed')
 
@@ -296,26 +314,30 @@ class Server():
         """
         Aggregating client params, vanilla
         Args:
-            client_list: list[ClientInfo], default self.selected_clients
+            client_list: list[int], default self.selected_clients_idxes
             weight_by_sample: bool, whether weight by sample number from client
         """
         if client_list is None:
-            assert self.selected_clients is not None, "No ClientInfo object to aggregate"
-            client_list = self.selected_clients
+            assert self.selected_clients_idxes is not None, "No ClientInfo object to aggregate"
+            client_list = self.selected_clients_idxes
         global_param_vec = self.export_model_parameter()
         total_sample, total_client_len = 0, len(client_list)
         param_delta_vec = torch.zeros_like(global_param_vec)
-        for client in client_list:
+        for client_idx in client_list:
+            client = self.get_client_by_rank(client_idx)
             assert client.params is not None, "Client params is None"
             if weight_by_sample:
                 assert client.train_samples > 0, f"Client {client.rank} train samples is 0"
                 total_sample += client.train_samples
-        for client in client_list:
+        for client_idx in client_list:
+            client = self.get_client_by_rank(client_idx)
             if weight_by_sample:
                 client.weight = client.train_samples / total_sample
             else:
                 client.weight = 1 / total_client_len
-            param_delta = client.params - global_param_vec
+            # global on cpu and params on gpu, need to temporarily move to cpu
+            # print(f"ClientParams:{client.params.device}, globalVec:{global_param_vec.device}")
+            param_delta = client.params.to(self.device) - global_param_vec
             param_delta_vec += param_delta * client.weight
         global_param_vec += param_delta_vec
         self.set_model_parameter(global_param_vec)
@@ -389,7 +411,16 @@ class Server():
 
     def _test_one_batch(self, model, data, target, loss_func):
         """
-        Test one batch
+        Test one batch.
+        Args:
+            model: model to test
+            data: data to test
+            target: target to test
+            loss_func: loss function
+        Returns:
+            num: number of samples
+            correct: number of correct samples
+            loss: loss of this batch
         """
         model.eval()
         output = model(data)
@@ -399,10 +430,35 @@ class Server():
         correct = (pred == target).sum().item()
         num = data.size(0)
         return num, correct, loss.item()
+    
+    def _train_one_batch(self, model, data, target, optimizer, loss_func):
+        """
+        Trains the model on a single batch of data. 
+        Parameters:
+        - model (nn.Module): The model to be trained.
+        - data (torch.Tensor): The input data for the model.
+        - target (torch.Tensor): The target values for the model.
+        - optimizer (torch.optim.Optimizer): The optimizer used to update the model parameters.
+        - loss_func (callable): The loss function used to compute the loss between the model output and the target.
+
+        Returns:
+        - batch_size (int): The size of the target tensor.
+        - loss (float): The computed loss value.
+        """
+        model.train()
+        # model = model.to(self.device)
+        data, target = data.to(self.device), target.to(self.device)
+        optimizer.zero_grad()
+        output = model(data)
+        loss = loss_func(output, target)
+        loss.backward()
+        optimizer.step()
+        return len(target), loss.item()
 
     def finalize_round(self):
         """
-        Call this to update global_round and other routines
+        Call this to update global_round and other routines.
+        For now it just add 1 to global_round
         """
         self.global_round += 1
 
@@ -422,16 +478,18 @@ class Server():
         while True:
             # Selecting and set params
             self.select_clients()
-            # Sending requests
+            # Sending models and parameters.
             self.broadcast(data={'status':'TRAINING',
-                                 'params':self.export_model_parameter()})
-            # waiting 
+                                 'params':self.export_model_parameter()}
+                           )
+            # Waiting for responses
             self.listen()
-            # aggregate
-            self.aggregate(client_list=self.selected_clients)
+            # Aggregating model parameters
+            self.aggregate()
             # Evaluate
-            # self.evaluate_on_clients(client_list=self.selected_idxes)
-            self.average_client_info(client_list=self.selected_idxes)
+            # self.test(self.model, self.test_loader)
+            # Average
+            self.average_client_info(client_list=self.selected_clients_idxes)
             
             self.finalize_round()
             if self.global_round >= self.max_epochs:
