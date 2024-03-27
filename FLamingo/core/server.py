@@ -245,30 +245,65 @@ class Server():
                 return client
         raise IndexError(f"Client rank {rank} not found")
 
-    def train(self, model, dataloader, local_epoch, loss_func, optimizer):
+    def train(self, model, dataloader, local_epoch, loss_func, optimizer, scheduler=None):
         """
-        A basic training function.
+        Train given dataset on given dataloader.
         Args:
-            model: model to train
-            dataloader: dataloader to train
-            local_epoch: local epoch to train
+            model: model to be trained
+            dataloader: dataloader for the dataset
+            local_epoch: number of local epochs
             loss_func: loss function
             optimizer: optimizer
-        Returns:
-            A dict containing averaged 'loss' and number of samples 'num' trained
-            {'loss':epoch_loss, 'num':epoch_num}
+            scheduler: default None, learning rate scheduler, lr will be consistent if not given
+        Return:
+            dict: train_loss and train_samples
         """
         model.train()
-        # model.to(self.device)
-        epoch_loss, epoch_num = 0.0, 0
+        epoch_loss, num_samples = 0.0, 0
         for ep in range(local_epoch):
             for batch_idx, (data, target) in enumerate(dataloader):
                 data, target = data.to(self.device), target.to(self.device)
-                batch_num, loss = self._train_one_batch(model, data, target, optimizer, loss_func)
-                epoch_loss += loss * batch_num
-                epoch_num += batch_num
-        epoch_loss /= epoch_num
-        return {'loss':epoch_loss, 'num':epoch_num}
+                optimizer.zero_grad()  
+                output = model(data)
+                loss = loss_func(output, target)
+                loss.backward()  
+                optimizer.step() 
+                batch_num_samples = len(target)
+                epoch_loss += loss.item() * batch_num_samples  
+                num_samples += batch_num_samples
+            if scheduler is not None:
+                scheduler.step()  # 更新学习率
+        return {'train_loss': epoch_loss/num_samples, 'train_samples': num_samples}
+
+    def test(self, model, dataloader, loss_func=None, device=None):
+        """
+        Test dataset on given dataloader.
+        Args:
+            model (nn.Module): Model to be tested.
+            dataloader (DataLoader): DataLoader for the test dataset.
+            loss_func (nn.Module, optional): Loss function to be used for testing. Defaults to None.
+            device (torch.device, optional): Device to be used for testing. Defaults to None.
+        Returns:
+            dict: Dictionary containing test loss and accuracy.
+        """
+        loss_func = loss_func or self.loss_func
+        device = device or self.device
+        model.eval()
+        test_loss = 0.0
+        correct = 0
+        num_samples = 0
+        with torch.no_grad():
+            for data, target in dataloader:
+                data, target = data.to(device), target.to(device)
+                output = model(data)
+                test_loss += loss_func(output, target).item()
+                pred = output.argmax(dim=1, keepdim=True)
+                correct += pred.eq(target.view_as(pred)).sum().item()
+                num_samples += len(target)
+        test_loss /= num_samples
+        accuracy = 100. * correct / num_samples
+        # self.log(f'Test set: Average loss: {test_loss:.4f}, Accuracy: {correct}/{num_samples} ({accuracy:.0f}%)')
+        return {'test_loss': test_loss, 'test_acc': accuracy,'test_samples':num_samples}
 
     def broadcast(self, data, dest_ranks=None, network=None):
         """
@@ -395,41 +430,6 @@ class Server():
         test_loss, test_acc, test_num = self.test(model, testloader, self.loss_func,self.device)
         del client_set, testloader
         return test_loss, test_acc, test_num
-
-    def test(self, model, dataloader, loss_func, device='cpu'):
-        model.eval()
-        test_loss, test_num, correct_num = 0.0, 0, 0
-        for batch_idx, (data, target) in enumerate(dataloader):
-            data, target = data.to(device), target.to(device)
-            batch_num, batch_correct, loss = self._test_one_batch(model, data, target, loss_func)
-            test_loss += loss * batch_num
-            test_num += batch_num
-            correct_num += batch_correct
-        test_loss /= test_num
-        test_acc = correct_num / test_num
-        return test_loss, test_acc , test_num
-
-    def _test_one_batch(self, model, data, target, loss_func):
-        """
-        Test one batch.
-        Args:
-            model: model to test
-            data: data to test
-            target: target to test
-            loss_func: loss function
-        Returns:
-            num: number of samples
-            correct: number of correct samples
-            loss: loss of this batch
-        """
-        model.eval()
-        output = model(data)
-        loss = loss_func(output, target)
-        _, pred = torch.max(output, 1)
-        # Check test accuracy
-        correct = (pred == target).sum().item()
-        num = data.size(0)
-        return num, correct, loss.item()
     
     def _train_one_batch(self, model, data, target, optimizer, loss_func):
         """
@@ -454,6 +454,28 @@ class Server():
         loss.backward()
         optimizer.step()
         return len(target), loss.item()
+
+    def _test_one_batch(self, model, data, target, loss_func):
+        """
+        Test one batch.
+        Args:
+            model: model to test
+            data: data to test
+            target: target to test
+            loss_func: loss function
+        Returns:
+            num: number of samples
+            correct: number of correct samples
+            loss: loss of this batch
+        """
+        model.eval()
+        output = model(data)
+        loss = loss_func(output, target)
+        _, pred = torch.max(output, 1)
+        # Check test accuracy
+        correct = (pred == target).sum().item()
+        num = data.size(0)
+        return num, correct, loss.item()
 
     def finalize_round(self):
         """
