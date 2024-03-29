@@ -66,9 +66,6 @@ class Client():
             setattr(self, key, value)
         self.global_round = 0
 
-        self.dataset = ClientDataset(self.dataset_type, self.data_dir, self.rank)
-        self.train_loader = self.dataset.get_train_loader(self.batch_size)
-        self.test_loader = self.dataset.get_test_loader(self.test_batch_size)
         self.model_save_path = os.path.join(self.run_dir, "saved_models")    
          
         if os.path.exists(self.run_dir) == False:
@@ -81,10 +78,15 @@ class Client():
         # If user didn't init model, network, optimizer, loss_func, lr_scheduler, do it here
         if not hasattr(self, 'network'):
             self.network = NetworkHandler()
+        if not hasattr(self, 'dataset'):
+            self.dataset = ClientDataset(self.dataset_type, self.data_dir, self.rank)
+            self.train_loader = self.dataset.get_train_loader(self.batch_size)
+            self.test_loader = self.dataset.get_test_loader(self.test_batch_size)
         if not hasattr(self, 'model'):
             self.model = create_model_instance(self.model_type, self.dataset_type)
+            self.model = self.model.to(self.device)
         if not hasattr(self, 'optimizer'):
-            if hasattr(self, 'momentum'):
+            if hasattr(self, 'momentum') and self.args.momentum is not None:
                 self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr, momentum=self.momentum)
             else:
                 self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
@@ -188,7 +190,7 @@ class Client():
             loss_func (nn.Module, optional): Loss function to be used for testing. Defaults to None.
             device (torch.device, optional): Device to be used for testing. Defaults to None.
         Returns:
-            dict: Dictionary containing test loss and accuracy.
+            dict: Dictionary containing test loss, test accuracy, and test samples.
         """
         loss_func = loss_func or self.loss_func
         device = device or self.device

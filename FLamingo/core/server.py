@@ -112,8 +112,9 @@ class Server():
             self.network = NetworkHandler()
         if not hasattr(self, 'model'):
             self.model = create_model_instance(self.model_type, self.dataset_type)
+            self.model = self.model.to(self.device)
         if not hasattr(self, 'optimizer'):
-            if hasattr(self, 'momentum'):
+            if hasattr(self, 'momentum') and self.args.momentum is not None:
                 self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr, momentum=self.momentum)
             else:
                 self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)

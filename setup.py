@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='FLamingo',
-    version='0.0.1-beta',
+    version='0.1.1-beta1',
     author='Isaacveg',
     author_email='isaaczhu@mail.ustc.edu.cn',
     description='A brief description of the package',

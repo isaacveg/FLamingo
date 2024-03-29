@@ -1,33 +1,34 @@
-## FedAvg config
-config: './config.yaml'  # use config file, will overwrite any other arguments
-data_dir: './datasets/'  # dataset directory
-work_dir: './runs/fedmeta_mnist/'  # working directory
+## Runner settings
+CREATE_SUBDIR_PER_RUN: True  # create a subdirectory for each run
+server_file: './server.py'  # server file
+client_file: './client.py'  # client file
 
+## File settings
+config: './config.yaml'  # use config file, will overwrite any other arguments
+data_dir: '../datasets/flamingo_generated/'  # dataset directory
+work_dir: './runs/cifar10/'  # working directory
+
+## Training settings
 seed: 2024  # random seed
 batch_size: 64  # batch size
 test_batch_size: 64  # test batch size
-lr: 0.001  # learning rate
+lr: 0.1  # learning rate
 weight_decay: 0.0001  # weight decay
-epoch: 100  # epoch
+max_epochs: 500  # epoch
 dropout: 0.5  # dropout rate
-
-gpu: -1  # gpu id, default auto select
-server_gpu: -1  # gpu id, default 0
-
-num_clients: 15  # number of clients
-training_clients: 5  # number of training clients
-
-method: fedmeta  # FL method, default fedavg
-# mnist:cnn, mlr, dnn; cifar10: mlr, cnn, dnn
-model: cnn  # model type
-dataset: mnist  # dataset_type
-
-verb: 1  # verbose
-momentum: 0.9  # momentum
+momentum:   
 local_epochs: 1  # local epochs
 
-# FedMeta
-alpha: 0.01
-beta: 0.01
-steps: 2
-optim_steps: 15
+## Federated learning settings
+num_clients: 30  # number of clients
+num_training_clients: 15  # number of training clients
+
+# custom settings
+method: fedavg  # For distiguish federated learning method
+# mnist:cnn, mlr, dnn; cifar10: mlr, cnn, dnn
+model_type: alexnet  # model type
+dataset_type: cifar10  # dataset_type
+
+# Logging settings
+log_path:      # log directory, set blank to use default
+verb: 1  # verbose, True or False

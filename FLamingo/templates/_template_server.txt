@@ -1,3 +1,12 @@
+# All os.environ['CUDA_VISIBLE_DEVICES'] are set at the beginning
+import os
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+
+import sys
+sys.path.append(".")
+sys.path.append("..") # Adds higher directory to python modules path.
+sys.path.append('../FLamingo/')
+# Now import FLamingo
 from FLamingo.core.server import *
 from _template_network import MyNetworkHandler
 
@@ -6,7 +15,6 @@ class YourClientInfo(ClientInfo):
     def __init__(self, rank):
         super().__init__(rank)
         # define your own information
-        self.network = MyNetworkHandler()
         self.new_client_attr = None
 
     def do_something_new(self):
