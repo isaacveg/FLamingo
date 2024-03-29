@@ -80,18 +80,19 @@ class Runner(object):
         self.add_cfg('saved_config_dir', os.path.join(run_dir, 'config.yaml'))
         self.export_config(os.path.join(run_dir, 'config.yaml'))
 
-        # Define the command to execute with mpiexec
+        # Define the command to execute with mpiexec. Use -u for immediate output
         mpiexec_cmd = [
             'mpiexec', '-n', '1', 
-            'python', config['server_file'], '--config', config['saved_config_dir'], 
+            'python', '-u', config['server_file'], '--config', config['saved_config_dir'], 
             ':', '-n', str(config['num_clients']), 
-            'python', config['client_file'], '--config', config['saved_config_dir']
+            'python', '-u',config['client_file'], '--config', config['saved_config_dir']
             # ,'> ' + log_path
         ]
 
         # Execute the command with subprocess, catch errors, and terminate the mpi processes
         try:
             with open(log_path, 'w') as log:
+                # self.process = subprocess.Popen(mpiexec_cmd, stdout=subprocess.STDOUT, stderr=subprocess.STDOUT)
                 self.process = subprocess.Popen(mpiexec_cmd, stdout=log, stderr=subprocess.STDOUT)
                 self.process.wait()
         except KeyboardInterrupt:

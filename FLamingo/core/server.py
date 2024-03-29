@@ -225,6 +225,7 @@ class Server():
             # self.all_clients[client_idx].strategy = strategy
             self.all_clients[client_idx].params = self.export_model_parameter(self.model)
             self.selected_clients.append(self.all_clients[client_idx])
+        self.selected_clients_idxes = sorted(self.selected_clients_idxes)
         if self.verb:self.log(f"Selected clients: {self.selected_clients_idxes}")
 
     def get_client_by_rank(self, rank, client_list=None):
@@ -237,7 +238,7 @@ class Server():
         Return:
             required ClientInfo
         """
-        assert rank in range(1, self.size+1), f"Invalid rank {rank}"
+        assert rank in range(1, self.num_clients+1), f"Invalid rank {rank}"
         if client_list is None:
             client_list = self.all_clients
         #     return self.all_clients[rank]
