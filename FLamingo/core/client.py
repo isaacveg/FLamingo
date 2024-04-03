@@ -18,7 +18,7 @@ import torch
 from FLamingo.core.utils.args_utils import get_args
 from FLamingo.core.utils.data_utils import ClientDataset
 from FLamingo.core.utils.model_utils import create_model_instance
-from FLamingo.core.utils.chores import log, merge_several_dicts
+from FLamingo.core.utils.chores import log, merge_several_dicts, create_logger
 from FLamingo.core.network import NetworkHandler
 
 
@@ -72,6 +72,9 @@ class Client():
             os.makedirs(self.run_dir, exist_ok=True)
         if os.path.exists(self.model_save_path) == False:
             os.makedirs(self.model_save_path, exist_ok=True)
+        client_logs_path = os.path.join(self.run_dir, 'client_logs')
+        if os.path.exists(os.path.join(self.run_dir, client_logs_path)) == False:
+            os.makedirs(os.path.join(self.run_dir, client_logs_path), exist_ok=True)
 
         self.init()
 
@@ -94,20 +97,23 @@ class Client():
             self.loss_func = torch.nn.CrossEntropyLoss()
         
         self.start_time = time.localtime()
-
+        
+        self.logger = create_logger(os.path.join(client_logs_path, f'client_{self.rank}.log'))
 
     def log(self, info_str):
         """
         Print info string with time and rank
         """
-        log(self.rank, self.global_round, info_str)
+        # log(self.rank, self.global_round, info_str)
+        self.logger.info(info_str)
 
     def init(self):
         """
         Init model and network to enable customize these parts.   
         For model, pass in torch model or model_type to create coresponding model.   
         For network, pass in your own network module or leave blank for default.
-        Returns:  
+        For dataset, pass in your own dataset, train_loader, and test_loader.
+        Settings:
             None of these will be returned. The function will set:  
             self.model, self.model_type(if given when customized)
             self.optimizer: default SGD
@@ -220,6 +226,7 @@ class Client():
         The basic version will only update global_round.
         """
         self.global_round += 1
+        self.log(f"============End of Round {self.global_round}============")
     
     def _train_one_batch(self, model, data, target, optimizer, loss_func):
         """

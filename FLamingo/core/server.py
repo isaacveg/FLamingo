@@ -16,7 +16,7 @@ sys.path.append("../../..")
 from FLamingo.core.utils.args_utils import get_args
 from FLamingo.core.utils.data_utils import ClientDataset
 from FLamingo.core.utils.model_utils import create_model_instance
-from FLamingo.core.utils.chores import log, merge_several_dicts
+from FLamingo.core.utils.chores import log, merge_several_dicts, create_logger
 from FLamingo.core.network import NetworkHandler
 
 
@@ -122,12 +122,17 @@ class Server():
             self.loss_func = torch.nn.CrossEntropyLoss()
         
         self.start_time = time.localtime()
+        
+        self.logger = create_logger(os.path.join(self.run_dir, 'logs.log'))
 
     def log(self, info_str):
         """
         Print info string with time and rank
         """
-        log(self.rank, self.global_round, info_str)
+        # Printed log won't used here anymore. 
+        # If you want it, you need to DIY
+        # log(self.rank, self.global_round, info_str)
+        self.logger.info(info_str)
 
     def save_model(self, model, epoch):
         if not os.path.exists(self.model_save_path):
@@ -139,6 +144,36 @@ class Server():
         model_path = os.path.join(self.model_save_path, f'model_{self.rank}.pth')
         assert os.path.exists(model_path), f"model for Server {self.rank} does not exist"
         model.load_state_dict(torch.load(model_path))
+        
+    def get_clients_attr_tolist(self, attr_name, clients_list=None):
+        """
+        Get a list of attribute values from a list of clients indexes.
+        Args:
+            attr_name: attribute name to get
+            clients_list: list of clients to get, default self.all_clients_idxes
+        Return:
+            list of attribute values
+        """
+        if clients_list is None:
+            clients = self.all_clients
+        else:
+            clients = [self.get_client_by_rank(k) for k in clients_list]
+        return [getattr(client, attr_name) for client in clients]
+    
+    def set_clients_attr_fromlist(self, attr_name, attr_list, clients_list=None):
+        """
+        Set a list of attribute values to a list of clients indexes.
+        Args:
+            attr_name: attribute name to set
+            attr_list: list of attribute values to set
+            clients_list: list of clients to set, default self.all_clients_idxes
+        """
+        if clients_list is None:
+            clients = self.all_clients
+        else:
+            clients = [self.get_client_by_rank(k) for k in clients_list]
+        for client, attr in zip(clients, attr_list):
+            setattr(client, attr_name, attr)
 
     def init(self):
         """
@@ -241,7 +276,7 @@ class Server():
         assert rank in range(1, self.num_clients+1), f"Invalid rank {rank}"
         if client_list is None:
             client_list = self.all_clients
-        #     return self.all_clients[rank]
+            return self.all_clients[rank]
         for client in client_list:
             if client.rank == rank:
                 return client
@@ -421,6 +456,29 @@ class Server():
             self.log(f'Evaluation on clients: {client_list}\n \
                   Avg acc {np.mean(evaluation_acc)}\n \
                   Avg loss {np.mean(evaluation_loss)}')
+            
+    def weighted_average(self, clients_list=None,attr='weight',delete=False):
+        """
+        Aggregate parameters using weights stored indexed by self.selected_clients_idxes.
+        
+        Args:
+            clients_list: The list of clients to use for aggregation.
+            attr (default 'weight'): The attribute to use for weighting the clients. 
+            delete: If True, delete the updated_vec, model_delta, and original_vec
+                after the aggregation.
+        """
+        clients_list = clients_list or self.selected_clients_idxes
+        original_vec = self.export_model_parameter(self.model)
+        model_delta = torch.zeros_like(original_vec)
+        for rank in clients_list:
+            client_vec = self.get_client_by_rank(rank).weight.to(self.device)
+            client_weight = getattr(self.get_client_by_rank(rank), attr)
+            model_delta += client_weight * (client_vec - original_vec)
+        updated_vec = original_vec + model_delta
+        self.set_model_parameter(updated_vec)
+        if delete:
+            del updated_vec, model_delta, original_vec
+        # return updated_vec
 
     def _evaluate_single_client(self, model, dataset_rank, model_rank=None):
         """
@@ -485,6 +543,7 @@ class Server():
         For now it just add 1 to global_round
         """
         self.global_round += 1
+        self.log(f"============End of Round {self.global_round}============")
 
     def run(self):
         """
