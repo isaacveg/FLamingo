@@ -232,7 +232,7 @@ class Server():
         This will set self.all_clients with a list of clientObj, defined by you.
         """
         # use num_clients+1 to ensure the rank 0 is server itself.
-        self.all_clients = [clientObj(rank) for rank in range(0, self.num_clients+1)]
+        self.all_clients = [clientObj(rank) for rank in range(1, self.num_clients+1)]
         self.all_clients_idxes = [i for i in range(1, self.num_clients+1)]
 
     def stop_all(self):
@@ -256,10 +256,10 @@ class Server():
         self.selected_clients_idxes = random.sample(selected_from, selected_num)
         self.selected_clients = []
         for client_idx in self.selected_clients_idxes:
-            self.all_clients[client_idx].global_round = self.global_round
+            self.get_client_by_rank(client_idx).global_round = self.global_round
             # self.all_clients[client_idx].strategy = strategy
-            self.all_clients[client_idx].params = self.export_model_parameter(self.model)
-            self.selected_clients.append(self.all_clients[client_idx])
+            self.get_client_by_rank(client_idx).params = self.export_model_parameter(self.model)
+            self.selected_clients.append(self.get_client_by_rank(client_idx))
         self.selected_clients_idxes = sorted(self.selected_clients_idxes)
         if self.verb:self.log(f"Selected clients: {self.selected_clients_idxes}")
 
@@ -276,7 +276,7 @@ class Server():
         assert rank in range(1, self.num_clients+1), f"Invalid rank {rank}"
         if client_list is None:
             client_list = self.all_clients
-            return self.all_clients[rank]
+            return self.all_clients[rank-1]     # rank 1--num_clients, index 0--num_clients-1
         for client in client_list:
             if client.rank == rank:
                 return client
@@ -471,8 +471,9 @@ class Server():
         original_vec = self.export_model_parameter(self.model)
         model_delta = torch.zeros_like(original_vec)
         for rank in clients_list:
-            client_vec = self.get_client_by_rank(rank).weight.to(self.device)
-            client_weight = getattr(self.get_client_by_rank(rank), attr)
+            client = self.get_client_by_rank(rank)
+            client_vec = client.params.to(self.device)
+            client_weight = getattr(client, attr)
             model_delta += client_weight * (client_vec - original_vec)
         updated_vec = original_vec + model_delta
         self.set_model_parameter(updated_vec)

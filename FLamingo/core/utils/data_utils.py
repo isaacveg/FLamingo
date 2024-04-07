@@ -54,21 +54,18 @@ def create_dataset_instance(rank, dataset_type, data_dir, train_test):
         # LEAF dataset, use preprocess from FedLab-benchmarks
         dataset = PickleDataset(dataset_name=dataset_type, pickle_root=data_dir)
         return dataset.get_dataset_pickle(train_test, rank)
-
     else:
-        if rank >= 0:
-            pickle_dir = os.path.join(data_dir, dataset_type, train_test)
-            pickle_file = os.path.join(pickle_dir, f'{rank-1}.npz')
+        pickle_dir = os.path.join(data_dir, dataset_type, train_test)
+        pickle_file = os.path.join(pickle_dir, f'{rank}.npz')
         assert os.path.exists(data_dir), f'{data_dir} dataset {dataset_type} not found, plz generate it'
         # Check file numbers under pickle_dir to match the number of clients
         file_num = len(os.listdir(pickle_dir))
         assert os.path.exists(pickle_file), f'{pickle_file} Client {rank} dataset {dataset_type} not found, plz generate it.\n \
             Hint: file number under {pickle_dir} is {file_num}, check your client num matches or not.'
-        with open(pickle_file, 'rb') as f:
-            data = np.load(f, allow_pickle=True)['data'].tolist()
-
-        X_train = torch.Tensor(data['x']).type(torch.float32)
-        y_train = torch.Tensor(data['y']).type(torch.int64)
+        data = np.load(pickle_file, allow_pickle=True)
+            
+        X_train = torch.Tensor(data['data']).type(torch.float32)
+        y_train = torch.Tensor(data['targets']).type(torch.int64)
 
         # train_data = [(x, y) for x, y in zip(X_train, y_train)]
         dataset = torch.utils.data.TensorDataset(X_train, y_train)

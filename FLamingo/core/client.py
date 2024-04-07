@@ -73,8 +73,8 @@ class Client():
         if os.path.exists(self.model_save_path) == False:
             os.makedirs(self.model_save_path, exist_ok=True)
         client_logs_path = os.path.join(self.run_dir, 'client_logs')
-        if os.path.exists(os.path.join(self.run_dir, client_logs_path)) == False:
-            os.makedirs(os.path.join(self.run_dir, client_logs_path), exist_ok=True)
+        if os.path.exists(client_logs_path) == False:
+            os.makedirs(client_logs_path, exist_ok=True)
 
         self.init()
 
@@ -196,7 +196,7 @@ class Client():
             loss_func (nn.Module, optional): Loss function to be used for testing. Defaults to None.
             device (torch.device, optional): Device to be used for testing. Defaults to None.
         Returns:
-            dict: Dictionary containing test loss, test accuracy, and test samples.
+            dict: Dictionary containing test_loss, test_acc, and test_samples.
         """
         loss_func = loss_func or self.loss_func
         device = device or self.device
