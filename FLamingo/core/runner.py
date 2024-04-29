@@ -34,6 +34,12 @@ class Runner(object):
         Add dict to the config.
         """
         self.cfg.update({key: value})
+        
+    def update_cfg(self, key, value):
+        """
+        Update the config.
+        """
+        self.cfg[key] = value
 
     def export_config(self, file_path):
         """

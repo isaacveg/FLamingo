@@ -55,7 +55,8 @@ def create_dataset_instance(rank, dataset_type, data_dir, train_test):
         dataset = PickleDataset(dataset_name=dataset_type, pickle_root=data_dir)
         return dataset.get_dataset_pickle(train_test, rank)
     else:
-        pickle_dir = os.path.join(data_dir, dataset_type, train_test)
+        # pickle_dir = os.path.join(data_dir, dataset_type, train_test)
+        pickle_dir = os.path.join(data_dir, train_test)
         pickle_file = os.path.join(pickle_dir, f'{rank}.npz')
         assert os.path.exists(data_dir), f'{data_dir} dataset {dataset_type} not found, plz generate it'
         # Check file numbers under pickle_dir to match the number of clients

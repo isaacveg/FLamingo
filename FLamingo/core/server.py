@@ -321,7 +321,7 @@ class Server():
             loss_func (nn.Module, optional): Loss function to be used for testing. Defaults to None.
             device (torch.device, optional): Device to be used for testing. Defaults to None.
         Returns:
-            dict: Dictionary containing test loss and accuracy.
+            dict: Dictionary containing test_loss, test_acc and test_samples.
         """
         loss_func = loss_func or self.loss_func
         device = device or self.device
@@ -413,6 +413,14 @@ class Server():
             param_delta_vec += param_delta * client.weight
         global_param_vec += param_delta_vec
         self.set_model_parameter(global_param_vec)
+    
+    def generate_global_test_set(self):
+        """
+        Generate a global test set. This will check data_dir/test/0.npz and generate a global test set.
+        After this you can use self.test_loader to test.
+        """
+        self.test_set = ClientDataset(self.dataset_type, self.data_dir, 0)
+        self.test_loader = self.test_set.get_test_loader(self.batch_size)
 
     def load_client_model(self, client_rank):
         """

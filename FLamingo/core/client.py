@@ -225,7 +225,7 @@ class Client():
         Finalize training round and execute given functions.
         The basic version will only update global_round.
         """
-        self.global_round += 1
+        # self.global_round += 1
         self.log(f"============End of Round {self.global_round}============")
     
     def _train_one_batch(self, model, data, target, optimizer, loss_func):
