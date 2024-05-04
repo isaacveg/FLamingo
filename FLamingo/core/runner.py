@@ -78,9 +78,9 @@ class Runner(object):
         if not os.path.exists(run_dir):
             os.makedirs(run_dir)
 
-        if config['log_path'] is None:
-            log_path = os.path.join(run_dir, "logs.log")
-            self.add_cfg('log_path', log_path)
+        # if config['log_path'] is None:
+        log_path = os.path.join(run_dir, "logs.log")
+        self.add_cfg('log_path', log_path)
 
         # export config.yaml to run_dir
         self.add_cfg('saved_config_dir', os.path.join(run_dir, 'config.yaml'))
