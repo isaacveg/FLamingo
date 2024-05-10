@@ -4,6 +4,7 @@ import sys
 import numpy as np
 import random
 import time
+from copy import deepcopy
 
 import asyncio
 from mpi4py import MPI
@@ -271,6 +272,7 @@ class Client():
         Listen from other processes, default from server
         """
         data = self.network.get(rank)
+        self.global_round = data['global_round']
         return data
     
     def send(self, data, rank=0):

@@ -3,7 +3,10 @@ import yaml
 import os
 import time
 import subprocess
-import platform, signal
+import platform
+import signal
+import shutil
+import sys
 
 
 class Runner(object):
@@ -97,13 +100,20 @@ class Runner(object):
 
         # Execute the command with subprocess, catch errors, and terminate the mpi processes
         try:
-            with open(log_path, 'w') as log:
-                # self.process = subprocess.Popen(mpiexec_cmd, stdout=subprocess.STDOUT, stderr=subprocess.STDOUT)
-                self.process = subprocess.Popen(mpiexec_cmd, stdout=log, stderr=subprocess.STDOUT)
-                self.process.wait()
+            # with open(log_path, 'w') as log:
+            #     # self.process = subprocess.Popen(mpiexec_cmd, stdout=subprocess.STDOUT, stderr=subprocess.STDOUT)
+            #     self.process = subprocess.Popen(mpiexec_cmd, stdout=log, stderr=subprocess.STDOUT)
+            #     self.process.wait()
+            self.process = subprocess.Popen(mpiexec_cmd, stdout=None, stderr=None)
+            self.process.wait()
         except KeyboardInterrupt:
             print("Interrupted by user.")
             self.terminate()
+            # Ask whether remove the output directory if user input y, other input will keep the output directory
+            if input("Do you want to remove the output directory? (y/n): ") == 'y':
+                shutil.rmtree(run_dir)
+            else:
+                print(f"Output directory is saved at {run_dir}")
         except Exception as e:
             print(e)
             self.terminate()

@@ -123,7 +123,7 @@ class Server():
         
         self.start_time = time.localtime()
         
-        self.logger = create_logger(os.path.join(self.run_dir, 'logs.log'))
+        self.logger = create_logger(os.path.join(self.run_dir, 'server.log'))
 
     def log(self, info_str):
         """
