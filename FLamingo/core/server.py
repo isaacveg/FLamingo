@@ -211,7 +211,7 @@ class Server():
         Export self.model.parameters() to a vector
         """
         model = self.model if model is None else model
-        return torch.nn.utils.parameters_to_vector(self.model.parameters()).detach()
+        return torch.nn.utils.parameters_to_vector(model.parameters()).clone().detach()
 
     def print_model_info(self, model=None):
         """
@@ -254,13 +254,13 @@ class Server():
         selected_from = self.all_clients_idxes if selected_from is None else selected_from
         selected_num = self.num_training_clients if selected_num is None else selected_num
         self.selected_clients_idxes = random.sample(selected_from, selected_num)
+        self.selected_clients_idxes = sorted(self.selected_clients_idxes)
         self.selected_clients = []
         for client_idx in self.selected_clients_idxes:
             self.get_client_by_rank(client_idx).global_round = self.global_round
             # self.all_clients[client_idx].strategy = strategy
-            self.get_client_by_rank(client_idx).params = self.export_model_parameter(self.model)
+            # self.get_client_by_rank(client_idx).params = self.export_model_parameter(self.model)
             self.selected_clients.append(self.get_client_by_rank(client_idx))
-        self.selected_clients_idxes = sorted(self.selected_clients_idxes)
         if self.verb:self.log(f"Selected clients: {self.selected_clients_idxes}")
 
     def get_client_by_rank(self, rank, client_list=None):

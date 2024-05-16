@@ -156,7 +156,7 @@ class Client():
         Export self.model.parameters() to a vector
         """
         model = self.model if model is None else model
-        return torch.nn.utils.parameters_to_vector(model.parameters()).detach()
+        return torch.nn.utils.parameters_to_vector(model.parameters()).clone().detach()
 
     def train(self, model, dataloader, local_epoch, loss_func, optimizer, scheduler=None):
         """
