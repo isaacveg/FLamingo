@@ -86,6 +86,7 @@ class Client():
             self.dataset = ClientDataset(self.dataset_type, self.data_dir, self.rank)
             self.train_loader = self.dataset.get_train_loader(self.batch_size)
             self.test_loader = self.dataset.get_test_loader(self.test_batch_size)
+            # self.log(f"Client {self.rank} initializing dataset {self.train_loader}")
         if not hasattr(self, 'model'):
             self.model = create_model_instance(self.model_type, self.dataset_type)
             self.model = self.model.to(self.device)

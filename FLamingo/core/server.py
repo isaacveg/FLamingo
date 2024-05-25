@@ -224,7 +224,7 @@ class Server():
         model_params = self.export_model_parameter(model=model)
         para_nums = model_params.nelement()
         model_size = para_nums * 4 / 1024 / 1024
-        self.log(f"Model type:{self.model_type} \nModel size: {model_size} MB\n Parameters: {para_nums}")
+        self.log(f"Model type:{self.model_type} \nModel size: {model_size} MB\n Parameters: {para_nums}\n{self.model}")
 
     def init_clients(self, clientObj=ClientInfo):
         """

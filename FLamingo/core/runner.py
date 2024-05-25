@@ -63,6 +63,15 @@ class Runner(object):
                 self.process.wait()
             self.process = None
 
+    def rename_last_run_dir(self, new_name):
+        """
+        Rename the last run directory.
+        """
+        if self.last_run_dir is not None:
+            os.rename(self.last_run_dir, new_name)
+        else:
+            print("No last run directory found.")
+    
     def run(self):
         """
         Use given config to run server and client.
@@ -105,6 +114,7 @@ class Runner(object):
             #     self.process = subprocess.Popen(mpiexec_cmd, stdout=log, stderr=subprocess.STDOUT)
             #     self.process.wait()
             self.process = subprocess.Popen(mpiexec_cmd, stdout=None, stderr=None)
+            print("Running...")
             self.process.wait()
         except KeyboardInterrupt:
             print("Interrupted by user.")
@@ -119,5 +129,6 @@ class Runner(object):
             self.terminate()
         finally:
             self.process = None
+            self.last_run_dir = run_dir 
 
 

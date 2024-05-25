@@ -11,8 +11,8 @@ dir_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 sys.path.append(dir_path)
 sys.path.append(os.path.join(dir_path, 'datasets'))
 # sys.path.append(os.path.join(dir_path, 'datasets','leaf','nlp_utils'))
-import leaf_data
-from leaf_data.pickle_dataset import PickleDataset
+# import leaf_data
+# from leaf_data.pickle_dataset import PickleDataset
 
 
 class ClientDataset():
@@ -50,27 +50,30 @@ def create_dataset_instance(rank, dataset_type, data_dir, train_test):
     Returns:
         (torch.utils.data.Dataset): the dataset instance
     '''
-    if dataset_type in ['femnist', 'shakespeare', 'sent140', 'celeba', 'synthetic', 'reddit']:
-        # LEAF dataset, use preprocess from FedLab-benchmarks
-        dataset = PickleDataset(dataset_name=dataset_type, pickle_root=data_dir)
-        return dataset.get_dataset_pickle(train_test, rank)
+    # if dataset_type in ['femnist', 'shakespeare', 'sent140', 'celeba', 'synthetic', 'reddit']:
+    #     # LEAF dataset, use preprocess from FedLab-benchmarks
+    #     dataset = PickleDataset(dataset_name=dataset_type, pickle_root=data_dir)
+    #     return dataset.get_dataset_pickle(train_test, rank)
+    # else:
+    #     # pickle_dir = os.path.join(data_dir, dataset_type, train_test)
+    pickle_dir = os.path.join(data_dir, train_test)
+    pickle_file = os.path.join(pickle_dir, f'{rank}.npz')
+    assert os.path.exists(data_dir), f'{data_dir} dataset {dataset_type} not found, plz generate it'
+    # Check file numbers under pickle_dir to match the number of clients
+    file_num = len(os.listdir(pickle_dir))
+    assert os.path.exists(pickle_file), f'{pickle_file} Client {rank} dataset {dataset_type} not found, plz generate it.\n \
+        Hint: file number under {pickle_dir} is {file_num}, check your client num matches or not.'
+    data = np.load(pickle_file, allow_pickle=True)
+    
+    if dataset_type == 'shakespeare':
+        X_train = torch.Tensor(data['data']).type(torch.int64)
     else:
-        # pickle_dir = os.path.join(data_dir, dataset_type, train_test)
-        pickle_dir = os.path.join(data_dir, train_test)
-        pickle_file = os.path.join(pickle_dir, f'{rank}.npz')
-        assert os.path.exists(data_dir), f'{data_dir} dataset {dataset_type} not found, plz generate it'
-        # Check file numbers under pickle_dir to match the number of clients
-        file_num = len(os.listdir(pickle_dir))
-        assert os.path.exists(pickle_file), f'{pickle_file} Client {rank} dataset {dataset_type} not found, plz generate it.\n \
-            Hint: file number under {pickle_dir} is {file_num}, check your client num matches or not.'
-        data = np.load(pickle_file, allow_pickle=True)
-            
         X_train = torch.Tensor(data['data']).type(torch.float32)
-        y_train = torch.Tensor(data['targets']).type(torch.int64)
+    y_train = torch.Tensor(data['targets']).type(torch.int64)
 
-        # train_data = [(x, y) for x, y in zip(X_train, y_train)]
-        dataset = torch.utils.data.TensorDataset(X_train, y_train)
-        return dataset
+    # train_data = [(x, y) for x, y in zip(X_train, y_train)]
+    dataset = torch.utils.data.TensorDataset(X_train, y_train)
+    return dataset
 
 
 def concatenate_datasets(dataset_type, data_dir, rank, train_test):
