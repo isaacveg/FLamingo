@@ -32,12 +32,15 @@ class NetworkHandler():
         self.MASTER_RANK = 0
         self.communication_tag = [0 for _ in range(self.size)]
         self.data_sent = [0 for _ in range(self.size)]
-
+        # time
+        self.last_send_time = 0.0
+        self.last_recv_time = 0.0
 
     def send(self, data, dest_rank=0):
         """
         Send data to other process, default from server
         """
+        s_t, self.last_send_time = time.time(), 0.0
         tag = self.communication_tag[dest_rank]
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
@@ -45,11 +48,15 @@ class NetworkHandler():
         loop.run_until_complete(asyncio.wait([task]))
         loop.close()
         self.communication_tag[dest_rank] += 1
+        self.last_send_time = time.time() - s_t
+        # it is not neccessary to return the time, but you can use it yourself.
+        return self.last_send_time
 
     def get(self, src_rank=0):
         """
         Get data from other process, default from server
         """
+        s_t, self.last_recv_time = time.time(), 0.0
         tag = self.communication_tag[src_rank]
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
@@ -58,4 +65,7 @@ class NetworkHandler():
         loop.close()
         # print(self.received_data[src_rank]['status'])
         self.communication_tag[src_rank] += 1
+        self.last_recv_time = time.time() - s_t
+        # receive time is not accurate due to the time of waiting for the data,
+        # so it is not explicitly used in the code. But you can use it yourself.
         return self.received_data[src_rank]

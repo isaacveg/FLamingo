@@ -61,10 +61,12 @@ class Client():
 
         self.status = "TRAINING"
 
+        self.random_wait_max = 0.1
         # Copy info from args
         self.args = args
         for key, value in vars(args).items():
-            setattr(self, key, value)
+            if value is not None:
+                setattr(self, key, value)
         self.global_round = 0
 
         self.model_save_path = os.path.join(self.run_dir, "saved_models")    
@@ -99,6 +101,9 @@ class Client():
             self.loss_func = torch.nn.CrossEntropyLoss()
         
         self.start_time = time.localtime()
+        
+        self.train_slow = False
+        self.send_slow = False
         
         self.logger = create_logger(os.path.join(client_logs_path, f'client_{self.rank}.log'))
 
@@ -159,7 +164,7 @@ class Client():
         model = self.model if model is None else model
         return torch.nn.utils.parameters_to_vector(model.parameters()).clone().detach()
 
-    def train(self, model, dataloader, local_epoch, loss_func, optimizer, scheduler=None):
+    def train(self, model, dataloader, local_epoch, loss_func, optimizer, scheduler=None, slow_train=False):
         """
         Train given dataset on given dataloader.
         Args:
@@ -170,10 +175,11 @@ class Client():
             optimizer: optimizer
             scheduler: default None, learning rate scheduler, lr will be consistent if not given
         Return:
-            dict: train_loss and train_samples
+            dict: train_loss, train_samples, train_time
         """
         model.train()
         epoch_loss, num_samples = 0.0, 0
+        s_t = time.time()
         for ep in range(local_epoch):
             for batch_idx, (data, target) in enumerate(dataloader):
                 data, target = data.to(self.device), target.to(self.device)
@@ -185,9 +191,12 @@ class Client():
                 batch_num_samples = len(target)
                 epoch_loss += loss.item() * batch_num_samples  
                 num_samples += batch_num_samples
+                if slow_train:
+                    self.random_wait()
             if scheduler is not None:
                 scheduler.step()  # 更新学习率
-        return {'train_loss': epoch_loss/num_samples, 'train_samples': num_samples}
+            
+        return {'train_loss': epoch_loss/num_samples, 'train_samples': num_samples,'train_time':time.time()-s_t}
 
     def test(self, model, dataloader, loss_func=None, device=None):
         """
@@ -254,6 +263,14 @@ class Client():
         loss.backward()
         optimizer.step()
         return len(target), loss.item()
+    
+    def random_wait(self):
+        """
+        Random wait for a random time.
+        Args:
+            max: max time to wait, default 0.1
+        """
+        time.sleep(self.random_wait_max * np.abs(np.random.rand()))
 
     def _test_one_batch(self, model, data, target, loss_func):
         """
@@ -274,6 +291,8 @@ class Client():
         """
         data = self.network.get(rank)
         self.global_round = data['global_round']
+        self.send_slow = data.get('send_slow', False)
+        self.train_slow = data.get('train_slow', False)
         return data
     
     def send(self, data, rank=0):
@@ -303,12 +322,14 @@ class Client():
 
             elif data['status'] == 'TRAINING':
                 # print(f'{self.rank}, {self.verb}')
-                # if self.verb: self.log('training')
+                if self.verb: self.log(f'training, train slow: {self.train_slow}, send slow: {self.send_slow}')
                 self.set_model_parameter(data['params'])
                 trained_info = self.train(
                     self.model, self.train_loader, self.args.local_epochs, self.loss_func, self.optimizer)
+                self.log(f"Client {self.rank} trained {trained_info['train_samples']} samples in {trained_info['train_time']}s, loss: {trained_info['train_loss']}")
                 tested_info = self.test(
                     self.model, self.test_loader, self.loss_func, self.device)
+                self.log(f"Client {self.rank} tested {tested_info['test_samples']} samples, loss: {tested_info['test_loss']}, acc: {tested_info['test_acc']}")
                 # Construct data to send
                 data_to_send = merge_several_dicts([trained_info, tested_info])
                 data_to_send['params'] = self.export_model_parameter()

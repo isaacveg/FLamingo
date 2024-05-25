@@ -30,7 +30,6 @@ class ClientInfo():
         self.global_round = 0
         # train status
         self.train_loss = 0.0
-        self.train_time = 0.0
         self.train_samples = 0
         # test status
         self.test_time = 0.0
@@ -40,6 +39,13 @@ class ClientInfo():
         # params and weight
         self.params = None
         self.weight = 0.0
+        # slow or not
+        self.train_slow = False
+        self.send_slow = False
+        # time cost
+        self.send_time = 0.0
+        self.train_time = 0.0
+        self.round_time = 0.0
 
     def update(self, data):
         """
@@ -50,6 +56,14 @@ class ClientInfo():
         for k,v in data.items():
             assert hasattr(self, k), f"{k} not in client info"
             setattr(self, k, v)
+    
+    def round_time_calc(self):
+        """
+        Calculate round time cost. Currently it's train_time + 2*send_time since receive time is not accurate.
+        """
+        if self.train_time ==0.0 or self.send_time == 0.0:
+            print(f"Warning, train_time or send_time is 0.0, train_time:{self.train_time}, send_time:{self.send_time}")
+        self.round_time = self.train_time + 2*self.send_time
 
 
 class Server():
@@ -88,11 +102,13 @@ class Server():
         np.random.seed(args.seed)
         self.MASTER_RANK = 0
         self.status = "TRAINING"
-
+        
+        self.random_wait_max = 0.1
         # Copy some info from args
         self.args = args
         for key, value in vars(args).items():
-            setattr(self, key, value)
+            if value is not None:
+                setattr(self, key, value)
         self.args = args
 
         self.global_round = 0
@@ -121,7 +137,10 @@ class Server():
         if not hasattr(self, 'loss_func'):
             self.loss_func = torch.nn.CrossEntropyLoss()
         
-        self.start_time = time.localtime()
+        self.round_start_time = time.time()
+        self.round_time_cost = 0.0
+        self.total_time_cost = 0.0
+        self.time_budget = []
         
         self.logger = create_logger(os.path.join(self.run_dir, 'server.log'))
 
@@ -234,6 +253,34 @@ class Server():
         # use num_clients+1 to ensure the rank 0 is server itself.
         self.all_clients = [clientObj(rank) for rank in range(1, self.num_clients+1)]
         self.all_clients_idxes = [i for i in range(1, self.num_clients+1)]
+        self.set_slow_clients()
+    
+    def random_wait(self):
+        """
+        Random wait for a random time.
+        Args:
+            max: max time to wait, default 0.1
+        """
+        time.sleep(self.random_wait_max * np.abs(np.random.rand()))
+    
+    def set_slow_clients(self):
+        """
+        Set slow clients for training and sending data.
+        The slow clients will be randomly selected form self.all_clients_idxes.
+        The corresponding client.train_slow and send_slow will be set to True.
+        """
+        if hasattr(self, 'train_slow_rate'):
+            if self.train_slow_rate is not None and self.train_slow_rate > 0:
+                train_slow_rate = self.train_slow_rate
+                self.train_slow_clients = random.sample(self.all_clients_idxes, int(self.num_clients * train_slow_rate))
+                self.set_clients_attr_fromlist('train_slow', [True]*len(self.train_slow_clients), self.train_slow_clients)
+                self.log(f"Train slow clients: {self.train_slow_clients}")
+        if hasattr(self, 'send_slow_rate'):
+            if self.send_slow_rate is not None and self.send_slow_rate > 0:
+                send_slow_rate = self.send_slow_rate
+                self.send_slow_clients = random.sample(self.all_clients_idxes, int(self.num_clients * send_slow_rate))
+                self.set_clients_attr_fromlist('send_slow', [True]*len(self.send_slow_clients), self.send_slow_clients)
+                self.log(f"Send slow clients: {self.send_slow_clients}")
 
     def stop_all(self):
         """
@@ -359,9 +406,17 @@ class Server():
         if dest_ranks is None:
             assert self.selected_clients_idxes is not None, "No dest_ranks to send in both dest_ranks and self.selected_clients_idxes"
             dest_ranks = self.selected_clients_idxes
-        data.update({'global_round':self.global_round})
+        data.update({
+            'global_round':self.global_round
+            })
         for dest in dest_ranks:
+            data.update({'send_slow': self.get_client_by_rank(dest).send_slow,
+                         'train_slow': self.get_client_by_rank(dest).train_slow})
+            s_t = time.time()
             network.send(data, dest)
+            if self.get_client_by_rank(dest).send_slow:
+                self.random_wait()
+            self.get_client_by_rank(dest).send_time = time.time() - s_t
         if self.verb: self.log(f'Server broadcast to {dest_ranks} succeed')
 
     def listen(self, src_ranks=None, network=None):
@@ -549,10 +604,26 @@ class Server():
     def finalize_round(self):
         """
         Call this to update global_round and other routines.
-        For now it just add 1 to global_round
+        For now it will:
+        - add 1 to global_round
+        - log current round time usage and reset timer
+        - append round_time to time_budget
         """
         self.global_round += 1
-        self.log(f"============End of Round {self.global_round}============")
+        self.time_budget.append(time.time()-self.round_start_time)
+        self.log(f"Round time cost: {self.time_budget[-1]:.4f}")
+        self.log(f"{'='*10}End of Round {self.global_round}{'='*10}")
+        self.round_start_time = time.time()
+        self.round_time_cost = 0.0
+        
+    def summarize(self):
+        """
+        Summarize the training process.
+        """
+        self.total_time_cost = sum(self.time_budget)
+        self.log(f"Total time cost: {self.total_time_cost:.4f}")
+        self.log(f"Average time cost: {self.total_time_cost/self.global_round:.4f}")
+        # self.log(f"Time budget: {self.time_budget}")
 
     def run(self):
         """
@@ -568,6 +639,8 @@ class Server():
         self.print_model_info()
         self.init_clients(clientObj=ClientInfo)
         while True:
+            # Althogh the self.round_start_time is set in init, it's better to set it again here.
+            self.round_start_time = time.time()
             # Selecting and set params
             self.select_clients()
             # Sending models and parameters.
@@ -590,4 +663,5 @@ class Server():
         
         if self.args.verb: self.log(f'Server finished at round {self.global_round}')
         self.stop_all()
+        self.summarize()
        
