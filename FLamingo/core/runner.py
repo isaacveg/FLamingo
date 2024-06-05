@@ -17,6 +17,8 @@ class Runner(object):
             raise ValueError("No config file found.")
         config = self.cfg
         self.process = None
+        self.last_run_success = False
+        self.last_run_dir = None
         
     def ParseConfig(self, cfg_file):
         """
@@ -68,7 +70,10 @@ class Runner(object):
         Rename the last run directory.
         """
         if self.last_run_dir is not None:
-            os.rename(self.last_run_dir, new_name)
+            if self.last_run_success:
+                os.rename(self.last_run_dir, new_name)
+            else:
+                print("Last run was not successful, not renaming directory.")
         else:
             print("No last run directory found.")
     
@@ -85,7 +90,7 @@ class Runner(object):
         else:
             run_dir = config['work_dir']
         self.add_cfg('run_dir', run_dir)
-
+        self.last_run_dir = run_dir 
         # Create run_dir
         if not os.path.exists(run_dir):
             os.makedirs(run_dir)
@@ -119,6 +124,7 @@ class Runner(object):
         except KeyboardInterrupt:
             print("Interrupted by user.")
             self.terminate()
+            self.last_run_success = False
             # Ask whether remove the output directory if user input y, other input will keep the output directory
             if input("Do you want to remove the output directory? (y/n): ") == 'y':
                 shutil.rmtree(run_dir)
@@ -127,8 +133,9 @@ class Runner(object):
         except Exception as e:
             print(e)
             self.terminate()
+            self.last_run_success = False
         finally:
             self.process = None
-            self.last_run_dir = run_dir 
+            self.last_run_success = True
 
 

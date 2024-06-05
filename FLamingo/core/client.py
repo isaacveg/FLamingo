@@ -61,12 +61,11 @@ class Client():
 
         self.status = "TRAINING"
 
-        self.random_wait_max = 0.1
         # Copy info from args
         self.args = args
         for key, value in vars(args).items():
-            if value is not None:
-                setattr(self, key, value)
+            # if value is not None:
+            setattr(self, key, value)
         self.global_round = 0
 
         self.model_save_path = os.path.join(self.run_dir, "saved_models")    
@@ -99,13 +98,18 @@ class Client():
                 self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
         if not hasattr(self, 'loss_func'):
             self.loss_func = torch.nn.CrossEntropyLoss()
-        
-        self.start_time = time.localtime()
-        
-        self.train_slow = False
-        self.send_slow = False
-        
+
         self.logger = create_logger(os.path.join(client_logs_path, f'client_{self.rank}.log'))
+        if self.USE_SIM_SYSHET:
+            self.log("Using simulated system heterogeneity. Time is computed through random generation.")
+            # Randomly select a setting from args.sys_het_list[ ]
+            assert len(self.sys_het_list) > 0, "Sys_het_list is empty or not given"
+            sys_het = random.choice(self.sys_het_list)
+            self.log(f"Using system heterogeneity setting: {sys_het}")
+            for key, value in sys_het.items():
+                setattr(self, key, value)
+            del sys_het
+        self.start_time = time.localtime()
 
     def log(self, info_str):
         """
@@ -164,7 +168,7 @@ class Client():
         model = self.model if model is None else model
         return torch.nn.utils.parameters_to_vector(model.parameters()).clone().detach()
 
-    def train(self, model, dataloader, local_epoch, loss_func, optimizer, scheduler=None, slow_train=False):
+    def train(self, model, dataloader, local_epoch, loss_func, optimizer, scheduler=None):
         """
         Train given dataset on given dataloader.
         Args:
@@ -180,6 +184,7 @@ class Client():
         model.train()
         epoch_loss, num_samples = 0.0, 0
         s_t = time.time()
+        num_batches = 0
         for ep in range(local_epoch):
             for batch_idx, (data, target) in enumerate(dataloader):
                 data, target = data.to(self.device), target.to(self.device)
@@ -191,12 +196,15 @@ class Client():
                 batch_num_samples = len(target)
                 epoch_loss += loss.item() * batch_num_samples  
                 num_samples += batch_num_samples
-                if slow_train:
-                    self.random_wait()
+                num_batches += 1
             if scheduler is not None:
                 scheduler.step()  # 更新学习率
-            
-        return {'train_loss': epoch_loss/num_samples, 'train_samples': num_samples,'train_time':time.time()-s_t}
+        
+        if self.USE_SIM_SYSHET:
+            train_time = num_batches * self.rand_time(self.computation, self.dynamics)
+        else:
+            train_time = time.time() - s_t
+        return {'train_loss': epoch_loss/num_samples, 'train_samples': num_samples,'train_time':train_time}
 
     def test(self, model, dataloader, loss_func=None, device=None):
         """
@@ -236,7 +244,7 @@ class Client():
         Finalize training round and execute given functions.
         The basic version will only update global_round.
         """
-        # self.global_round += 1
+        self.global_round += 1
         self.log(f"============End of Round {self.global_round}============")
     
     def _train_one_batch(self, model, data, target, optimizer, loss_func):
@@ -263,14 +271,24 @@ class Client():
         loss.backward()
         optimizer.step()
         return len(target), loss.item()
-    
-    def random_wait(self):
-        """
-        Random wait for a random time.
-        Args:
-            max: max time to wait, default 0.1
-        """
-        time.sleep(self.random_wait_max * np.abs(np.random.rand()))
+        
+    def rand_time(self, loc, scale):
+            """
+            Generate a random time value within a given range. 
+            You can override this method to implement a custom time distribution.
+            For now, it generates a random value from a normal distribution with a mean of loc and a standard deviation of sqrt scale.
+
+            Parameters:
+                loc (float): The mean value of the normal distribution.
+                scale (float): The standard deviation of the normal distribution.
+
+            Returns:
+                float: A random time value within the range of 0.1 to 1.0.
+            """
+            randed = np.random.normal(loc=loc, scale=np.sqrt(scale))
+            while randed > 10 or randed < 1:
+                randed = np.random.normal(loc=loc, scale=np.sqrt(scale))
+            return randed / 10
 
     def _test_one_batch(self, model, data, target, loss_func):
         """
@@ -291,8 +309,6 @@ class Client():
         """
         data = self.network.get(rank)
         self.global_round = data['global_round']
-        self.send_slow = data.get('send_slow', False)
-        self.train_slow = data.get('train_slow', False)
         return data
     
     def send(self, data, rank=0):
@@ -322,7 +338,7 @@ class Client():
 
             elif data['status'] == 'TRAINING':
                 # print(f'{self.rank}, {self.verb}')
-                if self.verb: self.log(f'training, train slow: {self.train_slow}, send slow: {self.send_slow}')
+                # if self.verb: self.log(f'training, train slow: {self.train_slow}, send slow: {self.send_slow}')
                 self.set_model_parameter(data['params'])
                 trained_info = self.train(
                     self.model, self.train_loader, self.args.local_epochs, self.loss_func, self.optimizer)
@@ -333,6 +349,9 @@ class Client():
                 # Construct data to send
                 data_to_send = merge_several_dicts([trained_info, tested_info])
                 data_to_send['params'] = self.export_model_parameter()
+                if self.USE_SIM_SYSHET:
+                    # send time usually larger than computation time
+                    data_to_send['send_time'] = self.rand_time(self.communication, self.dynamics) * 10
                 # print(data_to_send)
                 # self.network.send(data_to_send, self.MASTER_RANK)
                 self.send(data_to_send)

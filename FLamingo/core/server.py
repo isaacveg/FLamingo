@@ -39,9 +39,6 @@ class ClientInfo():
         # params and weight
         self.params = None
         self.weight = 0.0
-        # slow or not
-        self.train_slow = False
-        self.send_slow = False
         # time cost
         self.send_time = 0.0
         self.train_time = 0.0
@@ -103,12 +100,11 @@ class Server():
         self.MASTER_RANK = 0
         self.status = "TRAINING"
         
-        self.random_wait_max = 0.1
         # Copy some info from args
         self.args = args
         for key, value in vars(args).items():
-            if value is not None:
-                setattr(self, key, value)
+            # if value is not None:
+            setattr(self, key, value)
         self.args = args
 
         self.global_round = 0
@@ -138,7 +134,7 @@ class Server():
             self.loss_func = torch.nn.CrossEntropyLoss()
         
         self.round_start_time = time.time()
-        self.round_time_cost = 0.0
+        # self.round_time_cost = 0.0
         self.total_time_cost = 0.0
         self.time_budget = []
         
@@ -253,7 +249,6 @@ class Server():
         # use num_clients+1 to ensure the rank 0 is server itself.
         self.all_clients = [clientObj(rank) for rank in range(1, self.num_clients+1)]
         self.all_clients_idxes = [i for i in range(1, self.num_clients+1)]
-        self.set_slow_clients()
     
     def random_wait(self):
         """
@@ -262,25 +257,6 @@ class Server():
             max: max time to wait, default 0.1
         """
         time.sleep(self.random_wait_max * np.abs(np.random.rand()))
-    
-    def set_slow_clients(self):
-        """
-        Set slow clients for training and sending data.
-        The slow clients will be randomly selected form self.all_clients_idxes.
-        The corresponding client.train_slow and send_slow will be set to True.
-        """
-        if hasattr(self, 'train_slow_rate'):
-            if self.train_slow_rate is not None and self.train_slow_rate > 0:
-                train_slow_rate = self.train_slow_rate
-                self.train_slow_clients = random.sample(self.all_clients_idxes, int(self.num_clients * train_slow_rate))
-                self.set_clients_attr_fromlist('train_slow', [True]*len(self.train_slow_clients), self.train_slow_clients)
-                self.log(f"Train slow clients: {self.train_slow_clients}")
-        if hasattr(self, 'send_slow_rate'):
-            if self.send_slow_rate is not None and self.send_slow_rate > 0:
-                send_slow_rate = self.send_slow_rate
-                self.send_slow_clients = random.sample(self.all_clients_idxes, int(self.num_clients * send_slow_rate))
-                self.set_clients_attr_fromlist('send_slow', [True]*len(self.send_slow_clients), self.send_slow_clients)
-                self.log(f"Send slow clients: {self.send_slow_clients}")
 
     def stop_all(self):
         """
@@ -410,14 +386,26 @@ class Server():
             'global_round':self.global_round
             })
         for dest in dest_ranks:
-            data.update({'send_slow': self.get_client_by_rank(dest).send_slow,
-                         'train_slow': self.get_client_by_rank(dest).train_slow})
-            s_t = time.time()
             network.send(data, dest)
-            if self.get_client_by_rank(dest).send_slow:
-                self.random_wait()
-            self.get_client_by_rank(dest).send_time = time.time() - s_t
         if self.verb: self.log(f'Server broadcast to {dest_ranks} succeed')
+
+    def rand_time(self, loc, scale):
+        """
+        Generate a random time value within a given range. 
+        You can override this method to implement a custom time distribution.
+        For now, it generates a random value from a normal distribution with a mean of loc and a standard deviation of sqrt scale.
+
+        Parameters:
+            loc (float): The mean value of the normal distribution.
+            scale (float): The standard deviation of the normal distribution.
+
+        Returns:
+            float: A random time value within the range of 0.1 to 1.0.
+        """
+        randed = np.random.normal(loc=loc, scale=np.sqrt(scale))
+        while randed > 10 or randed < 1:
+            randed = np.random.normal(loc=loc, scale=np.sqrt(scale))
+        return randed / 10
 
     def listen(self, src_ranks=None, network=None):
         """
@@ -606,15 +594,27 @@ class Server():
         Call this to update global_round and other routines.
         For now it will:
         - add 1 to global_round
+        - calculate round time usage for each client
         - log current round time usage and reset timer
         - append round_time to time_budget
         """
         self.global_round += 1
-        self.time_budget.append(time.time()-self.round_start_time)
-        self.log(f"Round time cost: {self.time_budget[-1]:.4f}")
+        for client in self.selected_clients:
+            client.round_time_calc()    # update round time
+        if not self.USE_SIM_SYSHET:
+            time_used = time.time()-self.round_start_time
+            self.time_budget.append()
+            self.log(f"Round time cost: {time_used:.4f}")
+        else:
+            time_list = self.get_clients_attr_tolist('round_time', self.selected_clients_idxes)
+            max_idx = np.argmax(time_list)
+            time_used = time_list[max_idx]
+            slowest_client_idx = self.selected_clients_idxes[max_idx]
+            self.time_budget.append(time_used)
+            self.log(f"Simulated round time cost: {time_used:.4f} slowest client {slowest_client_idx}")
         self.log(f"{'='*10}End of Round {self.global_round}{'='*10}")
         self.round_start_time = time.time()
-        self.round_time_cost = 0.0
+        # self.round_time_cost = 0.0
         
     def summarize(self):
         """
