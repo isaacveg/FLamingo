@@ -104,7 +104,8 @@ class Client():
             self.log("Using simulated system heterogeneity. Time is computed through random generation.")
             # Randomly select a setting from args.sys_het_list[ ]
             assert len(self.sys_het_list) > 0, "Sys_het_list is empty or not given"
-            sys_het = random.choice(self.sys_het_list)
+            # sys_het = random.choice(self.sys_het_list)
+            sys_het = self.sys_het_list[self.rank % len(self.sys_het_list)]
             self.log(f"Using system heterogeneity setting: {sys_het}")
             for key, value in sys_het.items():
                 setattr(self, key, value)

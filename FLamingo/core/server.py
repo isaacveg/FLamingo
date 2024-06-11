@@ -139,6 +139,7 @@ class Server():
         self.time_budget = []
         
         self.logger = create_logger(os.path.join(self.run_dir, 'server.log'))
+        self.print_model_info()
 
     def log(self, info_str):
         """
@@ -511,6 +512,7 @@ class Server():
     def weighted_average(self, clients_list=None,attr='weight',delete=False):
         """
         Aggregate parameters using weights stored indexed by self.selected_clients_idxes.
+        Specifically, you can set client.weight and then use this function to aggregate.
         
         Args:
             clients_list: The list of clients to use for aggregation.
