@@ -134,8 +134,11 @@ class Runner(object):
             print(e)
             self.terminate()
             self.last_run_success = False
+        else:
+            # running success
+            self.last_run_success = True
         finally:
             self.process = None
-            self.last_run_success = True
+            self.last_run_dir = run_dir
 
 
