@@ -368,7 +368,8 @@ class Server():
 
     def broadcast(self, data, dest_ranks=None, network=None):
         """
-        Broadcast data to dest_ranks(list: int)
+        Broadcast data to dest_ranks(list: int).
+        
         Args:
             data: data to send, default self.data_to_send
             dest_ranks: destinations, default self.selected_clients_idxes
@@ -464,7 +465,7 @@ class Server():
         After this you can use self.test_loader to test.
         """
         self.test_set = ClientDataset(self.dataset_type, self.data_dir, 0)
-        self.test_loader = self.test_set.get_test_loader(self.batch_size)
+        self.test_loader = self.test_set.get_test_loader(self.test_batch_size)
 
     def load_client_model(self, client_rank):
         """

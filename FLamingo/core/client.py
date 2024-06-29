@@ -234,7 +234,6 @@ class Client():
                 num_samples += len(target)
         test_loss /= num_samples
         accuracy = 100. * correct / num_samples
-        # self.log(f'Test set: Average loss: {test_loss:.4f}, Accuracy: {correct}/{num_samples} ({accuracy:.0f}%)')
         return {'test_loss': test_loss, 'test_acc': accuracy,'test_samples':num_samples}
 
     def evaluate(self):
