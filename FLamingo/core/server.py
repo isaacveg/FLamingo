@@ -290,7 +290,7 @@ class Server():
     def get_client_by_rank(self, rank, client_list=None):
         """
         Get client by its rank, return ClientInfo object.
-        In most cases, if you set client_list to None, then you can simply use self.all_clients[rank].
+        In most cases, if you set client_list to None, then you can simply use self.all_clients[rank-1].
         Args:
             rank: client rank to return
             client_list [ClientInfo]: where to find, default self.all_clients
@@ -424,7 +424,10 @@ class Server():
         for src in src_ranks:
             received_data = network.get(src_rank=src)
             client = self.get_client_by_rank(src)
-            client.update(received_data)     
+            client.update(received_data)
+            if not self.USE_SIM_SYSHET:
+                # use real receive time
+                client.update({'send_time': network.last_recv_time})     
         if self.verb: self.log(f'Server listening to {src_ranks} succeed')
 
     def aggregate(self, client_list=None, weight_by_sample=False):
@@ -476,21 +479,20 @@ class Server():
         self.set_model_parameter(client.params, model=model)
         return model
 
-    def average_client_info(self, client_list):
+    def average_client_info(self, client_list, attrs=None):
         """
-        Average client info and log it
+        Average client info and log them.
+        
+        Args:
+            client_list: list[int] clients to average, default self.selected_clients_idxes
+            attrs: list[str] attributes to average, default ['train_loss', 'test_loss', 'test_acc']
         """
-        length = len(client_list)
-        clients = [self.get_client_by_rank(rank) for rank in client_list]
-        avg_train_loss = 0.0
-        avg_test_loss, avg_test_acc = 0.0, 0.0
-        for client in clients:
-            avg_train_loss += client.train_loss
-            avg_test_acc += client.test_acc
-            avg_test_loss += client.test_loss
-        self.log(f"Avg global info:\n train loss {avg_train_loss/length}, \
-                 \ntest acc {avg_test_acc/length}, \
-                 \ntest loss {avg_test_loss/length}")
+        client_list = client_list or self.selected_clients_idxes
+        if attrs is None:
+            attrs = ['train_loss', 'test_loss', 'test_acc']
+        for attr in attrs:
+            attr_list = self.get_clients_attr_tolist(attr, client_list)
+            self.log(f"Avg {attr}: {np.mean(attr_list)}")
         
     def evaluate_on_clients(self, client_list, model=None):
         """
@@ -622,11 +624,19 @@ class Server():
     def summarize(self):
         """
         Summarize the training process.
+        Log the total time cost and average time cost.
         """
         self.total_time_cost = sum(self.time_budget)
-        self.log(f"Total time cost: {self.total_time_cost:.4f}")
-        self.log(f"Average time cost: {self.total_time_cost/self.global_round:.4f}")
-        # self.log(f"Time budget: {self.time_budget}")
+        self.log(f"Total time cost: {sum(self.time_budget):.4f}")
+        self.log(f"Average time cost: {np.mean(self.time_budget):.4f}")
+        
+    def stop(self):
+        """
+        Stop the server. This will close the network and log the message.
+        However, you don't need to call this function in most cases.
+        """
+        self.network.close()
+        self.log("Server stopped")
 
     def run(self):
         """
@@ -639,7 +649,6 @@ class Server():
         5. Evaluating and record
         """
         # self.init()
-        self.print_model_info()
         self.init_clients(clientObj=ClientInfo)
         while True:
             # Althogh the self.round_start_time is set in init, it's better to set it again here.
@@ -667,4 +676,5 @@ class Server():
         if self.args.verb: self.log(f'Server finished at round {self.global_round}')
         self.stop_all()
         self.summarize()
+        self.stop()
        

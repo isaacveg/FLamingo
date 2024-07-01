@@ -250,6 +250,7 @@ class Client():
     def _train_one_batch(self, model, data, target, optimizer, loss_func):
         """
         Trains the model on a single batch of data. 
+        You should manually send everything to device before calling this function.
         
         Parameters:
         - model (nn.Module): The model to be trained.
@@ -262,9 +263,6 @@ class Client():
         - batch_size (int): The size of the target tensor.
         - loss (float): The computed loss value.
         """
-        model.train()
-        # model = model.to(self.device)
-        data, target = data.to(self.device), target.to(self.device)
         optimizer.zero_grad()
         output = model(data)
         loss = loss_func(output, target)
