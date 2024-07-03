@@ -305,6 +305,17 @@ class Server():
             if client.rank == rank:
                 return client
         raise IndexError(f"Client rank {rank} not found")
+    
+    def get_clients_by_ranks(self, rank_list, client_list=None):
+        """
+        Get clients by their ranks, return a list of ClientInfo objects.
+        Args:
+            rank_list: list of client ranks
+            client_list: list of clients to search, default self.all_clients
+        Return:
+            list of required ClientInfo objects
+        """
+        return [self.get_client_by_rank(rank, client_list) for rank in rank_list]
 
     def train(self, model, dataloader, local_epoch, loss_func, optimizer, scheduler=None):
         """
@@ -390,6 +401,44 @@ class Server():
         for dest in dest_ranks:
             network.send(data, dest)
         if self.verb: self.log(f'Server broadcast to {dest_ranks} succeed')
+        
+def personalized_broadcast(self, common_data=None, personalized_attr=None, dest_rank=None, network=None):
+    """
+    Broadcast different attributes to clients.
+    This function is useful when different clients have different attributes to send, 
+    such as dynamically adjusted local updates. You must store all commonly used data 
+    into common_data, the attributes will then be added from clients to the data, and 
+    finally sent to the specified destination ranks.
+
+    Args:
+        common_data (dict, optional): Data to be sent to all clients. Default is None.
+        personalized_attr (list of str, optional): List of attribute names to be sent 
+            individually to each client. Default is None.
+        dest_rank (list of int, optional): List of destination ranks for the clients. 
+            Default is None, which uses self.selected_clients_idxes.
+        network (object, optional): Network object used to send the data. Default is 
+            None, which uses self.network.
+    """
+    if network is None:
+        network = self.network
+    if dest_rank is None:
+        dest_rank = self.selected_clients_idxes
+    if personalized_attr is None:
+        print("There are no personalized attributes to send, you should use self.broadcast.")
+        self.broadcast(data=common_data, dest_ranks=dest_rank)
+    else:
+        for rank in dest_rank:
+            send_dic = {'global_round': self.global_round}
+            if common_data is not None:
+                send_dic.update(common_data)
+            client = self.get_client_by_rank(rank)
+            for attr in personalized_attr:
+                if hasattr(client, attr):
+                    send_dic.update({attr: getattr(client, attr)})
+                else:
+                    print(f"Client {rank} does not have attribute {attr}. Skipping...")
+            network.send(send_dic, dest_rank=rank)
+        if self.verb: self.log(f'Server personalized broadcast to {dest_rank} succeed')
 
     def rand_time(self, loc, scale):
         """

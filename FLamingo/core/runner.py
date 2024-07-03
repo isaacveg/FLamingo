@@ -15,7 +15,6 @@ class Runner(object):
         self.cfg = self.ParseConfig(cfg_file)
         if self.cfg is None:
             raise ValueError("No config file found.")
-        config = self.cfg
         self.process = None
         self.last_run_success = False
         self.last_run_dir = None
@@ -34,17 +33,23 @@ class Runner(object):
                 print(exc)
         return config
     
-    def add_cfg(self, key, value):
-        """
-        Add dict to the config.
-        """
-        self.cfg.update({key: value})
-        
-    def update_cfg(self, key, value):
+    def update_cfg(self, key_or_dict, value=None):
         """
         Update the config.
+        
+        Args:
+            key_or_dict (str or dict): If a string is provided, it is used as the key 
+                                    and `value` is used as the value to update the config.
+                                    If a dict is provided, its key-value pairs are used 
+                                    to update the config.
+            value (optional): The value to update in the config if `key_or_dict` is a string.
         """
-        self.cfg[key] = value
+        if isinstance(key_or_dict, dict):
+            # Update the config with all key-value pairs from the provided dictionary
+            self.cfg.update(key_or_dict)
+        else:
+            # Update or add the single key-value pair to the config
+            self.cfg[key_or_dict] = value
 
     def export_config(self, file_path):
         """
@@ -89,7 +94,7 @@ class Runner(object):
             run_dir = os.path.join(config['work_dir'], timestamp)
         else:
             run_dir = config['work_dir']
-        self.add_cfg('run_dir', run_dir)
+        self.update_cfg('run_dir', run_dir)
         self.last_run_dir = run_dir 
         # Create run_dir
         if not os.path.exists(run_dir):
@@ -97,10 +102,10 @@ class Runner(object):
 
         # if config['log_path'] is None:
         log_path = os.path.join(run_dir, "logs.log")
-        self.add_cfg('log_path', log_path)
+        self.update_cfg('log_path', log_path)
 
         # export config.yaml to run_dir
-        self.add_cfg('saved_config_dir', os.path.join(run_dir, 'config.yaml'))
+        self.update_cfg('saved_config_dir', os.path.join(run_dir, 'config.yaml'))
         self.export_config(os.path.join(run_dir, 'config.yaml'))
 
         # Define the command to execute with mpiexec. Use -u for immediate output
