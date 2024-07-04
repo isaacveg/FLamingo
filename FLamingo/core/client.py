@@ -19,7 +19,7 @@ import torch
 from FLamingo.core.utils.args_utils import get_args
 from FLamingo.core.utils.data_utils import ClientDataset
 from FLamingo.core.utils.model_utils import create_model_instance
-from FLamingo.core.utils.chores import log, merge_several_dicts, create_logger
+from FLamingo.core.utils.chores import log, merge_several_dicts, create_logger, create_recorder
 from FLamingo.core.network import NetworkHandler
 
 
@@ -110,6 +110,10 @@ class Client():
             for key, value in sys_het.items():
                 setattr(self, key, value)
             del sys_het
+        if self.USE_TENSORBOARD:
+            self.recorder = create_recorder(f'{self.run_dir}/event_log/{self.rank}/')
+        else:
+            self.USE_TENSORBOARD = False
         self.start_time = time.localtime()
 
     def log(self, info_str):
@@ -118,6 +122,14 @@ class Client():
         """
         # log(self.rank, self.global_round, info_str)
         self.logger.info(info_str)
+    
+    def quick_rec_dict(self, dict):
+        """Quickly write key-value in dict to self.recorder(SummaryWriter)
+        with current self.global_round. All values are default scalar
+        """
+        if self.USE_TENSORBOARD:
+            for key, value in dict.items():
+                self.recorder.add_scalar(key, value, self.global_round)
 
     def init(self):
         """

@@ -1,5 +1,7 @@
 import time
 import logging
+import os
+from tensorboardX import SummaryWriter
 
 
 def log(rank, global_round, log_str):
@@ -25,6 +27,16 @@ def create_logger(log_file_path):
     logger.addHandler(handler)
     return logger
 
+
+def create_recorder(event_log_dir):
+    """
+    Create and return a tensorboardX SummaryWriter.
+    """
+    if not os.path.exists(event_log_dir):
+        os.makedirs(event_log_dir, exist_ok=True)
+    recorder = SummaryWriter(log_dir=event_log_dir)
+    return recorder
+    
 
 def merge_several_dicts(dict_list):
         """

@@ -16,7 +16,7 @@ sys.path.append("../../..")
 from FLamingo.core.utils.args_utils import get_args
 from FLamingo.core.utils.data_utils import ClientDataset
 from FLamingo.core.utils.model_utils import create_model_instance
-from FLamingo.core.utils.chores import log, merge_several_dicts, create_logger
+from FLamingo.core.utils.chores import log, merge_several_dicts, create_logger, create_recorder
 from FLamingo.core.network import NetworkHandler
 
 
@@ -139,6 +139,11 @@ class Server():
         self.time_budget = []
         
         self.logger = create_logger(os.path.join(self.run_dir, 'server.log'))
+        if hasattr(self, 'USE_TENSORBOARD'):
+            if self.USE_TENSORBOARD:
+                self.recorder = create_recorder(f'{self.run_dir}/event_log/{self.rank}/')
+        else:
+            self.USE_TENSORBOARD = False
         self.print_model_info()
 
     def log(self, info_str):
@@ -149,6 +154,14 @@ class Server():
         # If you want it, you need to DIY
         # log(self.rank, self.global_round, info_str)
         self.logger.info(info_str)
+            
+    def quick_rec_dict(self, dict):
+        """Quickly write key-value in dict to self.recorder(SummaryWriter)
+        with current self.global_round. All values are default scalar
+        """
+        if self.USE_TENSORBOARD:
+            for key, value in dict.items():
+                self.recorder.add_scalar(key, value, self.global_round)
 
     def save_model(self, model, epoch):
         if not os.path.exists(self.model_save_path):
@@ -242,13 +255,20 @@ class Server():
         model_size = para_nums * 4 / 1024 / 1024
         self.log(f"Model type:{self.model_type} \nModel size: {model_size} MB\n Parameters: {para_nums}\n{self.model}")
 
-    def init_clients(self, clientObj=ClientInfo):
+    def init_clients(self, clientObj=ClientInfo, ex_args=None):
         """
         Init clients list on server, clients list must be a class.
         This will set self.all_clients with a list of clientObj, defined by you.
+        
+        Args:
+            clientObj: a ClientInfo object, default ClientInfo(rank)
+            ex_args: a list that stores all arguments need for clientObj.
         """
         # use num_clients+1 to ensure the rank 0 is server itself.
-        self.all_clients = [clientObj(rank) for rank in range(1, self.num_clients+1)]
+        if ex_args is None:
+            self.all_clients = [clientObj(rank) for rank in range(1, self.num_clients+1)]
+        else:
+            self.all_clients = [clientObj(rank, *ex_args) for rank in range(1, self.num_clients+1)]
         self.all_clients_idxes = [i for i in range(1, self.num_clients+1)]
     
     def random_wait(self):
@@ -402,43 +422,43 @@ class Server():
             network.send(data, dest)
         if self.verb: self.log(f'Server broadcast to {dest_ranks} succeed')
         
-def personalized_broadcast(self, common_data=None, personalized_attr=None, dest_rank=None, network=None):
-    """
-    Broadcast different attributes to clients.
-    This function is useful when different clients have different attributes to send, 
-    such as dynamically adjusted local updates. You must store all commonly used data 
-    into common_data, the attributes will then be added from clients to the data, and 
-    finally sent to the specified destination ranks.
+    def personalized_broadcast(self, common_data=None, personalized_attr=None, dest_rank=None, network=None):
+        """
+        Broadcast different attributes to clients.
+        This function is useful when different clients have different attributes to send, 
+        such as dynamically adjusted local updates. You must store all commonly used data 
+        into common_data, the attributes will then be added from clients to the data, and 
+        finally sent to the specified destination ranks.
 
-    Args:
-        common_data (dict, optional): Data to be sent to all clients. Default is None.
-        personalized_attr (list of str, optional): List of attribute names to be sent 
-            individually to each client. Default is None.
-        dest_rank (list of int, optional): List of destination ranks for the clients. 
-            Default is None, which uses self.selected_clients_idxes.
-        network (object, optional): Network object used to send the data. Default is 
-            None, which uses self.network.
-    """
-    if network is None:
-        network = self.network
-    if dest_rank is None:
-        dest_rank = self.selected_clients_idxes
-    if personalized_attr is None:
-        print("There are no personalized attributes to send, you should use self.broadcast.")
-        self.broadcast(data=common_data, dest_ranks=dest_rank)
-    else:
-        for rank in dest_rank:
-            send_dic = {'global_round': self.global_round}
-            if common_data is not None:
-                send_dic.update(common_data)
-            client = self.get_client_by_rank(rank)
-            for attr in personalized_attr:
-                if hasattr(client, attr):
-                    send_dic.update({attr: getattr(client, attr)})
-                else:
-                    print(f"Client {rank} does not have attribute {attr}. Skipping...")
-            network.send(send_dic, dest_rank=rank)
-        if self.verb: self.log(f'Server personalized broadcast to {dest_rank} succeed')
+        Args:
+            common_data (dict, optional): Data to be sent to all clients. Default is None.
+            personalized_attr (list of str, optional): List of attribute names to be sent 
+                individually to each client. Default is None.
+            dest_rank (list of int, optional): List of destination ranks for the clients. 
+                Default is None, which uses self.selected_clients_idxes.
+            network (object, optional): Network object used to send the data. Default is 
+                None, which uses self.network.
+        """
+        if network is None:
+            network = self.network
+        if dest_rank is None:
+            dest_rank = self.selected_clients_idxes
+        if personalized_attr is None:
+            print("There are no personalized attributes to send, you should use self.broadcast.")
+            self.broadcast(data=common_data, dest_ranks=dest_rank)
+        else:
+            for rank in dest_rank:
+                send_dic = {'global_round': self.global_round}
+                if common_data is not None:
+                    send_dic.update(common_data)
+                client = self.get_client_by_rank(rank)
+                for attr in personalized_attr:
+                    if hasattr(client, attr):
+                        send_dic.update({attr: getattr(client, attr)})
+                    else:
+                        print(f"Client {rank} does not have attribute {attr}. Skipping...")
+                network.send(send_dic, dest_rank=rank)
+            if self.verb: self.log(f'Server personalized broadcast to {dest_rank} succeed')
 
     def rand_time(self, loc, scale):
         """
@@ -530,18 +550,23 @@ def personalized_broadcast(self, common_data=None, personalized_attr=None, dest_
 
     def average_client_info(self, client_list, attrs=None):
         """
-        Average client info and log them.
+        Average client info and log them. It will also return a dict containing
+        these averaged params, with avg + original_name.
         
         Args:
             client_list: list[int] clients to average, default self.selected_clients_idxes
             attrs: list[str] attributes to average, default ['train_loss', 'test_loss', 'test_acc']
         """
         client_list = client_list or self.selected_clients_idxes
+        dic = {}
         if attrs is None:
             attrs = ['train_loss', 'test_loss', 'test_acc']
         for attr in attrs:
             attr_list = self.get_clients_attr_tolist(attr, client_list)
-            self.log(f"Avg {attr}: {np.mean(attr_list)}")
+            mean_attr = np.mean(attr_list)
+            self.log(f"Avg {attr}: {mean_attr}")
+            dic[f'avg_{attr}'] = mean_attr
+        return dic
         
     def evaluate_on_clients(self, client_list, model=None):
         """
@@ -678,7 +703,7 @@ def personalized_broadcast(self, common_data=None, personalized_attr=None, dest_
         self.total_time_cost = sum(self.time_budget)
         self.log(f"Total time cost: {sum(self.time_budget):.4f}")
         self.log(f"Average time cost: {np.mean(self.time_budget):.4f}")
-        
+            
     def stop(self):
         """
         Stop the server. This will close the network and log the message.
