@@ -30,12 +30,12 @@ class ClientDataset():
     # Return a DataLoader for the training set
     def get_train_loader(self, batch_size):
         # Return a DataLoader for the training set
-        return DataLoader(dataset=self.trainset, batch_size=batch_size, shuffle=True, num_workers=4)
+        return DataLoader(dataset=self.trainset, batch_size=batch_size, shuffle=True, num_workers=4, drop_last=False)
     
     # Return a DataLoader for the test set
     def get_test_loader(self, batch_size):
         # Return a DataLoader for the test set
-        return DataLoader(dataset=self.testset, batch_size=batch_size, shuffle=False, num_workers=4)
+        return DataLoader(dataset=self.testset, batch_size=batch_size, shuffle=False, num_workers=4, drop_last=False)
 
     
 def create_dataset_instance(rank, dataset_type, data_dir, train_test):

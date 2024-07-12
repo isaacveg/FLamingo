@@ -76,6 +76,8 @@ class Runner(object):
         """
         if self.last_run_dir is not None:
             if self.last_run_success:
+                if not os.path.exists(new_name):
+                    os.makedirs(new_name)
                 os.rename(self.last_run_dir, new_name)
             else:
                 print("Last run was not successful, not renaming directory.")

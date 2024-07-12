@@ -265,6 +265,12 @@ class Server():
             ex_args: a list that stores all arguments need for clientObj.
         """
         # use num_clients+1 to ensure the rank 0 is server itself.
+        if not hasattr(self, 'num_eval_clients'):
+            self.eval_clients_idxes = []
+            self.trainable_clients_idxes = [num for num in range(1, self.num_clients+1)]
+        else:
+            self.eval_clients_idxes = [num for num in range(self.num_clients-self.num_eval_clients+1, self.num_clients+1)]
+            self.trainable_clients_idxes = [num for num in range(1, self.num_clients-self.num_eval_clients+1)]
         if ex_args is None:
             self.all_clients = [clientObj(rank) for rank in range(1, self.num_clients+1)]
         else:
@@ -295,7 +301,7 @@ class Server():
             selected_from: int list, default self.all_clients_idxes
             selected_num: int, default self.num_training_clients
         """
-        selected_from = self.all_clients_idxes if selected_from is None else selected_from
+        selected_from = self.trainable_clients_idxes if selected_from is None else selected_from
         selected_num = self.num_training_clients if selected_num is None else selected_num
         self.selected_clients_idxes = random.sample(selected_from, selected_num)
         self.selected_clients_idxes = sorted(self.selected_clients_idxes)
@@ -548,7 +554,7 @@ class Server():
         self.set_model_parameter(client.params, model=model)
         return model
 
-    def average_client_info(self, client_list, attrs=None):
+    def average_client_info(self, client_list, attrs=None, dic_prefix='avg'):
         """
         Average client info and log them. It will also return a dict containing
         these averaged params, with avg + original_name.
@@ -556,6 +562,7 @@ class Server():
         Args:
             client_list: list[int] clients to average, default self.selected_clients_idxes
             attrs: list[str] attributes to average, default ['train_loss', 'test_loss', 'test_acc']
+            dic_prefix: str, prefix for the returned dict, default 'avg'
         """
         client_list = client_list or self.selected_clients_idxes
         dic = {}
@@ -564,11 +571,11 @@ class Server():
         for attr in attrs:
             attr_list = self.get_clients_attr_tolist(attr, client_list)
             mean_attr = np.mean(attr_list)
-            self.log(f"Avg {attr}: {mean_attr}")
-            dic[f'avg_{attr}'] = mean_attr
+            self.log(f"{dic_prefix} {attr}: {mean_attr}")
+            dic[f'{dic_prefix}_{attr}'] = mean_attr
         return dic
         
-    def evaluate_on_clients(self, client_list, model=None):
+    def evaluate_clients_models_on_server(self, client_list, model=None):
         """
         Evalutae model on given clients' datasets
         Args:
@@ -585,6 +592,20 @@ class Server():
             self.log(f'Evaluation on clients: {client_list}\n \
                   Avg acc {np.mean(evaluation_acc)}\n \
                   Avg loss {np.mean(evaluation_loss)}')
+            
+    def evaluate_on_new_clients(self, client_list=None, model=None):
+        """
+        Evaluate on new clients, this will send model to eval_clients and evaluate.
+        Args:
+            client_list: list[int] new clients to evaluate
+            model: model to evaluate
+        """
+        model = self.model if model is None else model
+        client_list = client_list or self.eval_clients_idxes
+        self.broadcast({'params': self.export_model_parameter(model),
+                        'status':'EVAL'}, 
+                       dest_ranks=client_list)
+        self.listen(src_ranks=client_list)
             
     def weighted_average(self, clients_list=None,attr='weight',delete=False):
         """
