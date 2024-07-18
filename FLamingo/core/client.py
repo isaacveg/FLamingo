@@ -19,6 +19,7 @@ import torch
 from FLamingo.core.utils.args_utils import get_args
 from FLamingo.core.utils.data_utils import ClientDataset
 from FLamingo.core.utils.model_utils import create_model_instance
+from FLamingo.core.utils.train_test_utils import infinite_dataloader
 from FLamingo.core.utils.chores import log, merge_several_dicts, create_logger, create_recorder
 from FLamingo.core.network import NetworkHandler
 
@@ -212,6 +213,45 @@ class Client():
                 num_batches += 1
             if scheduler is not None:
                 scheduler.step()  # 更新学习率
+        
+        if self.USE_SIM_SYSHET:
+            train_time = num_batches * self.rand_time(self.computation, self.dynamics)
+        else:
+            train_time = time.time() - s_t
+        return {'train_loss': epoch_loss/num_samples, 'train_samples': num_samples,'train_time':train_time}
+    
+    def train_iters(self, model, dataloader, loss_func, optimizer, scheduler=None, iters=None):
+        """
+        Train given dataset on given dataloader with given iters.
+        Args:
+            model: model to be trained
+            dataloader: dataloader for the dataset
+            loss_func: loss function
+            optimizer: optimizer
+            scheduler: default None, learning rate scheduler, lr will be consistent if not given
+            iters: number of iterations
+        Return:
+            dict: train_loss, train_samples, train_time
+        """
+        model.train()
+        epoch_loss, num_samples = 0.0, 0
+        s_t = time.time()
+        num_batches = 0
+        inf_loader = infinite_dataloader(dataloader)
+        for i in range(iters):
+            data, target = next(inf_loader)
+            data, target = data.to(self.device), target.to(self.device)
+            optimizer.zero_grad()  
+            output = model(data)
+            loss = loss_func(output, target)
+            loss.backward()  
+            optimizer.step() 
+            batch_num_samples = len(target)
+            epoch_loss += loss.item() * batch_num_samples  
+            num_samples += batch_num_samples
+            num_batches += 1
+        if scheduler is not None:
+            scheduler.step()  # 更新学习率
         
         if self.USE_SIM_SYSHET:
             train_time = num_batches * self.rand_time(self.computation, self.dynamics)

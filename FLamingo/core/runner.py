@@ -50,6 +50,7 @@ class Runner(object):
         else:
             # Update or add the single key-value pair to the config
             self.cfg[key_or_dict] = value
+        return key_or_dict
 
     def export_config(self, file_path):
         """

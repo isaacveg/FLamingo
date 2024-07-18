@@ -267,10 +267,12 @@ class Server():
         # use num_clients+1 to ensure the rank 0 is server itself.
         if not hasattr(self, 'num_eval_clients'):
             self.eval_clients_idxes = []
+            self.num_trainable_clients = self.num_clients
             self.trainable_clients_idxes = [num for num in range(1, self.num_clients+1)]
         else:
-            self.eval_clients_idxes = [num for num in range(self.num_clients-self.num_eval_clients+1, self.num_clients+1)]
-            self.trainable_clients_idxes = [num for num in range(1, self.num_clients-self.num_eval_clients+1)]
+            self.num_trainable_clients = self.num_clients-self.num_eval_clients
+            self.eval_clients_idxes = [num for num in range(self.num_trainable_clients, self.num_clients+1)]
+            self.trainable_clients_idxes = [num for num in range(1, self.num_trainable_clients+1)]
         if ex_args is None:
             self.all_clients = [clientObj(rank) for rank in range(1, self.num_clients+1)]
         else:
