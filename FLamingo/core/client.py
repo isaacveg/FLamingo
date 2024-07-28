@@ -215,7 +215,7 @@ class Client():
                 scheduler.step()  # 更新学习率
         
         if self.USE_SIM_SYSHET:
-            train_time = num_batches * self.rand_time(self.computation, self.dynamics)
+            train_time = num_batches * self.rand_comp()
         else:
             train_time = time.time() - s_t
         return {'train_loss': epoch_loss/num_samples, 'train_samples': num_samples,'train_time':train_time}
@@ -254,7 +254,7 @@ class Client():
             scheduler.step()  # 更新学习率
         
         if self.USE_SIM_SYSHET:
-            train_time = num_batches * self.rand_time(self.computation, self.dynamics)
+            train_time = num_batches * self.rand_comp()
         else:
             train_time = time.time() - s_t
         return {'train_loss': epoch_loss/num_samples, 'train_samples': num_samples,'train_time':train_time}
@@ -339,6 +339,12 @@ class Client():
             while randed > 10 or randed < 1:
                 randed = np.random.normal(loc=loc, scale=np.sqrt(scale))
             return randed / 10
+    
+    def rand_send(self):
+        return self.rand_time(self.communication, self.dynamics) * 10
+    
+    def rand_comp(self):
+        return self.rand_time(self.computation, self.dynamics)
 
     def _test_one_batch(self, model, data, target, loss_func):
         """
@@ -401,7 +407,7 @@ class Client():
                 data_to_send['params'] = self.export_model_parameter()
                 if self.USE_SIM_SYSHET:
                     # send time usually larger than computation time
-                    data_to_send['send_time'] = self.rand_time(self.communication, self.dynamics) * 10
+                    data_to_send['send_time'] = self.rand_send()
                 # print(data_to_send)
                 # self.network.send(data_to_send, self.MASTER_RANK)
                 self.send(data_to_send)
