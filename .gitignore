@@ -11,5 +11,5 @@ analysis_tools/**/
 dist/
 *.egg-info/
 build/
-
+.github/
 
