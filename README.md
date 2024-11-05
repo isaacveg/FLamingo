@@ -5,38 +5,54 @@ A truly expansive and flexible MPI library for Federated Learning
 
 ### How to run?
 Suppose there are 30 clients in your cluster on cifar10 dataset. 
-1. Generate dataset for each client
-Modify client number in `generate_cifar10.py`, and generate cifar10 with noniid data, balanced samples' number and ordinary distribution with 10 classes each client (can be modeified in datasets/utils/dataset_utils.py. Change pat to dir to use Dirichlet distribution.
-
-> This part is directly inheritated from Tsingz0/PFL-non-IID
-> Leaf dataset is directly from Leaf and FedLab
-```shell
-cd FLMPI  
-python datasets/generate_cifar10.py noniid balance pat
+0. Clone FLamingo
+```bash
+git clone https://github.com/isaacveg/FLamingo.git
 ```
-Then it'll be stored in `datasets/cifar10`, with train \test to use. Also storing meta data in json file.
+If you want to install it, do the followings, or just add the FLamingo to your system path
+```python
+# In your python file
+import sys
+sys.path.append(YOUR_PATH_TO_FLAMINGO)
+import FLamingo
+```
+Or install it (Optional)
+```bash
+cd FLamingo
+pip install .
+```
 
-If you need Leaf dataset, first download and generate according to official guidance and use `datasets/leaf_data/gen_pickle_dataset.sh`
+1. Generate dataset for each client
+Use FLamingo_datasets to generate dataset splits [FLamingo_datasets](github.com/isaacveg/FLamingo_datasets)
+```bash
+git clone https://github.com/isaacveg/FLamingo_datasets.git
+cd FLamingo_datasets
+python gen_cifar10.py --nc 30 --dist iid --seed 2024 --indir ../datasets/ --outdir ../datasets/
+```
+Generate cifar10 with iid data, change pat to dir to use Dirichlet distribution. More specific usages please check [FLamingo_datasets](github.com/isaacveg/FLamingo_datasets)
 
-2. Write configs in `config.yaml` and run.
+> This part is inheritated from Tsingz0/PFL-non-IID
+> Leaf dataset is directly from Leaf and FedLab
+
+Then it'll be stored in `datasets/cifar10`, with train \test to use. Also storing meta data in json file. 0.npz is the shard containing all the data which is easy to use.
+
+
+> If you need Leaf dataset, first download and generate according to official guidance and use `datasets/leaf_data/gen_pickle_dataset.sh`. Then you can use gen_femnist.py or gen_shakespeare.py
+
+2. Write configs in `config.yaml` and run. The main.py should contains process management.
 ```shell
 python main.py
 ```
-- or Use mpiexec to run your own script. 
+- or Use mpiexec to run on your own. 
 ```shell
 mpiexec --oversubscribe -n 1 python core/server/base_server.py : -n 30 python core/client/base_client.py > run.log > 2 >&1
 ```
 
+3. Check examples
+Use [FLamingo_examples](github.com/isaacveg/FLamingo_examples) and there are some of examples available.
+
 ### How to add my own client, server, model or datasets?
-0. Fork the repo and clone it to your machine.
-1. Add your client and server in `core/client/` or `core/server/`, there're templates to get started. Better name it as `yourmethod_client.py` and `yourmethod_server.py`.
-2. Add your models and datasets in `datasets/` or  `models/`. 
-3. Implement your own dataset generater in `datasets`. Remember before each run datasets should be generated ahead. Implement dataset loader in `core/utils/data_utils.py` if you have new type of dataset other than CV.
-4. `python main.py` if you followed standard naming paradigm or anything else you need to run.
-
-
-### Get started
-You can use `python -c "from FLamingo.templates import generate;generate('./FedProx')" ` to generate a template for your own method. Then you can modify it and run it.
+You can use `python -c "from FLamingo.templates import generate;generate('./YOUR_METHOD_NAME')" ` to generate a template for your own method. Then you can modify it and run it.
 
 The archecture is shown below.
 
