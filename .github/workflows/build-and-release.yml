@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*.*.*'  # 只有当标签为 vX.Y.Z 格式时触发
+  workflow_dispatch:
 
 jobs:
   build-and-release:
