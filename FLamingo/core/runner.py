@@ -113,7 +113,7 @@ class Runner(object):
 
         # Define the command to execute with mpiexec. Use -u for immediate output
         mpiexec_cmd = [
-            'mpiexec', '-n', '1', 
+            'mpiexec', '--oversubscribe', '-n', '1', 
             'python', '-u', config['server_file'], '--config', config['saved_config_dir'], 
             ':', '-n', str(config['num_clients']), 
             'python', '-u',config['client_file'], '--config', config['saved_config_dir']

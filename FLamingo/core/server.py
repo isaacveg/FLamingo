@@ -58,7 +58,7 @@ class ClientInfo():
         """
         Calculate round time cost. Currently it's train_time + 2*send_time since receive time is not accurate.
         """
-        if self.train_time ==0.0 or self.send_time == 0.0:
+        if self.train_time == 0.0 or self.send_time == 0.0:
             print(f"Warning, train_time or send_time is 0.0, train_time:{self.train_time}, send_time:{self.send_time}")
         self.round_time = self.train_time + 2*self.send_time
 
@@ -253,7 +253,7 @@ class Server():
         model_params = self.export_model_parameter(model=model)
         para_nums = model_params.nelement()
         model_size = para_nums * 4 / 1024 / 1024
-        self.log(f"Model type:{self.model_type} \nModel size: {model_size} MB\n Parameters: {para_nums}\n{self.model}")
+        self.log(f"Model type:{self.model_type} \nModel size: {model_size} MB\nParameters: {para_nums}\n{self.model}")
 
     def init_clients(self, clientObj=ClientInfo, ex_args=None):
         """
@@ -424,7 +424,7 @@ class Server():
             assert self.selected_clients_idxes is not None, "No dest_ranks to send in both dest_ranks and self.selected_clients_idxes"
             dest_ranks = self.selected_clients_idxes
         data.update({
-            'global_round':self.global_round
+            'global_round': self.global_round
             })
         for dest in dest_ranks:
             network.send(data, dest)
@@ -704,8 +704,8 @@ class Server():
         for client in self.selected_clients:
             client.round_time_calc()    # update round time
         if not self.USE_SIM_SYSHET:
-            time_used = time.time()-self.round_start_time
-            self.time_budget.append()
+            time_used = time.time()-self.round_start_time   
+            self.time_budget.append(time_used)
             self.log(f"Round time cost: {time_used:.4f}")
         else:
             time_list = self.get_clients_attr_tolist('round_time', self.selected_clients_idxes)
