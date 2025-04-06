@@ -182,6 +182,19 @@ class Client():
         model = self.model if model is None else model
         return torch.nn.utils.parameters_to_vector(model.parameters()).clone().detach()
 
+    def print_model_info(self, model=None):
+        """
+        Print model related info.
+        By default, it will log: model type, model size(MB), number of parameters.
+        Args:
+            model: model to print, default self.model
+        """
+        model = self.model if model is None else model
+        model_params = self.export_model_parameter(model=model)
+        para_nums = model_params.nelement()
+        model_size = para_nums * 4 / 1024 / 1024
+        self.log(f"Model type:{self.model_type} \nModel size: {model_size} MB\nParameters: {para_nums}\nwidth: {self.width}\n{self.model}")
+
     def train(self, model, dataloader, local_epoch, loss_func, optimizer, scheduler=None):
         """
         Train given dataset on given dataloader.
