@@ -18,7 +18,21 @@ def get_args():
         for k, v in cfg.items():
             # use config to overwrite args 
             setattr(args, k, v)
-
+    if unknown:
+        print(f"Unknown args: {unknown}")
+        
+    SYSTEM_DEFAULTS = {
+        'USE_SIM_SYSHET': False,
+        'sys_het_list': None,
+        'USE_TENSORBOARD': False,
+        'CREATE_SUBDIR_PER_RUN': True
+    }
+    
+    # if the SYSTEM_DEFAULTS are not in the config, set them to False
+    for k, v in SYSTEM_DEFAULTS.items():
+        if not hasattr(args, k):
+            setattr(args, k, v)
+    
     assert args.num_training_clients <= args.num_clients, f"training_clients {args.num_training_clients} cannot be more than num_clients {args.num_clients}"
     return args
 

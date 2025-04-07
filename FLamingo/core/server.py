@@ -120,18 +120,21 @@ class Server():
 
         self.init()
         # If user didn't init model, network, optimizer, loss_func, lr_scheduler, do it here
-        if not hasattr(self, 'network'):
-            self.network = NetworkHandler()
-        if not hasattr(self, 'model'):
-            self.model = create_model_instance(self.model_type, self.dataset_type)
-            self.model = self.model.to(self.device)
-        if not hasattr(self, 'optimizer'):
-            if hasattr(self, 'momentum') and self.args.momentum is not None:
-                self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr, momentum=self.momentum)
-            else:
-                self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
-        if not hasattr(self, 'loss_func'):
-            self.loss_func = torch.nn.CrossEntropyLoss()
+        # Don't force user to init them in init() function
+        # =================>
+        # if not hasattr(self, 'network'):
+        #     self.network = NetworkHandler()
+        # if not hasattr(self, 'model'):
+        #     self.model = create_model_instance(self.model_type, self.dataset_type)
+        #     self.model = self.model.to(self.device)
+        # if not hasattr(self, 'optimizer'):
+        #     if hasattr(self, 'momentum') and self.args.momentum is not None:
+        #         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr, momentum=self.momentum)
+        #     else:
+        #         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
+        # if not hasattr(self, 'loss_func'):
+        #     self.loss_func = torch.nn.CrossEntropyLoss()
+        # ==================>
         
         self.round_start_time = time.time()
         # self.round_time_cost = 0.0

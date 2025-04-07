@@ -81,28 +81,35 @@ class Client():
 
         self.init()
 
-        # If user didn't init model, network, optimizer, loss_func, lr_scheduler, do it here
-        if not hasattr(self, 'network'):
-            self.network = NetworkHandler()
-        if not hasattr(self, 'dataset'):
-            self.dataset = ClientDataset(self.dataset_type, self.data_dir, self.rank)
-            self.train_loader = self.dataset.get_train_loader(self.batch_size)
-            self.test_loader = self.dataset.get_test_loader(self.test_batch_size)
-            # self.log(f"Client {self.rank} initializing dataset {self.train_loader}")
-        if not hasattr(self, 'model'):
-            self.model = create_model_instance(self.model_type, self.dataset_type)
-            self.model = self.model.to(self.device)
-        if not hasattr(self, 'optimizer'):
-            if hasattr(self, 'momentum') and self.args.momentum is not None:
-                self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr, momentum=self.momentum)
-            else:
-                self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
-        if not hasattr(self, 'loss_func'):
-            self.loss_func = torch.nn.CrossEntropyLoss()
+        # If user didn't init model, network, optimizer, loss_func, lr_scheduler,
+        # give a warning what haven't been initialized and the user should know it.
+        
+        ## ===================> 
+        # Warning: this part has been commented out since we don't want to force user to init 
+        # if not hasattr(self, 'network'):
+        #     self.log(f"Client don't have network, init it with default")
+        #     self.network = NetworkHandler()
+        # if not hasattr(self, 'dataset'):
+        #     self.dataset = ClientDataset(self.dataset_type, self.data_dir, self.rank)
+        #     self.train_loader = self.dataset.get_train_loader(self.batch_size)
+        #     self.test_loader = self.dataset.get_test_loader(self.test_batch_size)
+        #     # self.log(f"Client {self.rank} initializing dataset {self.train_loader}")
+        # if not hasattr(self, 'model'):
+        #     self.model = create_model_instance(self.model_type, self.dataset_type)
+        #     self.model = self.model.to(self.device)
+        # if not hasattr(self, 'optimizer'):
+        #     if hasattr(self, 'momentum') and self.args.momentum is not None:
+        #         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr, momentum=self.momentum)
+        #     else:
+        #         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
+        # if not hasattr(self, 'loss_func'):
+        #     self.loss_func = torch.nn.CrossEntropyLoss()
+        ## ===================>
 
         self.logger = create_logger(os.path.join(client_logs_path, f'client_{self.rank}.log'))
         if self.USE_SIM_SYSHET:
-            self.log("Using simulated system heterogeneity. Time is computed through random generation.")
+            assert self.sys_het_list is not None, "sys_het_list is not given"
+            self.log("Using simulated system heterogeneity.")
             # Randomly select a setting from args.sys_het_list[ ]
             assert len(self.sys_het_list) > 0, "Sys_het_list is empty or not given"
             # sys_het = random.choice(self.sys_het_list)
@@ -111,6 +118,9 @@ class Client():
             for key, value in sys_het.items():
                 setattr(self, key, value)
             del sys_het
+        else:
+            self.log("Not using simulated system heterogeneity. Time are real.")
+
         if self.USE_TENSORBOARD:
             self.recorder = create_recorder(f'{self.run_dir}/event_log/{self.rank}/')
         else:
@@ -354,10 +364,10 @@ class Client():
             return randed / 10
     
     def rand_send(self):
-        return self.rand_time(self.communication, self.dynamics) * 10
+        return self.rand_time(self.communication, self.cm_dynamics) * 10
     
     def rand_comp(self):
-        return self.rand_time(self.computation, self.dynamics)
+        return self.rand_time(self.computation, self.cp_dynamics)
 
     def _test_one_batch(self, model, data, target, loss_func):
         """
