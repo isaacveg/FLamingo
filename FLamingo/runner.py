@@ -139,6 +139,7 @@ class Runner(object):
             else:
                 print(f"Output directory is saved at {run_dir}")
         except Exception as e:
+            print("An error occurred while running the command:")
             print(e)
             self.terminate()
             self.last_run_success = False

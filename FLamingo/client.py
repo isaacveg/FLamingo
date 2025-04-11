@@ -16,12 +16,12 @@ sys.path.append("../../..")
 
 import torch
 
-from FLamingo.core.utils.args_utils import get_args
-from FLamingo.core.utils.data_utils import ClientDataset
-from FLamingo.core.utils.model_utils import create_model_instance
-from FLamingo.core.utils.train_test_utils import infinite_dataloader
-from FLamingo.core.utils.chores import log, merge_several_dicts, create_logger, create_recorder
-from FLamingo.core.network import NetworkHandler
+from .utils.args_utils import get_args
+from .utils.data_utils import ClientDataset
+from .utils.model_utils import create_model_instance
+from .utils.train_test_utils import infinite_dataloader
+from .utils.chores import log, merge_several_dicts, create_logger, create_recorder
+from .network import NetworkHandler
 
 
 class Client():
