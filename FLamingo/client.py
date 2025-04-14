@@ -78,7 +78,7 @@ class Client():
         client_logs_path = os.path.join(self.run_dir, 'client_logs')
         if os.path.exists(client_logs_path) == False:
             os.makedirs(client_logs_path, exist_ok=True)
-
+        self.logger = create_logger(os.path.join(client_logs_path, f'client_{self.rank}.log'))
         self.init()
 
         # If user didn't init model, network, optimizer, loss_func, lr_scheduler,
@@ -106,7 +106,6 @@ class Client():
         #     self.loss_func = torch.nn.CrossEntropyLoss()
         ## ===================>
 
-        self.logger = create_logger(os.path.join(client_logs_path, f'client_{self.rank}.log'))
         if self.USE_SIM_SYSHET:
             assert self.sys_het_list is not None, "sys_het_list is not given"
             self.log("Using simulated system heterogeneity.")
@@ -203,7 +202,7 @@ class Client():
         model_params = self.export_model_parameter(model=model)
         para_nums = model_params.nelement()
         model_size = para_nums * 4 / 1024 / 1024
-        self.log(f"Model type:{self.model_type} \nModel size: {model_size} MB\nParameters: {para_nums}\nwidth: {self.width}\n{self.model}")
+        self.log(f"Model type:{self.model_type} \nModel size: {model_size} MB\nParameters: {para_nums}\n{model}")
 
     def train(self, model, dataloader, local_epoch, loss_func, optimizer, scheduler=None):
         """

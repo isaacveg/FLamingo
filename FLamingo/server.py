@@ -106,7 +106,9 @@ class Server():
             # if value is not None:
             setattr(self, key, value)
         self.args = args
-
+        
+        self.logger = create_logger(os.path.join(self.run_dir, 'server.log'))
+        
         self.global_round = 0
         self.model_save_path = os.path.join(self.run_dir, "saved_models")  
 
@@ -140,8 +142,7 @@ class Server():
         # self.round_time_cost = 0.0
         self.total_time_cost = 0.0
         self.time_budget = []
-        
-        self.logger = create_logger(os.path.join(self.run_dir, 'server.log'))
+
         if hasattr(self, 'USE_TENSORBOARD'):
             if self.USE_TENSORBOARD:
                 self.recorder = create_recorder(f'{self.run_dir}/event_log/{self.rank}/')
@@ -256,7 +257,7 @@ class Server():
         model_params = self.export_model_parameter(model=model)
         para_nums = model_params.nelement()
         model_size = para_nums * 4 / 1024 / 1024
-        self.log(f"Model type:{self.model_type} \nModel size: {model_size} MB\nParameters: {para_nums}\n{self.model}")
+        self.log(f"Model type:{self.model_type} \nModel size: {model_size} MB\nParameters: {para_nums}\n{model}")
 
     def init_clients(self, clientObj=ClientInfo, ex_args=None):
         """
