@@ -1,98 +1,184 @@
-# FLamingo 
-A truly expansive and flexible MPI library for Federated Learning
+# FLamingo
 
-*Some codes directly from PFL-Non-IID and FedLab, truly inspiring*
+A comprehensive and flexible MPI-based library for Federated Learning research and development.
 
-### How to run?
-Suppose there are 30 clients in your cluster on cifar10 dataset. 
-0. Clone FLamingo
+*Inspired by and incorporating elements from PFL-Non-IID and FedLab*
+
+## Overview
+
+FLamingo is a Python library designed for researchers and practitioners working in Federated Learning (FL). It provides a flexible framework built on MPI for efficient communication in distributed environments, allowing users to easily implement and experiment with various FL algorithms, client-server architectures, and data distributions.
+
+## Project Structure
+
+```
+/
+├── FLamingo/           # Core library (client, server, network, utils)
+├── datasets/           # Dataset generation scripts and utilities
+│   └── leaf_data/      # Special handling for LEAF benchmark datasets
+├── models/             # Common ML model implementations
+├── templates/          # Templates for creating new FL methods
+├── analysis_tools/     # Tools for analyzing experiment results
+├── config/             # Configuration files
+└── docs/               # Documentation
+```
+
+## Features
+
+- **MPI-based Communication**: Efficient message passing between server and clients
+- **Flexible Architecture**: Customize clients, servers, models, and dataset partitioning
+- **Rich Model Zoo**: Ready-to-use implementations of common deep learning models
+- **Dataset Management**: Tools to generate and partition standard FL benchmark datasets
+- **Extensible Templates**: Easily create your own FL algorithms with provided templates
+- **Analysis Utilities**: Visualize and analyze experiment results
+
+## Installation
+
+### Option 1: Clone and Use Directly
+
 ```bash
 git clone https://github.com/isaacveg/FLamingo.git
 ```
-If you want to install it, do the followings, or just add the FLamingo to your system path
+
+Then add the FLamingo directory to your Python path:
+
 ```python
-# In your python file
+# In your Python file
 import sys
-sys.path.append(YOUR_PATH_TO_FLAMINGO)
-import FLamingo
-```
-Or install it (Optional)
-```bash
-cd FLamingo
-pip install .
+sys.path.append('/path/to/FLamingo')  # Replace with your actual path
 ```
 
-1. Generate dataset for each client
-Use FLamingo_datasets to generate dataset splits [FLamingo_datasets](github.com/isaacveg/FLamingo_datasets)
+### Option 2: Install as a Package
+
+```bash
+git clone https://github.com/isaacveg/FLamingo.git
+cd FLamingo
+pip install -e .  # Install in development mode
+# OR
+pip install .     # Standard installation
+```
+
+## Getting Started
+
+### 1. Generate Dataset Partitions
+
+FLamingo supports creating partitioned datasets for FL experiments in various distributions (IID, non-IID).
+
+#### Using FLamingo_datasets (Recommended)
+
 ```bash
 git clone https://github.com/isaacveg/FLamingo_datasets.git
 cd FLamingo_datasets
+
+# Example: Generate CIFAR-10 with 30 clients using IID distribution
 python gen_cifar10.py --nc 30 --dist iid --seed 2024 --indir ../datasets/ --outdir ../datasets/
+
+# For non-IID Dirichlet distribution
+python gen_cifar10.py --nc 30 --dist dir --alpha 0.1 --seed 2024 --indir ../datasets/ --outdir ../datasets/
 ```
-Generate cifar10 with iid data, change pat to dir to use Dirichlet distribution. More specific usages please check [FLamingo_datasets](github.com/isaacveg/FLamingo_datasets)
 
-> This part is inheritated from Tsingz0/PFL-non-IID
-> Leaf dataset is directly from Leaf and FedLab
+The generated dataset will be stored in `datasets/cifar10/` with:
+- `train/` and `test/` directories containing `.npz` files for each client
+- `config.json` with metadata
+- `0.npz` containing the full dataset (for convenience)
 
-Then it'll be stored in `datasets/cifar10`, with train \test to use. Also storing meta data in json file. 0.npz is the shard containing all the data which is easy to use.
+#### LEAF Datasets
 
+For LEAF benchmark datasets (FEMNIST, Shakespeare, etc.):
 
-> If you need Leaf dataset, first download and generate according to official guidance and use `datasets/leaf_data/gen_pickle_dataset.sh`. Then you can use gen_femnist.py or gen_shakespeare.py
+1. Download and preprocess the dataset following the official LEAF guidance
+2. Use the script in FLamingo to convert to the required format:
+   ```bash
+   cd datasets/leaf_data
+   ./gen_pickle_dataset.sh
+   ```
+3. Then use the appropriate generator script (e.g., `gen_femnist.py` or `gen_shakespeare.py`)
 
-2. Write configs in `config.yaml` and run. The main.py should contains process management.
-```shell
+### 2. Running Experiments
+
+#### Option 1: Using a Configuration File (Recommended)
+
+Create a `config.yaml` file with your experiment parameters and use a main script to manage the process:
+
+```bash
 python main.py
 ```
-- or Use mpiexec to run on your own. 
-```shell
-mpiexec --oversubscribe -n 1 python core/server/base_server.py : -n 30 python core/client/base_client.py > run.log > 2 >&1
+
+#### Option 2: Using MPI Directly
+
+```bash
+mpiexec --oversubscribe -n 1 python path/to/server.py : -n 30 python path/to/client.py > run.log 2>&1
 ```
 
-3. Check examples
-Use [FLamingo_examples](github.com/isaacveg/FLamingo_examples) and there are some of examples available.
+### 3. Example Projects
 
-### How to add my own client, server, model or datasets?
-You can use `python -c "from FLamingo.templates import generate;generate('./YOUR_METHOD_NAME')" ` to generate a template for your own method. Then you can modify it and run it.
+Check out [FLamingo_examples](https://github.com/isaacveg/FLamingo_examples) for ready-to-use example implementations.
 
-The archecture is shown below.
+## Creating Your Own FL Methods
 
-- server.py implements `Server`, must have `run()`;    
-- server.py implments `ClientInfo`, should be passed to Server to record client infomation on server;   
-- client.py implements `Client`, must have `run()`, and other things you need;
+FLamingo makes it easy to implement custom FL algorithms:
 
-Server and `Client` use `ClientDataset` to get dataset by its rank. So clients rank are normally started from 1 and server has MASTER_RANK 0. After round you can use `finalize_round()` on client to do some rountine job or `stop_all` on server to stop all.
+1. Copy a template from the `templates/` directory and rename it to your project name.
+   - For example, copy `templates/template/` to `my_fl_method/`.
 
-Server use `broadcast` and `listen` to send and collect
+```bash
+cp -r templates/template/ my_fl_method/
+```
 
-Feel freeeee to use code already written.
+2. This creates a directory with template files:
+   - `server.py`: Implement a `Server` class with a `run()` method
+   - `client.py`: Implement a `Client` class with a `run()` method
+   - `network.py`: Configure communication protocols
+   - `main.py`: Entry point for your experiment
+   - `config.yaml`: Configuration parameters
 
-To communicate, you can use `network.send()` or `network.get()` and pass in rank of process you want to communicate. Or just implement your own communication method.
+## Models
 
+The `models/` directory contains implementations of common deep learning architectures:
+- AlexNet
+- VGG (various depths)
+- ResNet (various depths)
+- CNN
+- DNN
+- RNN
+- MobileNet
+- Linear Regression
+- Encoder-Decoder architectures
 
-### Hyperparams
-Bellow are some hyperparams you can refer to.
+Import and modify these models as needed for your experiments.
 
+## Hyperparameter Reference
 
-| dataset/model         | test_acc | lr/min_lr | decay_rate | local_iteration | batch_size | epoch | momentum | weight_decay |
-| --------------------- | -------- | --------- | ---------- | --------------- | ---------- | ----- | -------- | ------------ |
-| CIFAR10/AlextNet      | 0.8      | 0.1/0.001 | 0.993      | 50              | 32         | 500   | -1       | 0.00         |
-| CIFAR10/VGG9          | 0.85     | 0.1/0.001 | 0.993      | 50              | 32         | 500   | -1       | 0.00         |
-| EMNIST/CNN            | 0.85     | 0.1/0.001 | 0.98       | 30              | 32         | 200   | -1       | 0.00         |
-| EMINST/?              |          |           |            |                 |            |       |          |              |
-| CIFAR100/ResNet9      | 0.55     | 0.1/0.001 | 0.99       | 30              | 32         | 500   | 0.9      | 0.001        |
-| CIFAR100/VGG16        |          |           |            |                 |            |       |          |              |
-| tinyImageNet/ResNet50 |          |           |            |                 |            |       |          |              |
-| tinyImageNet/?        |          |           |            |                 |            |       |          |              |
-| IMAGE100/AlexNet      | 0.54     | 0.1/0.001 | 0.99       | 50              | 64         | 120   | -1       | 0.00         |
-| IMAGE100/VGG16        | 0.65     | 0.1/0.001 | 0.993      | 50              | 64         | 250   | -1       | 0.00         |
-| SVHN/?                |          |           |            |                 |            |       |          |              |
+Please refer to `docs/hyperparameters.md` for a detailed list of tested hyperparameters used in FLamingo.
 
+## Contribution
 
-### Results
-| Dataset | Method | Accuracy | Accuracy (std) | Accuracy (min) | Accuracy (max) |
-| ------- | ------ | -------- | -------------- | -------------- | -------------- |
+Contributions are welcome! Please feel free to:
+- Submit issues for bugs or feature requests
+- Create pull requests with improvements
+- Share your implementation of FL algorithms using FLamingo
 
+## License
 
+FLamingo is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-### Contribute
-Issue anything or pull request.
+## Citation
+
+If you use FLamingo in your research, please cite:
+
+```
+@misc{FLamingo2023,
+    author = {Isaac Zhu and contributors},
+    title = {FLamingo: A Flexible MPI-based Library for Federated Learning},
+    year = {2023},
+    howpublished = {\url{https://github.com/isaacveg/FLamingo}},
+    note = {Accessed: [Insert date of access]}
+}
+```
+
+## Acknowledgments
+
+FLamingo incorporates and builds upon code from:
+- [PFL-Non-IID](https://github.com/Tsingz0/PFL-Non-IID)
+- [FedLab](https://github.com/SMILELab-FL/FedLab)
+
+We also thank the LEAF project for benchmark datasets.

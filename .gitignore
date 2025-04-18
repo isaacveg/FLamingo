@@ -1,5 +1,5 @@
 _deprecated/
-**/__pycache__/
+**__pycache__/
 *.npz
 datasets/**/train/
 datasets/**/test/
@@ -11,5 +11,4 @@ analysis_tools/**/
 dist/
 *.egg-info/
 build/
-.github/
 
