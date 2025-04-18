@@ -7,8 +7,8 @@ sys.path.append(".")
 sys.path.append("..") # Adds higher directory to python modules path.
 sys.path.append('../FLamingo/')
 # Now import FLamingo
-from FLamingo.core.server import *
-from _template_network import MyNetworkHandler
+from FLamingo.server import *
+from template_network import MyNetworkHandler
 
 
 class YourClientInfo(ClientInfo):

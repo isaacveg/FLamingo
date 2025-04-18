@@ -1,7 +1,7 @@
 import sys
 sys.path.append('../FLamingo/')
 
-from FLamingo.core.runner import Runner
+from FLamingo.runner import Runner
 
 if __name__ == "__main__":
     # init Runner

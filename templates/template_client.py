@@ -14,7 +14,7 @@ sys.path.append("..") # Adds higher directory to python modules path.
 sys.path.append('../FLamingo/')
 
 # Now import FLamingo
-from FLamingo.core.client import *
+from FLamingo.client import *
 
 
 class YourClient(Client):
@@ -26,7 +26,6 @@ class YourClient(Client):
         Init model and network to enable customize these parts.   
         """
         self.network = NetworkHandler()
-        self.model = 
         self.model = self.model.to(self.device)
         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
         self.lr_scheduler = torch.optim.lr_scheduler.ExponentialLR(self.optimizer, gamma=0.993)

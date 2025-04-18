@@ -1,4 +1,4 @@
-from FLamingo.core.network import *
+from FLamingo.network import *
 
 
 class MyNetworkHandler(NetworkHandler):

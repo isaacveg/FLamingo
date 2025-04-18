@@ -1,13 +1,13 @@
 ## Runner settings
 CREATE_SUBDIR_PER_RUN: True  # create a subdirectory for each run
-USE_TENSORBOARD: False
-USE_SIM_SYSHET: False
-sys_het_list:             # randomly sample time within normal distribution with mean and variance
+USE_TENSORBOARD: False  # use tensorboard to record
+USE_SIM_SYSHET: False # use simulated system heterogeneity
+sys_het_list:     # randomly sample time within normal distribution with mean and variance
   - computation: 10.0      # Long computation and communication time, low dynamic
     communication: 10.0
     cm_dynamics: 2.0
     cp_dynamics: 2.0
-  - computation: 7.0      # Short computation and communication time, high dynamic
+  - computation: 7.0      # Medium computation and communication time, low dynamic
     communication: 7.0
     cp_dynamics: 1.0
     cp_dynamics: 1.0
@@ -15,7 +15,7 @@ sys_het_list:             # randomly sample time within normal distribution with
     communication: 5.0
     cm_dynamics: 1.5
     cp_dynamics: 1.5
-  - computation: 1.0      # Long computation and communication time, high dynamic
+  - computation: 1.0      # Long computation and communication time, low dynamic
     communication: 1.0
     cm_dynamics: 0.5
     cp_dynamics: 0.5
@@ -29,9 +29,10 @@ work_dir: './runs/cifar10/'  # working directory
 
 ## Training settings
 seed: 2024  # random seed
-batch_size: 64  # batch size
+batch_size: 32  # batch size
 test_batch_size: 64  # test batch size
 lr: 0.1  # learning rate
+lr_decay: 0.993 # learning rate decay
 weight_decay: 0.0001  # weight decay
 max_epochs: 500  # epoch
 dropout: 0.5  # dropout rate

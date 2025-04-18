@@ -163,7 +163,7 @@ class Client():
             self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr, momentum=self.momentum)
         else:
             self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
-        self.lr_scheduler = torch.optim.lr_scheduler.ExponentialLR(self.optimizer, gamma=0.993)
+        self.lr_scheduler = torch.optim.lr_scheduler.ExponentialLR(self.optimizer, gamma=self.lr_decay)
         self.loss_func = torch.nn.CrossEntropyLoss()
 
     def save_model(self, model, epoch):
