@@ -159,7 +159,7 @@ Contributions are welcome! Please feel free to:
 
 ## License
 
-FLamingo is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+FLamingo is licensed under the Apache License. See the [LICENSE](LICENSE) file for details.
 
 ## Citation
 
