@@ -13,6 +13,7 @@ sys.path.append("..")
 sys.path.append("../..")
 sys.path.append("../../..")
 
+from .base import FLamingoBase
 from .utils.args_utils import get_args
 from .utils.data_utils import ClientDataset
 from .utils.model_utils import create_model_instance
@@ -63,53 +64,41 @@ class ClientInfo():
         self.round_time = self.train_time + 2*self.send_time
 
 
-class Server():
+class Server(FLamingoBase):
     # def __init__(self, args):
     def __init__(self):
         """
         The basic Federated Learning Server, includes basic operations
-        Args:
-            args: passed in through config file or other way
-        returns:
-            None
         """
-        args = get_args()
+        # args = get_args()
         
-        WORLD = MPI.COMM_WORLD
-        rank = WORLD.Get_rank()
-        size = WORLD.Get_size()   
-
-        self.comm_world = WORLD
-        self.rank = rank
-        self.size = size
-
-        if torch.cuda.is_available():
-            device_num = torch.cuda.device_count()
-            if device_num > 1:
-                print(f"Warning, multiple GPUs detected, this could probably cause problems. \
-                      They will all work on first GPU if not specified in advance as it may be unable to set GPU after importing torch. \n \
-                      Please use 'os.environ' to set 'CUDA_VISIBLE_DEVICES' before using FLamingo. \n \
-                      For example, 'os.environ['CUDA_VISIBLE_DEVICES'] = '0', then import FLamingo.")
-            self.device = torch.device("cuda")
-        else:
-            self.device = torch.device("cpu")
+        # WORLD = MPI.COMM_WORLD
+        # rank = WORLD.Get_rank()
+        # size = WORLD.Get_size()   
+        # Initialize the base class
+        # super().__init__(rank=rank, seed=args.seed)
+        super().__init__()
+        args = self.args
+        # self.comm_world = WORLD
+        # # self.rank = rank
+        # self.size = size
     
         random.seed(args.seed)
         torch.manual_seed(args.seed)
         np.random.seed(args.seed)
-        self.MASTER_RANK = 0
+        # self.MASTER_RANK = 0
         self.status = "TRAINING"
         
         # Copy some info from args
-        self.args = args
-        for key, value in vars(args).items():
-            # if value is not None:
-            setattr(self, key, value)
-        self.args = args
+        # self.args = args
+        # args = self.args
+        # for key, value in vars(args).items():
+        #     setattr(self, key, value)
+        # self.args = args
         
         self.logger = create_logger(os.path.join(self.run_dir, 'server.log'))
         
-        self.global_round = 0
+        # self.global_round = 0
         self.model_save_path = os.path.join(self.run_dir, "saved_models")  
 
         if os.path.exists(self.run_dir) == False:
@@ -121,43 +110,27 @@ class Server():
         self.buffer = []
 
         self.init()
-        # If user didn't init model, network, optimizer, loss_func, lr_scheduler, do it here
-        # Don't force user to init them in init() function
-        # =================>
-        # if not hasattr(self, 'network'):
-        #     self.network = NetworkHandler()
-        # if not hasattr(self, 'model'):
-        #     self.model = create_model_instance(self.model_type, self.dataset_type)
-        #     self.model = self.model.to(self.device)
-        # if not hasattr(self, 'optimizer'):
-        #     if hasattr(self, 'momentum') and self.args.momentum is not None:
-        #         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr, momentum=self.momentum)
-        #     else:
-        #         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
-        # if not hasattr(self, 'loss_func'):
-        #     self.loss_func = torch.nn.CrossEntropyLoss()
-        # ==================>
         
+        # Server specific
         self.round_start_time = time.time()
         # self.round_time_cost = 0.0
         self.total_time_cost = 0.0
         self.time_budget = []
 
-        if hasattr(self, 'USE_TENSORBOARD'):
-            if self.USE_TENSORBOARD:
-                self.recorder = create_recorder(f'{self.run_dir}/event_log/{self.rank}/')
+        # if hasattr(self, 'USE_TENSORBOARD'):
+        if self.USE_TENSORBOARD:
+            self.recorder = create_recorder(f'{self.run_dir}/event_log/{self.rank}/')
         else:
             self.USE_TENSORBOARD = False
-        # self.print_model_info()
 
-    def log(self, info_str):
-        """
-        Print info string with time and rank
-        """
-        # Printed log won't used here anymore. 
-        # If you want it, you need to DIY
-        # log(self.rank, self.global_round, info_str)
-        self.logger.info(info_str)
+    # def log(self, info_str):
+    #     """
+    #     Print info string with time and rank
+    #     """
+    #     # Printed log won't used here anymore. 
+    #     # If you want it, you need to DIY
+    #     # log(self.rank, self.global_round, info_str)
+    #     self.logger.info(info_str)
             
     def quick_rec_dict(self, dict):
         """Quickly write key-value in dict to self.recorder(SummaryWriter)
@@ -167,16 +140,16 @@ class Server():
             for key, value in dict.items():
                 self.recorder.add_scalar(key, value, self.global_round)
 
-    def save_model(self, model, epoch):
-        if not os.path.exists(self.model_save_path):
-            os.makedirs(self.model_save_path)
-        model_path = os.path.join(self.model_save_path, f'model_{self.rank}.pth')
-        torch.save(model.state_dict(), model_path)
+    # def save_model(self, model, epoch):
+    #     if not os.path.exists(self.model_save_path):
+    #         os.makedirs(self.model_save_path)
+    #     model_path = os.path.join(self.model_save_path, f'model_{self.rank}.pth')
+    #     torch.save(model.state_dict(), model_path)
 
-    def load_model(self, model, epoch):
-        model_path = os.path.join(self.model_save_path, f'model_{self.rank}.pth')
-        assert os.path.exists(model_path), f"model for Server {self.rank} does not exist"
-        model.load_state_dict(torch.load(model_path))
+    # def load_model(self, model, epoch):
+    #     model_path = os.path.join(self.model_save_path, f'model_{self.rank}.pth')
+    #     assert os.path.exists(model_path), f"model for Server {self.rank} does not exist"
+    #     model.load_state_dict(torch.load(model_path))
         
     def get_clients_attr_tolist(self, attr_name, clients_list=None):
         """
@@ -232,32 +205,32 @@ class Server():
         self.lr_scheduler = torch.optim.lr_scheduler.ExponentialLR(self.optimizer, gamma=0.993)
         self.loss_func = torch.nn.CrossEntropyLoss()
 
-    def set_model_parameter(self, params, model=None):
-        """
-        Set model parameters. Default self.model
-        """
-        model = self.model if model is None else model
-        torch.nn.utils.vector_to_parameters(params, model.parameters())
+    # def set_model_parameter(self, params, model=None):
+    #     """
+    #     Set model parameters. Default self.model
+    #     """
+    #     model = self.model if model is None else model
+    #     torch.nn.utils.vector_to_parameters(params, model.parameters())
 
-    def export_model_parameter(self, model=None):
-        """
-        Export self.model.parameters() to a vector
-        """
-        model = self.model if model is None else model
-        return torch.nn.utils.parameters_to_vector(model.parameters()).clone().detach()
+    # def export_model_parameter(self, model=None):
+    #     """
+    #     Export self.model.parameters() to a vector
+    #     """
+    #     model = self.model if model is None else model
+    #     return torch.nn.utils.parameters_to_vector(model.parameters()).clone().detach()
 
-    def print_model_info(self, model=None):
-        """
-        Print model related info.
-        By default, it will log: model type, model size(MB), number of parameters.
-        Args:
-            model: model to print, default self.model
-        """
-        model = self.model if model is None else model
-        model_params = self.export_model_parameter(model=model)
-        para_nums = model_params.nelement()
-        model_size = para_nums * 4 / 1024 / 1024
-        self.log(f"Model type:{self.model_type} \nModel size: {model_size} MB\nParameters: {para_nums}\n{model}")
+    # def print_model_info(self, model=None):
+    #     """
+    #     Print model related info.
+    #     By default, it will log: model type, model size(MB), number of parameters.
+    #     Args:
+    #         model: model to print, default self.model
+    #     """
+    #     model = self.model if model is None else model
+    #     model_params = self.export_model_parameter(model=model)
+    #     para_nums = model_params.nelement()
+    #     model_size = para_nums * 4 / 1024 / 1024
+    #     self.log(f"Model type:{self.model_type} \nModel size: {model_size} MB\nParameters: {para_nums}\n{model}")
 
     def init_clients(self, clientObj=ClientInfo, ex_args=None):
         """
@@ -283,13 +256,13 @@ class Server():
             self.all_clients = [clientObj(rank, *ex_args) for rank in range(1, self.num_clients+1)]
         self.all_clients_idxes = [i for i in range(1, self.num_clients+1)]
     
-    def random_wait(self):
-        """
-        Random wait for a random time.
-        Args:
-            max: max time to wait, default 0.1
-        """
-        time.sleep(self.random_wait_max * np.abs(np.random.rand()))
+    # def random_wait(self):
+    #     """
+    #     Random wait for a random time.
+    #     Args:
+    #         max: max time to wait, default 0.1
+    #     """
+    #     time.sleep(self.random_wait_max * np.abs(np.random.rand()))
 
     def stop_all(self):
         """
@@ -356,65 +329,65 @@ class Server():
         """
         return [self.get_client_by_rank(rank, client_list) for rank in rank_list]
 
-    def train(self, model, dataloader, local_epoch, loss_func, optimizer, scheduler=None):
-        """
-        Train given dataset on given dataloader.
-        Args:
-            model: model to be trained
-            dataloader: dataloader for the dataset
-            local_epoch: number of local epochs
-            loss_func: loss function
-            optimizer: optimizer
-            scheduler: default None, learning rate scheduler, lr will be consistent if not given
-        Return:
-            dict: train_loss and train_samples
-        """
-        model.train()
-        epoch_loss, num_samples = 0.0, 0
-        for ep in range(local_epoch):
-            for batch_idx, (data, target) in enumerate(dataloader):
-                data, target = data.to(self.device), target.to(self.device)
-                optimizer.zero_grad()  
-                output = model(data)
-                loss = loss_func(output, target)
-                loss.backward()  
-                optimizer.step() 
-                batch_num_samples = len(target)
-                epoch_loss += loss.item() * batch_num_samples  
-                num_samples += batch_num_samples
-            if scheduler is not None:
-                scheduler.step()  # 更新学习率
-        return {'train_loss': epoch_loss/num_samples, 'train_samples': num_samples}
+    # def train(self, model, dataloader, local_epoch, loss_func, optimizer, scheduler=None):
+    #     """
+    #     Train given dataset on given dataloader.
+    #     Args:
+    #         model: model to be trained
+    #         dataloader: dataloader for the dataset
+    #         local_epoch: number of local epochs
+    #         loss_func: loss function
+    #         optimizer: optimizer
+    #         scheduler: default None, learning rate scheduler, lr will be consistent if not given
+    #     Return:
+    #         dict: train_loss and train_samples
+    #     """
+    #     model.train()
+    #     epoch_loss, num_samples = 0.0, 0
+    #     for ep in range(local_epoch):
+    #         for batch_idx, (data, target) in enumerate(dataloader):
+    #             data, target = data.to(self.device), target.to(self.device)
+    #             optimizer.zero_grad()  
+    #             output = model(data)
+    #             loss = loss_func(output, target)
+    #             loss.backward()  
+    #             optimizer.step() 
+    #             batch_num_samples = len(target)
+    #             epoch_loss += loss.item() * batch_num_samples  
+    #             num_samples += batch_num_samples
+    #         if scheduler is not None:
+    #             scheduler.step()  # 更新学习率
+    #     return {'train_loss': epoch_loss/num_samples, 'train_samples': num_samples}
 
-    def test(self, model, dataloader, loss_func=None, device=None):
-        """
-        Test dataset on given dataloader.
-        Args:
-            model (nn.Module): Model to be tested.
-            dataloader (DataLoader): DataLoader for the test dataset.
-            loss_func (nn.Module, optional): Loss function to be used for testing. Defaults to None.
-            device (torch.device, optional): Device to be used for testing. Defaults to None.
-        Returns:
-            dict: Dictionary containing test_loss, test_acc and test_samples.
-        """
-        loss_func = loss_func or self.loss_func
-        device = device or self.device
-        model.eval()
-        test_loss = 0.0
-        correct = 0
-        num_samples = 0
-        with torch.no_grad():
-            for data, target in dataloader:
-                data, target = data.to(device), target.to(device)
-                output = model(data)
-                test_loss += loss_func(output, target).item()
-                pred = output.argmax(dim=1, keepdim=True)
-                correct += pred.eq(target.view_as(pred)).sum().item()
-                num_samples += len(target)
-        test_loss /= num_samples
-        accuracy = 100. * correct / num_samples
-        # self.log(f'Test set: Average loss: {test_loss:.4f}, Accuracy: {correct}/{num_samples} ({accuracy:.0f}%)')
-        return {'test_loss': test_loss, 'test_acc': accuracy,'test_samples':num_samples}
+    # def test(self, model, dataloader, loss_func=None, device=None):
+    #     """
+    #     Test dataset on given dataloader.
+    #     Args:
+    #         model (nn.Module): Model to be tested.
+    #         dataloader (DataLoader): DataLoader for the test dataset.
+    #         loss_func (nn.Module, optional): Loss function to be used for testing. Defaults to None.
+    #         device (torch.device, optional): Device to be used for testing. Defaults to None.
+    #     Returns:
+    #         dict: Dictionary containing test_loss, test_acc and test_samples.
+    #     """
+    #     loss_func = loss_func or self.loss_func
+    #     device = device or self.device
+    #     model.eval()
+    #     test_loss = 0.0
+    #     correct = 0
+    #     num_samples = 0
+    #     with torch.no_grad():
+    #         for data, target in dataloader:
+    #             data, target = data.to(device), target.to(device)
+    #             output = model(data)
+    #             test_loss += loss_func(output, target).item()
+    #             pred = output.argmax(dim=1, keepdim=True)
+    #             correct += pred.eq(target.view_as(pred)).sum().item()
+    #             num_samples += len(target)
+    #     test_loss /= num_samples
+    #     accuracy = 100. * correct / num_samples
+    #     # self.log(f'Test set: Average loss: {test_loss:.4f}, Accuracy: {correct}/{num_samples} ({accuracy:.0f}%)')
+    #     return {'test_loss': test_loss, 'test_acc': accuracy,'test_samples':num_samples}
 
     def broadcast(self, data, dest_ranks=None, network=None):
         """
@@ -479,23 +452,23 @@ class Server():
                 network.send(send_dic, dest_rank=rank)
             if self.verb: self.log(f'Server personalized broadcast to {dest_rank} succeed')
 
-    def rand_time(self, loc, scale):
-        """
-        Generate a random time value within a given range. 
-        You can override this method to implement a custom time distribution.
-        For now, it generates a random value from a normal distribution with a mean of loc and a standard deviation of sqrt scale.
+    # def rand_time(self, loc, scale):
+    #     """
+    #     Generate a random time value within a given range. 
+    #     You can override this method to implement a custom time distribution.
+    #     For now, it generates a random value from a normal distribution with a mean of loc and a standard deviation of sqrt scale.
 
-        Parameters:
-            loc (float): The mean value of the normal distribution.
-            scale (float): The standard deviation of the normal distribution.
+    #     Parameters:
+    #         loc (float): The mean value of the normal distribution.
+    #         scale (float): The standard deviation of the normal distribution.
 
-        Returns:
-            float: A random time value within the range of 0.1 to 1.0.
-        """
-        randed = np.random.normal(loc=loc, scale=np.sqrt(scale))
-        while randed > 10 or randed < 1:
-            randed = np.random.normal(loc=loc, scale=np.sqrt(scale))
-        return randed / 10
+    #     Returns:
+    #         float: A random time value within the range of 0.1 to 1.0.
+    #     """
+    #     randed = np.random.normal(loc=loc, scale=np.sqrt(scale))
+    #     while randed > 10 or randed < 1:
+    #         randed = np.random.normal(loc=loc, scale=np.sqrt(scale))
+    #     return randed / 10
 
     def listen(self, src_ranks=None, network=None):
         """
@@ -656,51 +629,51 @@ class Server():
         del client_set, testloader
         return test_loss, test_acc, test_num
     
-    def _train_one_batch(self, model, data, target, optimizer, loss_func):
-        """
-        Trains the model on a single batch of data. 
-        Parameters:
-        - model (nn.Module): The model to be trained.
-        - data (torch.Tensor): The input data for the model.
-        - target (torch.Tensor): The target values for the model.
-        - optimizer (torch.optim.Optimizer): The optimizer used to update the model parameters.
-        - loss_func (callable): The loss function used to compute the loss between the model output and the target.
+    # def _train_one_batch(self, model, data, target, optimizer, loss_func):
+    #     """
+    #     Trains the model on a single batch of data. 
+    #     Parameters:
+    #     - model (nn.Module): The model to be trained.
+    #     - data (torch.Tensor): The input data for the model.
+    #     - target (torch.Tensor): The target values for the model.
+    #     - optimizer (torch.optim.Optimizer): The optimizer used to update the model parameters.
+    #     - loss_func (callable): The loss function used to compute the loss between the model output and the target.
 
-        Returns:
-        - batch_size (int): The size of the target tensor.
-        - loss (float): The computed loss value.
-        """
-        model.train()
-        # model = model.to(self.device)
-        data, target = data.to(self.device), target.to(self.device)
-        optimizer.zero_grad()
-        output = model(data)
-        loss = loss_func(output, target)
-        loss.backward()
-        optimizer.step()
-        return len(target), loss.item()
+    #     Returns:
+    #     - batch_size (int): The size of the target tensor.
+    #     - loss (float): The computed loss value.
+    #     """
+    #     model.train()
+    #     # model = model.to(self.device)
+    #     data, target = data.to(self.device), target.to(self.device)
+    #     optimizer.zero_grad()
+    #     output = model(data)
+    #     loss = loss_func(output, target)
+    #     loss.backward()
+    #     optimizer.step()
+    #     return len(target), loss.item()
 
-    def _test_one_batch(self, model, data, target, loss_func):
-        """
-        Test one batch.
-        Args:
-            model: model to test
-            data: data to test
-            target: target to test
-            loss_func: loss function
-        Returns:
-            num: number of samples
-            correct: number of correct samples
-            loss: loss of this batch
-        """
-        model.eval()
-        output = model(data)
-        loss = loss_func(output, target)
-        _, pred = torch.max(output, 1)
-        # Check test accuracy
-        correct = (pred == target).sum().item()
-        num = data.size(0)
-        return num, correct, loss.item()
+    # def _test_one_batch(self, model, data, target, loss_func):
+    #     """
+    #     Test one batch.
+    #     Args:
+    #         model: model to test
+    #         data: data to test
+    #         target: target to test
+    #         loss_func: loss function
+    #     Returns:
+    #         num: number of samples
+    #         correct: number of correct samples
+    #         loss: loss of this batch
+    #     """
+    #     model.eval()
+    #     output = model(data)
+    #     loss = loss_func(output, target)
+    #     _, pred = torch.max(output, 1)
+    #     # Check test accuracy
+    #     correct = (pred == target).sum().item()
+    #     num = data.size(0)
+    #     return num, correct, loss.item()
 
     def finalize_round(self):
         """
