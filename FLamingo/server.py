@@ -70,31 +70,14 @@ class Server(FLamingoBase):
         """
         The basic Federated Learning Server, includes basic operations
         """
-        # args = get_args()
-        
-        # WORLD = MPI.COMM_WORLD
-        # rank = WORLD.Get_rank()
-        # size = WORLD.Get_size()   
-        # Initialize the base class
-        # super().__init__(rank=rank, seed=args.seed)
         super().__init__()
         args = self.args
-        # self.comm_world = WORLD
-        # # self.rank = rank
-        # self.size = size
     
         random.seed(args.seed)
         torch.manual_seed(args.seed)
         np.random.seed(args.seed)
         # self.MASTER_RANK = 0
         self.status = "TRAINING"
-        
-        # Copy some info from args
-        # self.args = args
-        # args = self.args
-        # for key, value in vars(args).items():
-        #     setattr(self, key, value)
-        # self.args = args
         
         self.logger = create_logger(os.path.join(self.run_dir, 'server.log'))
         
@@ -122,15 +105,6 @@ class Server(FLamingoBase):
             self.recorder = create_recorder(f'{self.run_dir}/event_log/{self.rank}/')
         else:
             self.USE_TENSORBOARD = False
-
-    # def log(self, info_str):
-    #     """
-    #     Print info string with time and rank
-    #     """
-    #     # Printed log won't used here anymore. 
-    #     # If you want it, you need to DIY
-    #     # log(self.rank, self.global_round, info_str)
-    #     self.logger.info(info_str)
             
     def quick_rec_dict(self, dict):
         """Quickly write key-value in dict to self.recorder(SummaryWriter)
@@ -140,17 +114,6 @@ class Server(FLamingoBase):
             for key, value in dict.items():
                 self.recorder.add_scalar(key, value, self.global_round)
 
-    # def save_model(self, model, epoch):
-    #     if not os.path.exists(self.model_save_path):
-    #         os.makedirs(self.model_save_path)
-    #     model_path = os.path.join(self.model_save_path, f'model_{self.rank}.pth')
-    #     torch.save(model.state_dict(), model_path)
-
-    # def load_model(self, model, epoch):
-    #     model_path = os.path.join(self.model_save_path, f'model_{self.rank}.pth')
-    #     assert os.path.exists(model_path), f"model for Server {self.rank} does not exist"
-    #     model.load_state_dict(torch.load(model_path))
-        
     def get_clients_attr_tolist(self, attr_name, clients_list=None):
         """
         Get a list of attribute values from a list of clients indexes.
@@ -205,33 +168,6 @@ class Server(FLamingoBase):
         self.lr_scheduler = torch.optim.lr_scheduler.ExponentialLR(self.optimizer, gamma=0.993)
         self.loss_func = torch.nn.CrossEntropyLoss()
 
-    # def set_model_parameter(self, params, model=None):
-    #     """
-    #     Set model parameters. Default self.model
-    #     """
-    #     model = self.model if model is None else model
-    #     torch.nn.utils.vector_to_parameters(params, model.parameters())
-
-    # def export_model_parameter(self, model=None):
-    #     """
-    #     Export self.model.parameters() to a vector
-    #     """
-    #     model = self.model if model is None else model
-    #     return torch.nn.utils.parameters_to_vector(model.parameters()).clone().detach()
-
-    # def print_model_info(self, model=None):
-    #     """
-    #     Print model related info.
-    #     By default, it will log: model type, model size(MB), number of parameters.
-    #     Args:
-    #         model: model to print, default self.model
-    #     """
-    #     model = self.model if model is None else model
-    #     model_params = self.export_model_parameter(model=model)
-    #     para_nums = model_params.nelement()
-    #     model_size = para_nums * 4 / 1024 / 1024
-    #     self.log(f"Model type:{self.model_type} \nModel size: {model_size} MB\nParameters: {para_nums}\n{model}")
-
     def init_clients(self, clientObj=ClientInfo, ex_args=None):
         """
         Init clients list on server, clients list must be a class.
@@ -255,14 +191,6 @@ class Server(FLamingoBase):
         else:
             self.all_clients = [clientObj(rank, *ex_args) for rank in range(1, self.num_clients+1)]
         self.all_clients_idxes = [i for i in range(1, self.num_clients+1)]
-    
-    # def random_wait(self):
-    #     """
-    #     Random wait for a random time.
-    #     Args:
-    #         max: max time to wait, default 0.1
-    #     """
-    #     time.sleep(self.random_wait_max * np.abs(np.random.rand()))
 
     def stop_all(self):
         """
@@ -329,66 +257,6 @@ class Server(FLamingoBase):
         """
         return [self.get_client_by_rank(rank, client_list) for rank in rank_list]
 
-    # def train(self, model, dataloader, local_epoch, loss_func, optimizer, scheduler=None):
-    #     """
-    #     Train given dataset on given dataloader.
-    #     Args:
-    #         model: model to be trained
-    #         dataloader: dataloader for the dataset
-    #         local_epoch: number of local epochs
-    #         loss_func: loss function
-    #         optimizer: optimizer
-    #         scheduler: default None, learning rate scheduler, lr will be consistent if not given
-    #     Return:
-    #         dict: train_loss and train_samples
-    #     """
-    #     model.train()
-    #     epoch_loss, num_samples = 0.0, 0
-    #     for ep in range(local_epoch):
-    #         for batch_idx, (data, target) in enumerate(dataloader):
-    #             data, target = data.to(self.device), target.to(self.device)
-    #             optimizer.zero_grad()  
-    #             output = model(data)
-    #             loss = loss_func(output, target)
-    #             loss.backward()  
-    #             optimizer.step() 
-    #             batch_num_samples = len(target)
-    #             epoch_loss += loss.item() * batch_num_samples  
-    #             num_samples += batch_num_samples
-    #         if scheduler is not None:
-    #             scheduler.step()  # 更新学习率
-    #     return {'train_loss': epoch_loss/num_samples, 'train_samples': num_samples}
-
-    # def test(self, model, dataloader, loss_func=None, device=None):
-    #     """
-    #     Test dataset on given dataloader.
-    #     Args:
-    #         model (nn.Module): Model to be tested.
-    #         dataloader (DataLoader): DataLoader for the test dataset.
-    #         loss_func (nn.Module, optional): Loss function to be used for testing. Defaults to None.
-    #         device (torch.device, optional): Device to be used for testing. Defaults to None.
-    #     Returns:
-    #         dict: Dictionary containing test_loss, test_acc and test_samples.
-    #     """
-    #     loss_func = loss_func or self.loss_func
-    #     device = device or self.device
-    #     model.eval()
-    #     test_loss = 0.0
-    #     correct = 0
-    #     num_samples = 0
-    #     with torch.no_grad():
-    #         for data, target in dataloader:
-    #             data, target = data.to(device), target.to(device)
-    #             output = model(data)
-    #             test_loss += loss_func(output, target).item()
-    #             pred = output.argmax(dim=1, keepdim=True)
-    #             correct += pred.eq(target.view_as(pred)).sum().item()
-    #             num_samples += len(target)
-    #     test_loss /= num_samples
-    #     accuracy = 100. * correct / num_samples
-    #     # self.log(f'Test set: Average loss: {test_loss:.4f}, Accuracy: {correct}/{num_samples} ({accuracy:.0f}%)')
-    #     return {'test_loss': test_loss, 'test_acc': accuracy,'test_samples':num_samples}
-
     def broadcast(self, data, dest_ranks=None, network=None):
         """
         Broadcast data to dest_ranks(list: int).
@@ -451,24 +319,6 @@ class Server(FLamingoBase):
                         print(f"Client {rank} does not have attribute {attr}. Skipping...")
                 network.send(send_dic, dest_rank=rank)
             if self.verb: self.log(f'Server personalized broadcast to {dest_rank} succeed')
-
-    # def rand_time(self, loc, scale):
-    #     """
-    #     Generate a random time value within a given range. 
-    #     You can override this method to implement a custom time distribution.
-    #     For now, it generates a random value from a normal distribution with a mean of loc and a standard deviation of sqrt scale.
-
-    #     Parameters:
-    #         loc (float): The mean value of the normal distribution.
-    #         scale (float): The standard deviation of the normal distribution.
-
-    #     Returns:
-    #         float: A random time value within the range of 0.1 to 1.0.
-    #     """
-    #     randed = np.random.normal(loc=loc, scale=np.sqrt(scale))
-    #     while randed > 10 or randed < 1:
-    #         randed = np.random.normal(loc=loc, scale=np.sqrt(scale))
-    #     return randed / 10
 
     def listen(self, src_ranks=None, network=None):
         """
@@ -628,53 +478,7 @@ class Server(FLamingoBase):
         test_loss, test_acc, test_num = self.test(model, testloader, self.loss_func,self.device)
         del client_set, testloader
         return test_loss, test_acc, test_num
-    
-    # def _train_one_batch(self, model, data, target, optimizer, loss_func):
-    #     """
-    #     Trains the model on a single batch of data. 
-    #     Parameters:
-    #     - model (nn.Module): The model to be trained.
-    #     - data (torch.Tensor): The input data for the model.
-    #     - target (torch.Tensor): The target values for the model.
-    #     - optimizer (torch.optim.Optimizer): The optimizer used to update the model parameters.
-    #     - loss_func (callable): The loss function used to compute the loss between the model output and the target.
-
-    #     Returns:
-    #     - batch_size (int): The size of the target tensor.
-    #     - loss (float): The computed loss value.
-    #     """
-    #     model.train()
-    #     # model = model.to(self.device)
-    #     data, target = data.to(self.device), target.to(self.device)
-    #     optimizer.zero_grad()
-    #     output = model(data)
-    #     loss = loss_func(output, target)
-    #     loss.backward()
-    #     optimizer.step()
-    #     return len(target), loss.item()
-
-    # def _test_one_batch(self, model, data, target, loss_func):
-    #     """
-    #     Test one batch.
-    #     Args:
-    #         model: model to test
-    #         data: data to test
-    #         target: target to test
-    #         loss_func: loss function
-    #     Returns:
-    #         num: number of samples
-    #         correct: number of correct samples
-    #         loss: loss of this batch
-    #     """
-    #     model.eval()
-    #     output = model(data)
-    #     loss = loss_func(output, target)
-    #     _, pred = torch.max(output, 1)
-    #     # Check test accuracy
-    #     correct = (pred == target).sum().item()
-    #     num = data.size(0)
-    #     return num, correct, loss.item()
-
+ 
     def finalize_round(self):
         """
         Call this to update global_round and other routines.
