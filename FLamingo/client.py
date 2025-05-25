@@ -53,19 +53,19 @@ class Client(FLamingoBase):
         self.logger = create_logger(os.path.join(client_logs_path, f'client_{self.rank}.log'))
         self.init()
 
-        if self.USE_SIM_SYSHET:
-            assert self.sys_het_list is not None, "sys_het_list is not given"
-            self.log("Using simulated system heterogeneity.")
-            # Randomly select a setting from args.sys_het_list[ ]
-            assert len(self.sys_het_list) > 0, "Sys_het_list is empty or not given"
-            # sys_het = random.choice(self.sys_het_list)
-            sys_het = self.sys_het_list[self.rank % len(self.sys_het_list)]
-            self.log(f"Using system heterogeneity setting: {sys_het}")
-            for key, value in sys_het.items():
-                setattr(self, key, value)
-            del sys_het
-        else:
-            self.log("Not using simulated system heterogeneity. Time are real.")
+        # if self.USE_SIM_SYSHET:
+        #     assert self.sys_het_list is not None, "sys_het_list is not given"
+        #     self.log("Using simulated system heterogeneity.")
+        #     # Randomly select a setting from args.sys_het_list[ ]
+        #     assert len(self.sys_het_list) > 0, "Sys_het_list is empty or not given"
+        #     # sys_het = random.choice(self.sys_het_list)
+        #     sys_het = self.sys_het_list[self.rank % len(self.sys_het_list)]
+        #     self.log(f"Using system heterogeneity setting: {sys_het}")
+        #     for key, value in sys_het.items():
+        #         setattr(self, key, value)
+        #     del sys_het
+        # else:
+        #     self.log("Not using simulated system heterogeneity. Time are real.")
 
         if self.USE_TENSORBOARD:
             self.recorder = create_recorder(f'{self.run_dir}/event_log/{self.rank}/')

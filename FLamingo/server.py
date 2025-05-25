@@ -257,13 +257,14 @@ class Server(FLamingoBase):
         """
         return [self.get_client_by_rank(rank, client_list) for rank in rank_list]
 
-    def broadcast(self, data, dest_ranks=None, network=None):
+    def broadcast(self, data, dest_ranks=None, network=None, blocking=True):
         """
         Broadcast data to dest_ranks(list: int).
         
         Args:
             data: data to send, default self.data_to_send
             dest_ranks: destinations, default self.selected_clients_idxes
+            blocking: if True, use blocking send. Otherwise, use non-blocking send.
         """
         if network is None:
             network = self.network
@@ -279,10 +280,14 @@ class Server(FLamingoBase):
             'global_round': self.global_round
             })
         for dest in dest_ranks:
-            network.send(data, dest)
+            network.send(data, dest, blocking=blocking)
+        
+        if not blocking:
+            network.wait_for_sends() # Ensure all non-blocking sends are completed
+
         if self.verb: self.log(f'Server broadcast to {dest_ranks} succeed')
         
-    def personalized_broadcast(self, common_data=None, personalized_attr=None, dest_rank=None, network=None):
+    def personalized_broadcast(self, common_data=None, personalized_attr=None, dest_rank=None, network=None, blocking=True):
         """
         Broadcast different attributes to clients.
         This function is useful when different clients have different attributes to send, 
@@ -305,7 +310,7 @@ class Server(FLamingoBase):
             dest_rank = self.selected_clients_idxes
         if personalized_attr is None:
             print("There are no personalized attributes to send, you should use self.broadcast.")
-            self.broadcast(data=common_data, dest_ranks=dest_rank)
+            self.broadcast(data=common_data, dest_ranks=dest_rank, blocking=blocking)
         else:
             for rank in dest_rank:
                 send_dic = {'global_round': self.global_round}
@@ -317,7 +322,11 @@ class Server(FLamingoBase):
                         send_dic.update({attr: getattr(client, attr)})
                     else:
                         print(f"Client {rank} does not have attribute {attr}. Skipping...")
-                network.send(send_dic, dest_rank=rank)
+                network.send(send_dic, dest_rank=rank, blocking=blocking)
+            
+            if not blocking:
+                network.wait_for_sends() # Ensure all non-blocking sends are completed
+
             if self.verb: self.log(f'Server personalized broadcast to {dest_rank} succeed')
 
     def listen(self, src_ranks=None, network=None):

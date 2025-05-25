@@ -41,8 +41,8 @@ The `ClientInfo` class maintains information about each client, including:
 
 #### Communication
 
-- `broadcast(data, dest_ranks=None, network=None)`: Broadcasts data to specified clients
-- `personalized_broadcast(common_data=None, personalized_attr=None, dest_rank=None, network=None)`: Sends personalized data to clients
+- `broadcast(data, dest_ranks=None, network=None, blocking=True)`: Broadcasts data to specified clients. Use `blocking=False` for non-blocking parallel sends.
+- `personalized_broadcast(common_data=None, personalized_attr=None, dest_rank=None, network=None, blocking=True)`: Sends personalized data to clients. Use `blocking=False` for non-blocking parallel sends.
 - `listen(src_ranks=None, network=None)`: Receives data from specified clients
 - `stop_all()`: Sends stop signal to all clients
 
@@ -90,6 +90,22 @@ server.run()
 ### System Heterogeneity Simulation
 
 When `USE_SIM_SYSHET` is enabled, the server simulates heterogeneous client behavior by adjusting timing metrics.
+
+### Blocking vs Non-Blocking Communication
+
+The server supports both blocking and non-blocking communication modes:
+
+- **Blocking mode (default)**: Sends are executed sequentially, ensuring stability and simplicity. Each client receives data only after the previous send completes.
+- **Non-blocking mode**: Sends are executed in parallel using MPI's non-blocking operations, reducing overall communication time when sending to multiple clients.
+
+```python
+# Blocking mode (default)
+server.broadcast(data)
+
+# Non-blocking mode for faster parallel sends
+server.broadcast(data, blocking=False)
+server.personalized_broadcast(common_data, personalized_attr, blocking=False)
+```
 
 ### Personalized Model Distribution
 

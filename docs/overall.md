@@ -18,8 +18,15 @@ The framework is designed with modularity in mind, allowing researchers and prac
 1. **FLamingoBase**: Base class containing shared functionality for both Server and Client classes.
 2. **Server**: Manages client selection, aggregation, and global model updates.
 3. **Client**: Handles local training and communication with the server.
-4. **NetworkHandler**: Facilitates communication between server and clients.
+4. **NetworkHandler**: Facilitates communication between server and clients with support for both blocking and non-blocking MPI operations.
 5. **Utilities**: Helper modules for data loading, model creation, and other common tasks.
+
+## Key Features
+
+- **Flexible Communication**: Support for both blocking (sequential) and non-blocking (parallel) communication modes
+- **Modular Design**: Easy to customize and extend individual components
+- **MPI-based Networking**: Efficient distributed communication using Message Passing Interface
+- **Heterogeneity Simulation**: Built-in support for simulating client system heterogeneity
 
 ## Getting Started with FLamingo
 
